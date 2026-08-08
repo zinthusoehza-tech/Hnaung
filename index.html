@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Zion — Card Collection</title>
+    <title>Zion — 3D Card Collection</title>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
@@ -41,20 +41,14 @@
             --accent-3: #6cc0e5;
             --accent-4: #a78bfa;
             --glow-gold: 0 0 60px rgba(245, 166, 35, 0.20);
+            --glow-purple: 0 0 60px rgba(167, 139, 250, 0.20);
+            --glow-blue: 0 0 40px rgba(96, 165, 250, 0.12);
             --radius-card: 16px;
             --radius-sm: 10px;
             --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.55);
             --transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-
-            /* Rarity Colors */
-            --common-color: #9ca3af;
-            --common-glow: rgba(156, 163, 175, 0.08);
-            --rare-color: #60a5fa;
-            --rare-glow: rgba(96, 165, 250, 0.12);
-            --epic-color: #a78bfa;
-            --epic-glow: rgba(167, 139, 250, 0.20);
-            --legendary-color: #fbbf24;
-            --legendary-glow: rgba(251, 191, 36, 0.25);
+            --card-height: 320px;
+            --card-width: calc(var(--card-height) / 1.5);
         }
 
         html,
@@ -411,6 +405,7 @@
             padding: 0.6rem 2rem;
             background: rgba(10, 10, 18, 0.4);
             border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            flex-wrap: wrap;
         }
         .app-tabs .tab {
             padding: 0.45rem 1.5rem;
@@ -422,6 +417,7 @@
             font-weight: 500;
             cursor: pointer;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         .app-tabs .tab:hover {
             color: #fff;
@@ -439,12 +435,15 @@
             padding: 1.5rem 2rem 6rem;
         }
 
-        /* ----- CARDS GRID ----- */
+        /* ----- CARDS GRID (3D style) ----- */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+            justify-items: center;
+            padding: 0.5rem 0;
         }
+
         .cards-grid .empty-state {
             grid-column: 1 / -1;
             text-align: center;
@@ -476,23 +475,28 @@
         }
 
         /* ============================================================
-               CARD ITEM — ENHANCED RARITY EFFECTS
+               SINGLE CARD — 3D HOVER STYLE with dual-image effects
                ============================================================ */
-        .card-item {
+        .card-item-3d {
+            width: var(--card-width);
+            height: var(--card-height);
             position: relative;
-            background: var(--bg-card);
-            border-radius: var(--radius-card);
-            border: 1px solid var(--border-glass);
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.5s ease, border-color 0.4s ease;
-            aspect-ratio: 2 / 3;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30);
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 0 0.8rem 0;
+            perspective: 2500px;
+            margin: 0 auto;
             opacity: 0;
             animation: cardFadeIn 0.55s ease forwards;
+            cursor: pointer;
+            border-radius: var(--radius-card);
+            flex-shrink: 0;
+            background: transparent;
+            overflow: visible;
         }
+
         @keyframes cardFadeIn {
             from {
                 opacity: 0;
@@ -503,383 +507,97 @@
                 transform: translateY(0) scale(1);
             }
         }
-        .card-item:nth-child(1) {
+
+        .card-item-3d:nth-child(1) {
             animation-delay: 0.04s;
         }
-        .card-item:nth-child(2) {
+        .card-item-3d:nth-child(2) {
             animation-delay: 0.08s;
         }
-        .card-item:nth-child(3) {
+        .card-item-3d:nth-child(3) {
             animation-delay: 0.12s;
         }
-        .card-item:nth-child(4) {
+        .card-item-3d:nth-child(4) {
             animation-delay: 0.16s;
         }
-        .card-item:nth-child(5) {
+        .card-item-3d:nth-child(5) {
             animation-delay: 0.20s;
         }
-        .card-item:nth-child(6) {
+        .card-item-3d:nth-child(6) {
             animation-delay: 0.24s;
         }
-        .card-item:nth-child(7) {
+        .card-item-3d:nth-child(7) {
             animation-delay: 0.28s;
         }
-        .card-item:nth-child(8) {
+        .card-item-3d:nth-child(8) {
             animation-delay: 0.32s;
         }
-        .card-item:nth-child(9) {
+        .card-item-3d:nth-child(9) {
             animation-delay: 0.36s;
         }
-        .card-item:nth-child(10) {
+        .card-item-3d:nth-child(10) {
             animation-delay: 0.40s;
         }
-        .card-item:nth-child(11) {
-            animation-delay: 0.44s;
-        }
-        .card-item:nth-child(12) {
-            animation-delay: 0.48s;
-        }
 
-        /* ---- BASE HOVER ---- */
-        .card-item:hover {
-            transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50);
-        }
-
-        /* ---- RARITY: COMMON ---- */
-        .card-item.rarity-common {
-            border-color: rgba(156, 163, 175, 0.10);
-        }
-        .card-item.rarity-common:hover {
-            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50), 0 0 30px rgba(156, 163, 175, 0.05);
-        }
-
-        /* ---- RARITY: RARE ---- */
-        .card-item.rarity-rare {
-            border-color: rgba(96, 165, 250, 0.15);
-        }
-        .card-item.rarity-rare:hover {
-            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50), 0 0 40px rgba(96, 165, 250, 0.12);
-            border-color: rgba(96, 165, 250, 0.30);
-        }
-        .card-item.rarity-rare .rarity-badge {
-            color: #60a5fa;
-            border-color: rgba(96, 165, 250, 0.20);
-        }
-
-        /* ---- RARITY: EPIC (PURPLE GLOW + MAGICAL PARTICLES) ---- */
-        .card-item.rarity-epic {
-            border-color: rgba(167, 139, 250, 0.20);
-            background: linear-gradient(145deg, rgba(167, 139, 250, 0.04), rgba(10, 10, 18, 0.60));
-        }
-        .card-item.rarity-epic::before {
-            content: '';
+        /* ---- wrapper (cover image container) ---- */
+        .card-item-3d .wrapper {
             position: absolute;
-            inset: -2px;
+            inset: 0;
+            width: 100%;
+            height: 100%;
             border-radius: var(--radius-card);
-            padding: 2px;
-            background: conic-gradient(from 0deg,
-                    rgba(167, 139, 250, 0.0),
-                    rgba(167, 139, 250, 0.15),
-                    rgba(167, 139, 250, 0.0),
-                    rgba(167, 139, 250, 0.15),
-                    rgba(167, 139, 250, 0.0));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.4;
-            transition: opacity 0.6s ease;
-            animation: epicBorderRotate 6s linear infinite;
-        }
-        @keyframes epicBorderRotate {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .card-item.rarity-epic:hover::before {
-            opacity: 0.9;
-            background: conic-gradient(from 0deg,
-                    rgba(167, 139, 250, 0.0),
-                    rgba(167, 139, 250, 0.4),
-                    rgba(167, 139, 250, 0.0),
-                    rgba(167, 139, 250, 0.4),
-                    rgba(167, 139, 250, 0.0));
-        }
-        .card-item.rarity-epic:hover {
-            transform: translateY(-8px) scale(1.03);
-            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.50), 0 0 60px rgba(167, 139, 250, 0.15), 0 0 120px rgba(167, 139, 250, 0.05);
-            border-color: rgba(167, 139, 250, 0.35);
-        }
-        .card-item.rarity-epic .rarity-badge {
-            color: #a78bfa;
-            border-color: rgba(167, 139, 250, 0.25);
-            box-shadow: 0 0 20px rgba(167, 139, 250, 0.10);
-        }
-        /* Epic shimmer overlay */
-        .card-item.rarity-epic .card-img::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg,
-                    transparent 0%,
-                    transparent 30%,
-                    rgba(167, 139, 250, 0.06) 50%,
-                    transparent 70%,
-                    transparent 100%);
-            pointer-events: none;
-            z-index: 3;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            background-size: 300% 300%;
-        }
-        .card-item.rarity-epic:hover .card-img::after {
-            opacity: 1;
-            animation: epicShimmer 1.8s ease forwards;
-        }
-        @keyframes epicShimmer {
-            0% {
-                background-position: 150% 150%;
-            }
-            100% {
-                background-position: -50% -50%;
-            }
-        }
-
-        /* ---- RARITY: LEGENDARY (GOLDEN GLOW + FIRE EFFECTS) ---- */
-        .card-item.rarity-legendary {
-            border-color: rgba(251, 191, 36, 0.25);
-            background: linear-gradient(145deg, rgba(251, 191, 36, 0.06), rgba(10, 10, 18, 0.50));
-            animation: cardFadeIn 0.55s ease forwards, legendaryPulse 3s ease-in-out infinite;
-        }
-        @keyframes legendaryPulse {
-            0%,
-            100% {
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30), 0 0 20px rgba(251, 191, 36, 0.04);
-            }
-            50% {
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30), 0 0 40px rgba(251, 191, 36, 0.10);
-            }
-        }
-        /* Legendary golden border ring */
-        .card-item.rarity-legendary::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border-radius: var(--radius-card);
-            padding: 3px;
-            background: conic-gradient(from 0deg,
-                    rgba(251, 191, 36, 0.0),
-                    rgba(251, 191, 36, 0.6),
-                    rgba(245, 166, 35, 0.8),
-                    rgba(251, 191, 36, 0.6),
-                    rgba(251, 191, 36, 0.0));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.6;
-            animation: legendaryBorderRotate 4s linear infinite;
-        }
-        @keyframes legendaryBorderRotate {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-        .card-item.rarity-legendary:hover::before {
-            opacity: 1;
-            background: conic-gradient(from 0deg,
-                    rgba(251, 191, 36, 0.0),
-                    rgba(251, 191, 36, 0.9),
-                    rgba(245, 166, 35, 1),
-                    rgba(251, 191, 36, 0.9),
-                    rgba(251, 191, 36, 0.0));
-            animation-duration: 1.8s;
-        }
-
-        /* Legendary golden glow ring (outer) */
-        .card-item.rarity-legendary::after {
-            content: '';
-            position: absolute;
-            inset: -6px;
-            border-radius: calc(var(--radius-card) + 4px);
-            background: radial-gradient(ellipse at 50% 50%,
-                    rgba(251, 191, 36, 0.15) 0%,
-                    transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            filter: blur(8px);
-        }
-        .card-item.rarity-legendary:hover::after {
-            opacity: 1;
-            animation: legendaryGlowPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes legendaryGlowPulse {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.6;
-            }
-            50% {
-                transform: scale(1.08);
-                opacity: 1;
-            }
-        }
-
-        /* Legendary fire/flame particles (CSS only) */
-        .card-item.rarity-legendary .card-img::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(245, 166, 35, 0.06) 0%, transparent 35%),
-                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 60%);
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.3;
-            transition: opacity 0.6s ease;
-        }
-        .card-item.rarity-legendary:hover .card-img::before {
-            opacity: 0.8;
-            animation: legendaryFireDance 2.4s ease-in-out infinite;
-        }
-        @keyframes legendaryFireDance {
-            0%,
-            100% {
-                background-position: 0% 0%;
-            }
-            25% {
-                background-position: 10% 5%;
-            }
-            50% {
-                background-position: 5% 15%;
-            }
-            75% {
-                background-position: 15% 5%;
-            }
-        }
-
-        /* Legendary golden sparkles overlay */
-        .card-item.rarity-legendary .card-img::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(2px 2px at 10% 20%, rgba(251, 191, 36, 0.3), transparent),
-                radial-gradient(3px 3px at 30% 60%, rgba(251, 191, 36, 0.2), transparent),
-                radial-gradient(2px 2px at 60% 30%, rgba(251, 191, 36, 0.35), transparent),
-                radial-gradient(4px 4px at 80% 70%, rgba(251, 191, 36, 0.15), transparent),
-                radial-gradient(2px 2px at 45% 85%, rgba(251, 191, 36, 0.25), transparent),
-                radial-gradient(3px 3px at 75% 15%, rgba(251, 191, 36, 0.2), transparent),
-                radial-gradient(2px 2px at 20% 45%, rgba(251, 191, 36, 0.3), transparent),
-                radial-gradient(3px 3px at 90% 50%, rgba(251, 191, 36, 0.15), transparent);
-            pointer-events: none;
-            z-index: 3;
-            opacity: 0;
-            transition: opacity 0.8s ease;
-            background-size: 100% 100%;
-        }
-        .card-item.rarity-legendary:hover .card-img::after {
-            opacity: 1;
-            animation: legendarySparkle 1.2s ease-in-out infinite alternate;
-        }
-        @keyframes legendarySparkle {
-            0% {
-                opacity: 0.4;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1.02);
-            }
-        }
-
-        /* Legendary card hover - extra glow */
-        .card-item.rarity-legendary:hover {
-            transform: translateY(-10px) scale(1.04);
-            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.50), 0 0 80px rgba(251, 191, 36, 0.15), 0 0 160px rgba(251, 191, 36, 0.06);
-            border-color: rgba(251, 191, 36, 0.45);
-            animation: none;
-        }
-        .card-item.rarity-legendary .rarity-badge {
-            color: #fbbf24;
-            border-color: rgba(251, 191, 36, 0.30);
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.05);
-            background: rgba(0, 0, 0, 0.70);
-            backdrop-filter: blur(4px);
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.20);
-        }
-
-        /* ---- Legendary golden text glow on card name ---- */
-        .card-item.rarity-legendary .card-info .cname {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(251, 191, 36, 0.10);
-            font-weight: 700;
-        }
-        .card-item.rarity-epic .card-info .cname {
-            color: #a78bfa;
-            font-weight: 600;
-        }
-        .card-item.rarity-rare .card-info .cname {
-            color: #60a5fa;
-            font-weight: 600;
-        }
-
-        /* ---- Card inner structure ---- */
-        .card-item .card-img {
-            position: relative;
             overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1;
+            transform-style: preserve-3d;
             background: #141425;
-            flex: 1;
-            min-height: 0;
-            z-index: 0;
+            border: 1px solid var(--border-glass);
         }
-        .card-item .card-img img {
+
+        .card-item-3d:hover .wrapper {
+            transform: perspective(900px) translateY(-6%) rotateX(25deg) translateZ(0);
+            box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75);
+        }
+
+        .card-item-3d .wrapper .cover-image {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.4s ease;
+            border-radius: var(--radius-card);
             position: relative;
             z-index: 1;
         }
-        .card-item:hover .card-img img {
-            transform: scale(1.04);
-        }
-        .card-item .card-img .img-placeholder {
-            position: absolute;
-            inset: 0;
-            display: none;
+
+        .card-item-3d .wrapper .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 2.8rem;
+            background: #141425;
             color: var(--text-muted);
-            background: linear-gradient(145deg, #161625, #1e1e30);
-            z-index: 2;
+            font-size: 2.5rem;
+            border-radius: var(--radius-card);
+            position: absolute;
+            inset: 0;
+            z-index: 0;
         }
-        .card-item .card-img .img-placeholder .pname {
+        .card-item-3d .wrapper .img-placeholder .pname {
             font-size: 0.8rem;
             margin-top: 0.5rem;
             color: var(--text-secondary);
         }
-        .card-item .card-img .img-loading {
+
+        .card-item-3d .wrapper .img-loading {
             position: absolute;
             inset: 0;
             background: linear-gradient(90deg, #141425 25%, #22223a 50%, #141425 75%);
             background-size: 200% 100%;
             animation: shimmer 1.2s ease-in-out infinite;
-            z-index: 1;
+            z-index: 2;
+            border-radius: var(--radius-card);
         }
         @keyframes shimmer {
             0% {
@@ -889,7 +607,50 @@
                 background-position: -200% 0;
             }
         }
-        .card-item .card-img .rarity-badge {
+
+        /* Gradient overlays on wrapper */
+        .card-item-3d .wrapper::before,
+        .card-item-3d .wrapper::after {
+            content: "";
+            opacity: 0;
+            width: 100%;
+            transition: all 0.5s;
+            position: absolute;
+            left: 0;
+            z-index: 5;
+            pointer-events: none;
+            border-radius: var(--radius-card);
+        }
+        .card-item-3d .wrapper::before {
+            top: 0;
+            height: 100%;
+            background-image: linear-gradient(to top,
+                    transparent 46%,
+                    rgba(12, 13, 19, 0.5) 68%,
+                    rgba(12, 13, 19) 97%);
+            border-radius: var(--radius-card);
+        }
+        .card-item-3d .wrapper::after {
+            bottom: 0;
+            opacity: 1;
+            height: 80px;
+            background-image: linear-gradient(to bottom,
+                    transparent 46%,
+                    rgba(12, 13, 19, 0.5) 68%,
+                    rgba(12, 13, 19) 97%);
+            border-radius: var(--radius-card);
+        }
+
+        .card-item-3d:hover .wrapper::before {
+            opacity: 1;
+        }
+        .card-item-3d:hover .wrapper::after {
+            opacity: 1;
+            height: 120px;
+        }
+
+        /* ---- rarity badge ---- */
+        .card-item-3d .rarity-badge {
             position: absolute;
             top: 0.6rem;
             right: 0.6rem;
@@ -902,35 +663,264 @@
             backdrop-filter: blur(4px);
             letter-spacing: 0.06em;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            z-index: 4;
-            transition: all 0.4s ease;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        .card-item .card-info {
-            padding: 0.6rem 0.9rem 0.85rem;
-            background: rgba(0, 0, 0, 0.50);
-            backdrop-filter: blur(4px);
-            flex-shrink: 0;
+        /* ---- title (card name) ---- */
+        .card-item-3d .title {
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 8;
             position: relative;
-            z-index: 2;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #fff;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+            padding: 0 0.3rem 0.4rem;
+            pointer-events: none;
+            line-height: 1.3;
+            margin-top: auto;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.30) 20%);
+            border-radius: 0 0 var(--radius-card) var(--radius-card);
         }
-        .card-item .card-info .cname {
-            font-weight: 600;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .card-item .card-info .cdesc {
-            font-size: 0.7rem;
+        .card-item-3d .title .sub {
+            font-weight: 400;
+            font-size: 0.65rem;
             color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
             margin-top: 0.1rem;
+            opacity: 0.8;
+        }
+        .card-item-3d:hover .title {
+            transform: translate3d(0%, -55px, 100px);
         }
 
-        /* ----- USERS LIST ----- */
+        /* ---- character image (hover) with rarity glow ---- */
+        .card-item-3d .character {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: absolute;
+            z-index: 3;
+            pointer-events: none;
+            object-fit: contain;
+            top: 0;
+            left: 0;
+            border-radius: var(--radius-card);
+            padding: 0.5rem;
+            filter: drop-shadow(0 0 0px transparent);
+            transition: opacity 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                filter 0.6s ease;
+        }
+        .card-item-3d:hover .character {
+            opacity: 1;
+            transform: translate3d(0%, -30%, 100px);
+        }
+
+        /* Character glow by rarity (appears on hover) */
+        .card-item-3d.rarity-rare:hover .character {
+            filter: drop-shadow(0 0 18px rgba(96, 165, 250, 0.50)) drop-shadow(0 0 40px rgba(96, 165, 250, 0.15));
+        }
+        .card-item-3d.rarity-epic:hover .character {
+            filter: drop-shadow(0 0 22px rgba(167, 139, 250, 0.60)) drop-shadow(0 0 50px rgba(167, 139, 250, 0.20));
+        }
+        .card-item-3d.rarity-legendary:hover .character {
+            filter: drop-shadow(0 0 28px rgba(251, 191, 36, 0.70)) drop-shadow(0 0 60px rgba(251, 191, 36, 0.25));
+        }
+
+        .card-item-3d .character.placeholder-char {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.20);
+            border-radius: var(--radius-card);
+            pointer-events: none;
+        }
+
+        /* ---- shared particles layer (above character) ---- */
+        .card-item-3d .card-particles {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 7;
+            overflow: hidden;
+            border-radius: var(--radius-card);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .card-item-3d:hover .card-particles {
+            opacity: 1;
+        }
+        .card-item-3d .card-particles .part {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatParticle 3s ease-in-out infinite;
+        }
+        @keyframes floatParticle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(var(--tx), var(--ty)) scale(1.5);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(calc(var(--tx) * 0.5), calc(var(--ty) * 0.5)) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* ---- wrapper glow ring (conic gradient border) ---- */
+        .card-item-3d .wrapper::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-image: linear-gradient(to bottom,
+                    transparent 46%,
+                    rgba(12, 13, 19, 0.5) 68%,
+                    rgba(12, 13, 19) 97%);
+            border-radius: var(--radius-card);
+            opacity: 1;
+            z-index: 5;
+            pointer-events: none;
+            transition: height 0.5s, opacity 0.5s;
+        }
+
+        /* Rarity-specific glow ring on wrapper */
+        .card-item-3d.rarity-rare .wrapper {
+            border-color: rgba(96, 165, 250, 0.25);
+        }
+        .card-item-3d.rarity-rare .rarity-badge {
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.20);
+        }
+        .card-item-3d.rarity-rare:hover .wrapper {
+            box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75),
+                0 0 40px rgba(96, 165, 250, 0.12);
+        }
+
+        .card-item-3d.rarity-epic .wrapper {
+            border-color: rgba(167, 139, 250, 0.30);
+        }
+        .card-item-3d.rarity-epic .rarity-badge {
+            color: #a78bfa;
+            border-color: rgba(167, 139, 250, 0.20);
+        }
+        .card-item-3d.rarity-epic:hover .wrapper {
+            box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75),
+                0 0 60px rgba(167, 139, 250, 0.20);
+        }
+        .card-item-3d.rarity-epic .wrapper::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-card);
+            background: conic-gradient(from 0deg, #a78bfa, #c4b5fd, #8b5cf6, #a78bfa);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 2px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .card-item-3d.rarity-epic:hover .wrapper::after {
+            opacity: 0.6;
+            animation: spinGlow 2s linear infinite;
+        }
+
+        .card-item-3d.rarity-legendary .wrapper {
+            border-color: rgba(251, 191, 36, 0.35);
+        }
+        .card-item-3d.rarity-legendary .rarity-badge {
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.25);
+            box-shadow: 0 0 24px rgba(251, 191, 36, 0.12);
+        }
+        .card-item-3d.rarity-legendary:hover .wrapper {
+            box-shadow: 2px 35px 32px -8px rgba(0, 0, 0, 0.75),
+                0 0 80px rgba(251, 191, 36, 0.25);
+        }
+        .card-item-3d.rarity-legendary .wrapper::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-card);
+            background: conic-gradient(from 0deg, #fbbf24, #fcd34d, #f59e0b, #d97706, #fbbf24);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 2px;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        .card-item-3d.rarity-legendary:hover .wrapper::after {
+            opacity: 0.8;
+            animation: spinGlow 1.5s linear infinite;
+        }
+
+        .card-item-3d.rarity-legendary .wrapper .shimmer-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            border-radius: var(--radius-card);
+            background: linear-gradient(135deg,
+                    transparent 0%,
+                    transparent 30%,
+                    rgba(255, 215, 0, 0.10) 50%,
+                    transparent 70%,
+                    transparent 100%);
+            background-size: 300% 300%;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .card-item-3d.rarity-legendary:hover .wrapper .shimmer-overlay {
+            opacity: 1;
+            animation: shineSweep 2s ease-in-out infinite;
+        }
+        @keyframes shineSweep {
+            0% {
+                background-position: 150% 150%;
+            }
+            100% {
+                background-position: -50% -50%;
+            }
+        }
+
+        @keyframes spinGlow {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---- common rarity ---- */
+        .card-item-3d.rarity-common .wrapper {
+            border-color: rgba(156, 163, 175, 0.15);
+        }
+        .card-item-3d.rarity-common .rarity-badge {
+            color: #9ca3af;
+            border-color: rgba(156, 163, 175, 0.15);
+        }
+
+        /* ============================================================
+               USERS LIST
+               ============================================================ */
         .users-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -1237,7 +1227,7 @@
         }
 
         /* ============================================================
-               REVEAL MODAL — ENHANCED with rarity colors
+               REVEAL MODAL
                ============================================================ */
         #revealModal .modal-box {
             max-width: 480px;
@@ -1308,7 +1298,6 @@
         }
         .rarity-label.legendary {
             color: #fbbf24;
-            text-shadow: 0 0 30px rgba(251, 191, 36, 0.30);
         }
 
         .reveal-card-wrapper {
@@ -1373,11 +1362,6 @@
             opacity: 1;
             animation-duration: 1.2s;
         }
-        @keyframes spinGlow {
-            to {
-                transform: rotate(360deg);
-            }
-        }
 
         .reveal-card-wrapper .shine-overlay {
             position: absolute;
@@ -1398,14 +1382,6 @@
         .reveal-card-wrapper.revealing .shine-overlay {
             opacity: 1;
             animation: shineSweep 1.2s ease forwards;
-        }
-        @keyframes shineSweep {
-            0% {
-                background-position: 150% 150%;
-            }
-            100% {
-                background-position: -50% -50%;
-            }
         }
 
         .reveal-card-wrapper.spinning .reveal-card {
@@ -1476,7 +1452,7 @@
         }
 
         /* ============================================================
-               CONFETTI — enhanced with rarity colors
+               CONFETTI
                ============================================================ */
         .reveal-confetti {
             position: fixed;
@@ -1554,6 +1530,7 @@
                 padding: 0.4rem 1rem;
                 overflow-x: auto;
                 gap: 0.2rem;
+                flex-wrap: nowrap;
             }
             .app-tabs .tab {
                 font-size: 0.75rem;
@@ -1564,8 +1541,11 @@
                 padding: 1rem 1rem 5rem;
             }
             .cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 1.2rem;
+            }
+            :root {
+                --card-height: 240px;
             }
             .users-list {
                 grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -1595,23 +1575,86 @@
             #revealModal .modal-box {
                 padding: 1.6rem 1.2rem;
             }
+            .card-item-3d .title {
+                font-size: 0.85rem;
+            }
         }
 
         @media (max-width: 400px) {
             .cards-grid {
-                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
                 gap: 0.8rem;
             }
-            .card-item .card-info .cname {
-                font-size: 0.7rem;
-            }
-            .card-item .card-info .cdesc {
-                font-size: 0.6rem;
+            :root {
+                --card-height: 200px;
             }
             .reveal-card-wrapper {
                 width: 130px;
                 height: 185px;
             }
+            .card-item-3d .title {
+                font-size: 0.75rem;
+            }
+            .card-item-3d .title .sub {
+                font-size: 0.55rem;
+            }
+        }
+
+        .modal-box::-webkit-scrollbar {
+            width: 4px;
+        }
+        .modal-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-box::-webkit-scrollbar-thumb {
+            background: var(--accent-1);
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+               USER COLLECTION MODAL — 3D cards
+               ============================================================ */
+        .user-collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            justify-items: center;
+            padding: 0.5rem 0;
+        }
+        .user-collection-grid .card-item-3d {
+            --card-height: 240px;
+            cursor: default;
+        }
+        @media (max-width: 640px) {
+            .user-collection-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            .user-collection-grid .card-item-3d {
+                --card-height: 200px;
+            }
+        }
+        @media (max-width: 400px) {
+            .user-collection-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.8rem;
+            }
+            .user-collection-grid .card-item-3d {
+                --card-height: 170px;
+            }
+            .user-collection-grid .card-item-3d .title {
+                font-size: 0.65rem;
+            }
+            .user-collection-grid .card-item-3d .title .sub {
+                font-size: 0.5rem;
+            }
+        }
+
+        /* ============================================================
+               ALL CARDS TAB
+               ============================================================ */
+        #tabAllCards .cards-grid .card-item-3d {
+            cursor: default;
         }
     </style>
 </head>
@@ -1623,7 +1666,7 @@
     <div id="landing">
         <canvas id="particles-canvas"></canvas>
         <div class="landing-title" id="landingTitle">ZION</div>
-        <div class="landing-sub">Card <span>Collection</span> · Firebase</div>
+        <div class="landing-sub">3D Card <span>Collection</span> · Firebase</div>
         <div class="landing-loader"></div>
     </div>
 
@@ -1663,6 +1706,7 @@
 
         <div class="app-tabs">
             <button class="tab active" data-tab="collection">📚 My Collection</button>
+            <button class="tab" data-tab="allcards">🌟 All Cards</button>
             <button class="tab" data-tab="users">👥 All Users</button>
         </div>
 
@@ -1675,6 +1719,16 @@
                     </div>
                 </div>
             </div>
+
+            <div id="tabAllCards" class="tab-content hidden">
+                <div class="cards-grid" id="allCardsGrid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <div>Loading all cards...</div>
+                    </div>
+                </div>
+            </div>
+
             <div id="tabUsers" class="tab-content hidden">
                 <div class="users-list" id="usersList"></div>
             </div>
@@ -1721,9 +1775,12 @@
             <div id="atabAddcard">
                 <label>Card Name</label>
                 <input type="text" id="acName" placeholder="e.g. Dragon's Fury" />
-                <label>Image URL</label>
-                <input type="text" id="acImage" placeholder="https://i.ibb.co/XXXXX/image.jpg or Google Drive link" />
-                <div class="hint">✅ Supports: ImgBB, Google Drive (any format), or any direct image URL</div>
+                <label>Cover Image URL (base image)</label>
+                <input type="text" id="acCover" placeholder="https://i.ibb.co/XXXXX/cover.jpg or Google Drive link" />
+                <div class="hint">✅ The background image visible at all times</div>
+                <label>Character Image URL (hover image)</label>
+                <input type="text" id="acCharacter" placeholder="https://i.ibb.co/XXXXX/character.png or Google Drive link" />
+                <div class="hint">✅ Appears with 3D effect on hover — supports PNG with transparency</div>
                 <label>Rarity</label>
                 <select id="acRarity">
                     <option value="common">Common</option>
@@ -1764,7 +1821,7 @@
     </div>
 
     <!-- ============================================================
-    REVEAL MODAL — ENHANCED
+    REVEAL MODAL
     ============================================================ -->
     <div class="modal-overlay" id="revealModal">
         <div class="modal-box">
@@ -1844,6 +1901,7 @@
         const appCardCount = $('appCardCount');
         const logoutBtn = $('logoutBtn');
         const myCardsGrid = $('myCardsGrid');
+        const allCardsGrid = $('allCardsGrid');
         const usersList = $('usersList');
         const adminFab = $('adminFab');
         const adminPrompt = $('adminPrompt');
@@ -1863,7 +1921,8 @@
         const confettiContainer = $('confettiContainer');
 
         const acName = $('acName');
-        const acImage = $('acImage');
+        const acCover = $('acCover');
+        const acCharacter = $('acCharacter');
         const acRarity = $('acRarity');
         const acDesc = $('acDesc');
         const acSubmit = $('acSubmit');
@@ -1878,7 +1937,7 @@
         const manageList = $('manageList');
 
         // ============================================================
-        //  LOCAL STORAGE HELPERS — track seen cards
+        //  LOCAL STORAGE HELPERS
         // ============================================================
         function getSeenKey(username) {
             return 'zion_seen_' + username;
@@ -1903,7 +1962,7 @@
         }
 
         // ============================================================
-        //  IMAGE URL HANDLER — Supports: ImgBB, Google Drive, Direct
+        //  IMAGE URL HANDLER
         // ============================================================
         function getDirectImageUrl(url) {
             if (!url) return '';
@@ -2129,6 +2188,7 @@
                 setupRealtimeAdmin();
                 adminPanel.classList.remove('open');
                 adminPrompt.classList.remove('open');
+                renderAllCards();
             } else {
                 adminLoginPass.value = '';
                 adminLoginPass.focus();
@@ -2138,7 +2198,7 @@
         }
 
         // ============================================================
-        //  ENTER APP — with unseen card detection
+        //  ENTER APP
         // ============================================================
         function enterApp(username) {
             login.classList.add('hidden');
@@ -2205,9 +2265,6 @@
             adminPrompt.classList.remove('open');
         }
 
-        // ============================================================
-        //  Finish loading after detecting new cards
-        // ============================================================
         function finishLoad(username, ids, keys) {
             myCardIds = ids;
             _prevKeys = keys;
@@ -2220,6 +2277,7 @@
                 loadAllUsers();
                 loadAllCards();
                 setupRealtime(username);
+                renderAllCards();
                 isInitialRender = false;
                 return;
             }
@@ -2238,6 +2296,7 @@
                 loadAllUsers();
                 loadAllCards();
                 setupRealtime(username);
+                renderAllCards();
                 isInitialRender = false;
             }).catch(err => {
                 console.error('Error loading user cards:', err);
@@ -2246,6 +2305,7 @@
                 loadAllUsers();
                 loadAllCards();
                 setupRealtime(username);
+                renderAllCards();
                 isInitialRender = false;
             });
         }
@@ -2287,6 +2347,7 @@
             window._cardListListener = cardRef.on('value', snap => {
                 allCards = snap.val() || {};
                 populateAdminCardSelect();
+                renderAllCards();
             });
         }
 
@@ -2317,7 +2378,7 @@
         });
 
         // ============================================================
-        //  LOAD DATA (legacy)
+        //  LOAD DATA
         // ============================================================
         function loadAllUsers() {
             db.ref('users').once('value').then(snap => {
@@ -2332,11 +2393,12 @@
             db.ref('cards').once('value').then(snap => {
                 allCards = snap.val() || {};
                 populateAdminCardSelect();
+                renderAllCards();
             });
         }
 
         // ============================================================
-        //  REALTIME (user) — also updates seen cards
+        //  REALTIME (user)
         // ============================================================
         function setupRealtime(username) {
             if (window._cardListener) window._cardListener();
@@ -2409,7 +2471,140 @@
             window._cardListListener = cardRef.on('value', snap => {
                 allCards = snap.val() || {};
                 populateAdminCardSelect();
+                renderAllCards();
             });
+        }
+
+        // ============================================================
+        //  BUILD CARD HTML (shared between My Cards, All Cards, and User modal)
+        // ============================================================
+        function buildCardHTML(card, id, delay = 0, isClickable = true) {
+            const coverUrl = getDirectImageUrl(card.coverImage || card.imageUrl || '');
+            const charUrl = getDirectImageUrl(card.characterImage || '');
+            const rarityClass = 'rarity-' + (card.rarity || 'common');
+            const escapedName = escHtml(card.name || 'Untitled');
+            const escapedDesc = escHtml(card.description || '');
+            const rarityLabel = card.rarity || 'common';
+
+            // Cover image
+            let coverHtml = '';
+            if (coverUrl) {
+                coverHtml = `
+                    <img src="${coverUrl}" 
+                         referrerpolicy="no-referrer" 
+                         loading="lazy" 
+                         alt="${escapedName}" 
+                         class="cover-image"
+                         onload="this.style.display='block'; this.parentElement.querySelector('.img-loading').style.display='none';"
+                         onerror="this.style.display='none'; this.parentElement.querySelector('.img-loading').style.display='none'; this.parentElement.querySelector('.img-placeholder').style.display='flex';"
+                    />
+                    <div class="img-loading" style="display:block;"></div>
+                    <div class="img-placeholder" style="display:none;flex-direction:column;">
+                        <span>🖼️</span>
+                        <span class="pname">${escapedName}</span>
+                    </div>
+                `;
+            } else {
+                coverHtml = `
+                    <div class="img-placeholder" style="display:flex;flex-direction:column;">
+                        <span>🖼️</span>
+                        <span class="pname">${escapedName}</span>
+                    </div>
+                `;
+            }
+
+            // Character image
+            let charHtml = '';
+            if (charUrl) {
+                charHtml = `
+                    <img src="${charUrl}" 
+                         referrerpolicy="no-referrer" 
+                         loading="lazy" 
+                         alt="${escapedName} character"
+                         class="character"
+                         onerror="this.className='character placeholder-char'; this.alt='⚠️';"
+                    />
+                `;
+            } else {
+                charHtml = `
+                    <div class="character placeholder-char">✦</div>
+                `;
+            }
+
+            // Particles for legendary/epic (shared layer above character)
+            let particlesHtml = '';
+            if (card.rarity === 'legendary') {
+                let parts = '';
+                for (let i = 0; i < 14; i++) {
+                    const tx = (Math.random() - 0.5) * 180;
+                    const ty = (Math.random() - 0.5) * 180 - 40;
+                    const size = 2 + Math.random() * 4;
+                    const dur = 2 + Math.random() * 3;
+                    const delayP = Math.random() * 2;
+                    const colors = ['#fbbf24', '#fcd34d', '#f59e0b', '#d97706', '#fff'];
+                    parts += `
+                        <div class="part" style="
+                            left:${15 + Math.random() * 70}%;
+                            top:${10 + Math.random() * 65}%;
+                            width:${size}px;
+                            height:${size}px;
+                            --tx:${tx}px;
+                            --ty:${ty}px;
+                            animation-duration:${dur}s;
+                            animation-delay:${delayP}s;
+                            background:${colors[Math.floor(Math.random() * colors.length)]};
+                        "></div>
+                    `;
+                }
+                particlesHtml = `<div class="card-particles">${parts}</div>`;
+            } else if (card.rarity === 'epic') {
+                let parts = '';
+                for (let i = 0; i < 10; i++) {
+                    const tx = (Math.random() - 0.5) * 140;
+                    const ty = (Math.random() - 0.5) * 140 - 30;
+                    const size = 2 + Math.random() * 3;
+                    const dur = 2.5 + Math.random() * 3;
+                    const delayP = Math.random() * 2.5;
+                    const colors = ['#a78bfa', '#c4b5fd', '#8b5cf6', '#7c3aed'];
+                    parts += `
+                        <div class="part" style="
+                            left:${15 + Math.random() * 70}%;
+                            top:${10 + Math.random() * 65}%;
+                            width:${size}px;
+                            height:${size}px;
+                            --tx:${tx}px;
+                            --ty:${ty}px;
+                            animation-duration:${dur}s;
+                            animation-delay:${delayP}s;
+                            background:${colors[Math.floor(Math.random() * colors.length)]};
+                        "></div>
+                    `;
+                }
+                particlesHtml = `<div class="card-particles">${parts}</div>`;
+            }
+
+            let shimmerHtml = '';
+            if (card.rarity === 'legendary') {
+                shimmerHtml = `<div class="shimmer-overlay"></div>`;
+            }
+
+            const clickableAttr = isClickable ? '' : 'style="cursor:default;"';
+
+            return `
+                <div class="card-item-3d ${rarityClass}" ${clickableAttr} style="animation-delay:${delay}s;">
+                    <div class="wrapper">
+                        ${coverHtml}
+                        ${shimmerHtml}
+                        <span class="rarity-badge">${rarityLabel}</span>
+                    </div>
+                    ${charHtml}
+                    ${particlesHtml}
+                    <div class="title">
+                        ${escapedName}
+                        <div class="sub">${escapedDesc}</div>
+                    </div>
+                </div>
+            `;
         }
 
         // ============================================================
@@ -2438,64 +2633,54 @@
             }
 
             let html = '';
-            ids.forEach(id => {
+            ids.forEach((id, idx) => {
                 const card = userCards[id];
                 if (!card) return;
-
-                const directUrl = getDirectImageUrl(card.imageUrl || '');
-                const rarityClass = 'rarity-' + (card.rarity || 'common');
-                const escapedName = escHtml(card.name || 'Untitled');
-                const escapedDesc = escHtml(card.description || '');
-                const rarityLabel = card.rarity || 'common';
-
-                let imgHtml = '';
-                if (directUrl) {
-                    imgHtml = `
-                        <img src="${directUrl}" 
-                             referrerpolicy="no-referrer" 
-                             loading="lazy" 
-                             alt="${escapedName}" 
-                             style="width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1;"
-                             onload="this.style.display='block'; this.parentElement.querySelector('.img-loading').style.display='none';"
-                             onerror="this.style.display='none'; this.parentElement.querySelector('.img-loading').style.display='none'; this.parentElement.querySelector('.img-placeholder').style.display='flex';"
-                        />
-                        <div class="img-loading" style="display:block;"></div>
-                        <div class="img-placeholder" style="display:none;flex-direction:column;">
-                            <span>🖼️</span>
-                            <span class="pname">${escapedName}</span>
-                        </div>
-                    `;
-                } else {
-                    imgHtml = `
-                        <div class="img-placeholder" style="display:flex;flex-direction:column;">
-                            <span>🖼️</span>
-                            <span class="pname">${escapedName}</span>
-                        </div>
-                    `;
-                }
-
-                html += `
-                    <div class="card-item ${rarityClass}">
-                        <div class="card-img">
-                            ${imgHtml}
-                            <span class="rarity-badge">${rarityLabel}</span>
-                        </div>
-                        <div class="card-info">
-                            <div class="cname">${escapedName}</div>
-                            <div class="cdesc">${escapedDesc}</div>
-                        </div>
-                    </div>
-                `;
+                const delay = (idx % 10) * 0.04 + 0.04;
+                html += buildCardHTML(card, id, delay, true);
             });
 
             myCardsGrid.innerHTML = html;
+            reanimateCards(myCardsGrid);
+        }
 
-            const items = myCardsGrid.querySelectorAll('.card-item');
+        // ============================================================
+        //  RENDER: ALL CARDS (browse all)
+        // ============================================================
+        function renderAllCards() {
+            const ids = Object.keys(allCards);
+            if (ids.length === 0) {
+                allCardsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📦</div>
+                        <div>No cards in the system yet.<br /><span style="font-size:0.8rem;color:var(--text-muted);">Admin can create cards.</span></div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            ids.forEach((id, idx) => {
+                const card = allCards[id];
+                if (!card) return;
+                const delay = (idx % 10) * 0.04 + 0.04;
+                html += buildCardHTML(card, id, delay, false);
+            });
+
+            allCardsGrid.innerHTML = html;
+            reanimateCards(allCardsGrid);
+        }
+
+        // ============================================================
+        //  RE-ANIMATE CARDS
+        // ============================================================
+        function reanimateCards(container) {
+            const items = container.querySelectorAll('.card-item-3d');
             items.forEach((el, i) => {
                 el.style.animation = 'none';
                 void el.offsetWidth;
                 el.style.animation = `cardFadeIn 0.55s ease forwards`;
-                el.style.animationDelay = `${(i % 12) * 0.04 + 0.04}s`;
+                el.style.animationDelay = `${(i % 10) * 0.04 + 0.04}s`;
             });
         }
 
@@ -2553,50 +2738,37 @@
                 if (ids.length === 0) { alert(username + ' has no cards yet.'); return; }
                 const cardPromises = ids.map(id => db.ref('cards/' + id).once('value').then(s => s.val()));
                 Promise.all(cardPromises).then(cards => {
-                    const valid = cards.filter(c => c !== null);
+                    const valid = [];
+                    ids.forEach((id, idx) => {
+                        if (cards[idx]) {
+                            valid.push({ id, ...cards[idx] });
+                        }
+                    });
                     if (valid.length === 0) { alert('No card data found.'); return; }
-                    showUserCollectionModal(username, valid, ids);
+                    showUserCollectionModal(username, valid);
                 });
             });
         }
 
-        function showUserCollectionModal(username, cards, ids) {
+        function showUserCollectionModal(username, cards) {
             const overlay = document.createElement('div');
             overlay.className = 'modal-overlay open';
             overlay.style.zIndex = '400';
+
             let html = `
-                <div class="modal-box" style="max-width:600px;">
+                <div class="modal-box" style="max-width:700px;">
                     <div class="modal-title">
                         <span>📚 ${escHtml(username)}'s Collection</span>
                         <button class="close-btn" onclick="this.closest('.modal-overlay').remove()">✕</button>
                     </div>
-                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;">
+                    <div class="user-collection-grid">
             `;
-            cards.forEach((card) => {
-                const directUrl = getDirectImageUrl(card.imageUrl || '');
-                const rClass = 'rarity-' + (card.rarity || 'common');
-                const escapedName = escHtml(card.name || 'Untitled');
-                const escapedDesc = escHtml(card.description || '');
 
-                let imgHtml = '';
-                if (directUrl) {
-                    imgHtml =
-                        `<img src="${directUrl}" referrerpolicy="no-referrer" loading="lazy" alt="${escapedName}" style="width:100%;height:100%;object-fit:cover;" />`;
-                } else {
-                    imgHtml =
-                        `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--text-muted);background:#151525;">🖼️</div>`;
-                }
-
-                html += `
-                    <div class="card-item ${rClass}" style="aspect-ratio:2/3;cursor:default;">
-                        <div class="card-img">${imgHtml}<span class="rarity-badge">${card.rarity || 'common'}</span></div>
-                        <div class="card-info">
-                            <div class="cname">${escapedName}</div>
-                            <div class="cdesc">${escapedDesc}</div>
-                        </div>
-                    </div>
-                `;
+            cards.forEach((card, idx) => {
+                const delay = (idx % 10) * 0.04 + 0.04;
+                html += buildCardHTML(card, card.id, delay, false);
             });
+
             html += `</div></div>`;
             overlay.innerHTML = html;
             document.body.appendChild(overlay);
@@ -2604,10 +2776,10 @@
         }
 
         // ============================================================
-        //  CARD REVEAL — with callback for queue
+        //  CARD REVEAL
         // ============================================================
         function showReveal(cardData, onClose) {
-            const directUrl = getDirectImageUrl(cardData.imageUrl || '');
+            const coverUrl = getDirectImageUrl(cardData.coverImage || cardData.imageUrl || '');
             const name = cardData.name || 'Mystery Card';
             const rarity = cardData.rarity || 'common';
 
@@ -2640,7 +2812,7 @@
 
             const colors = rarityColors[rarity] || rarityColors.common;
 
-            revealCardImg.src = directUrl || '';
+            revealCardImg.src = coverUrl || '';
             revealCardImg.alt = name;
             revealCardImg.referrerpolicy = "no-referrer";
 
@@ -2933,35 +3105,44 @@
         // ============================================================
         acSubmit.addEventListener('click', () => {
             const name = acName.value.trim();
-            let image = acImage.value.trim();
+            const coverRaw = acCover.value.trim();
+            const charRaw = acCharacter.value.trim();
             const rarity = acRarity.value;
             const desc = acDesc.value.trim();
 
             if (!name) { setStatus(acStatus, '❌ Card name required.', 'error'); return; }
-            if (!image) { setStatus(acStatus, '❌ Image URL required.', 'error'); return; }
+            if (!coverRaw) { setStatus(acStatus, '❌ Cover image URL required.', 'error'); return; }
 
-            const directUrl = getDirectImageUrl(image);
-            if (!directUrl) { setStatus(acStatus, '❌ Could not parse image URL. Use ImgBB or Google Drive.', 'error'); return; }
+            const coverUrl = getDirectImageUrl(coverRaw);
+            if (!coverUrl) { setStatus(acStatus, '❌ Could not parse cover image URL.', 'error'); return; }
+
+            const charUrl = charRaw ? getDirectImageUrl(charRaw) : '';
 
             setStatus(acStatus, 'Creating...', '');
             acSubmit.disabled = true;
 
             const newRef = db.ref('cards').push();
-            newRef.set({
+            const cardData = {
                 name: name,
-                imageUrl: directUrl,
+                coverImage: coverUrl,
+                characterImage: charUrl,
                 rarity: rarity,
                 description: desc,
                 createdAt: Date.now(),
                 createdBy: currentUser || 'admin'
-            }).then(() => {
+            };
+            cardData.imageUrl = coverUrl;
+
+            newRef.set(cardData).then(() => {
                 setStatus(acStatus, '✅ Card created successfully!', 'success');
                 acName.value = '';
-                acImage.value = '';
+                acCover.value = '';
+                acCharacter.value = '';
                 acDesc.value = '';
                 acSubmit.disabled = false;
                 loadAllCards();
                 populateAdminCardSelect();
+                renderAllCards();
                 setTimeout(() => { if (acStatus.textContent.includes('success')) acStatus.textContent = ''; }, 3500);
             }).catch(err => {
                 setStatus(acStatus, '❌ ' + err.message, 'error');
@@ -3054,6 +3235,9 @@
                 document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
                 if (target === 'collection') {
                     document.getElementById('tabCollection').classList.remove('hidden');
+                } else if (target === 'allcards') {
+                    document.getElementById('tabAllCards').classList.remove('hidden');
+                    renderAllCards();
                 } else {
                     document.getElementById('tabUsers').classList.remove('hidden');
                     renderUsers();
@@ -3093,11 +3277,13 @@
             runLanding();
         });
 
-        console.log('✦ Zion Card Collection v11 — ENHANCED RARITY EFFECTS');
-        console.log('🔥 Legendary: Golden glow, fire particles, rotating border, sparkles');
-        console.log('💜 Epic: Purple glow, magical shimmer, rotating border');
-        console.log('🔵 Rare: Blue glow with subtle effects');
-        console.log('⚪ Common: Minimal effects');
+        console.log('✦ Zion 3D Card Collection — DUAL IMAGE + ALL CARDS BROWSE');
+        console.log('✅ Character images now have rarity-based glow (drop-shadow) on hover');
+        console.log('✅ Particles float above BOTH cover and character images (z-index: 7)');
+        console.log('✅ "All Cards" tab lets users browse every card in the system');
+        console.log('✅ Legendary: golden glow + shimmer + particles');
+        console.log('✅ Epic: purple glow + particles');
+        console.log('✅ Rare: blue glow');
         console.log('🔑 Admin password: 126805');
     </script>
 
