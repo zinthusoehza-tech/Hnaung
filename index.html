@@ -1,0 +1,3105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zion — Card Collection</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js">
+    </script>
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js">
+    </script>
+
+    <style>
+        /* ============================================================
+               RESET & BASE
+               ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #07070e;
+            --bg-secondary: #10101e;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-glass: rgba(255, 255, 255, 0.05);
+            --border-glass: rgba(255, 255, 255, 0.07);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6a6a82;
+            --accent-1: #f5a623;
+            --accent-2: #e85d3a;
+            --accent-3: #6cc0e5;
+            --accent-4: #a78bfa;
+            --glow-gold: 0 0 60px rgba(245, 166, 35, 0.20);
+            --radius-card: 16px;
+            --radius-sm: 10px;
+            --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.55);
+            --transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Rarity Colors */
+            --common-color: #9ca3af;
+            --common-glow: rgba(156, 163, 175, 0.08);
+            --rare-color: #60a5fa;
+            --rare-glow: rgba(96, 165, 250, 0.12);
+            --epic-color: #a78bfa;
+            --epic-glow: rgba(167, 139, 250, 0.20);
+            --legendary-color: #fbbf24;
+            --legendary-glow: rgba(251, 191, 36, 0.25);
+        }
+
+        html,
+        body {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-1);
+            border-radius: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ============================================================
+               LANDING
+               ============================================================ */
+        #landing {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: #06060c;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.9s ease, transform 0.9s ease;
+            overflow: hidden;
+        }
+        #landing.fade-out {
+            opacity: 0;
+            transform: scale(1.06);
+            pointer-events: none;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .landing-title {
+            font-size: clamp(4.5rem, 16vw, 11rem);
+            font-weight: 900;
+            letter-spacing: 0.06em;
+            color: #fff;
+            text-shadow: 0 0 80px rgba(245, 166, 35, 0.20);
+            user-select: none;
+            position: relative;
+            z-index: 1;
+        }
+        .landing-title .char {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(50px) rotateX(45deg);
+            filter: blur(6px);
+        }
+
+        .landing-sub {
+            margin-top: 1.5rem;
+            font-size: clamp(0.85rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeUp 1s ease 2.6s forwards;
+            z-index: 1;
+            position: relative;
+        }
+        .landing-sub span {
+            color: var(--accent-1);
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .landing-loader {
+            margin-top: 3rem;
+            width: 42px;
+            height: 42px;
+            border: 3px solid rgba(255, 255, 255, 0.06);
+            border-top-color: var(--accent-1);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite, fadeUp 0.6s ease 2.4s forwards;
+            z-index: 1;
+            position: relative;
+            opacity: 0;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+               LOGIN
+               ============================================================ */
+        #login {
+            position: fixed;
+            inset: 0;
+            z-index: 900;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            transition: opacity 0.6s ease;
+        }
+        #login.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            padding: 2.8rem 2.2rem;
+            box-shadow: var(--shadow-card);
+            text-align: center;
+            animation: slideUp 0.7s ease;
+            position: relative;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .login-box .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.04em;
+        }
+        .login-box .sub {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.4rem;
+            margin-bottom: 1.8rem;
+        }
+        .login-box .sub span {
+            color: var(--accent-3);
+            -webkit-text-fill-color: var(--accent-3);
+        }
+
+        .login-box .input-group {
+            position: relative;
+            margin-bottom: 0.9rem;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        .login-box input::placeholder {
+            color: var(--text-muted);
+        }
+        .login-box input:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.10);
+        }
+
+        .login-box .btn-login {
+            width: 100%;
+            margin-top: 0.8rem;
+            padding: 0.9rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent-1), #d48a1f);
+            color: #0b0b12;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            letter-spacing: 0.02em;
+        }
+        .login-box .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(245, 166, 35, 0.30);
+        }
+        .login-box .btn-login:active {
+            transform: scale(0.97);
+        }
+        .login-box .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .login-box .error-msg {
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            min-height: 1.4rem;
+        }
+
+        .login-box .admin-toggle {
+            margin-top: 0.6rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            background: transparent;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: 1px solid transparent;
+        }
+        .login-box .admin-toggle:hover {
+            color: var(--accent-1);
+            border-color: rgba(245, 166, 35, 0.15);
+        }
+        .login-box .admin-toggle.active {
+            color: var(--accent-1);
+            border-color: rgba(245, 166, 35, 0.20);
+            background: rgba(245, 166, 35, 0.06);
+        }
+
+        .login-box .admin-password-wrap {
+            margin-top: 0.8rem;
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+        .login-box .admin-password-wrap.show {
+            display: block;
+        }
+
+        /* ============================================================
+               MAIN APP
+               ============================================================ */
+        #app {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow: hidden;
+        }
+        #app.visible {
+            opacity: 1;
+        }
+
+        /* ----- HEADER ----- */
+        .app-header {
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 2rem;
+            background: rgba(10, 10, 18, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            z-index: 10;
+        }
+        .app-header .brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.02em;
+        }
+        .app-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .app-header .user-info .uname {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        .app-header .user-info .badge {
+            background: rgba(245, 166, 35, 0.12);
+            color: var(--accent-1);
+            padding: 0.2rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(245, 166, 35, 0.10);
+        }
+        .app-header .user-info .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        .app-header .user-info .btn-logout:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ----- TABS ----- */
+        .app-tabs {
+            flex-shrink: 0;
+            display: flex;
+            gap: 0.4rem;
+            padding: 0.6rem 2rem;
+            background: rgba(10, 10, 18, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+        .app-tabs .tab {
+            padding: 0.45rem 1.5rem;
+            border-radius: 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .app-tabs .tab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .app-tabs .tab.active {
+            background: rgba(245, 166, 35, 0.10);
+            color: var(--accent-1);
+        }
+
+        /* ----- CONTENT ----- */
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem 2rem 6rem;
+        }
+
+        /* ----- CARDS GRID ----- */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+        .cards-grid .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+        .cards-grid .empty-state .icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.25;
+        }
+        .cards-grid .loading-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .cards-grid .loading-state .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.06);
+            border-top-color: var(--accent-1);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        /* ============================================================
+               CARD ITEM — ENHANCED RARITY EFFECTS
+               ============================================================ */
+        .card-item {
+            position: relative;
+            background: var(--bg-card);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-glass);
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.5s ease, border-color 0.4s ease;
+            aspect-ratio: 2 / 3;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30);
+            opacity: 0;
+            animation: cardFadeIn 0.55s ease forwards;
+        }
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .card-item:nth-child(1) {
+            animation-delay: 0.04s;
+        }
+        .card-item:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+        .card-item:nth-child(3) {
+            animation-delay: 0.12s;
+        }
+        .card-item:nth-child(4) {
+            animation-delay: 0.16s;
+        }
+        .card-item:nth-child(5) {
+            animation-delay: 0.20s;
+        }
+        .card-item:nth-child(6) {
+            animation-delay: 0.24s;
+        }
+        .card-item:nth-child(7) {
+            animation-delay: 0.28s;
+        }
+        .card-item:nth-child(8) {
+            animation-delay: 0.32s;
+        }
+        .card-item:nth-child(9) {
+            animation-delay: 0.36s;
+        }
+        .card-item:nth-child(10) {
+            animation-delay: 0.40s;
+        }
+        .card-item:nth-child(11) {
+            animation-delay: 0.44s;
+        }
+        .card-item:nth-child(12) {
+            animation-delay: 0.48s;
+        }
+
+        /* ---- BASE HOVER ---- */
+        .card-item:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50);
+        }
+
+        /* ---- RARITY: COMMON ---- */
+        .card-item.rarity-common {
+            border-color: rgba(156, 163, 175, 0.10);
+        }
+        .card-item.rarity-common:hover {
+            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50), 0 0 30px rgba(156, 163, 175, 0.05);
+        }
+
+        /* ---- RARITY: RARE ---- */
+        .card-item.rarity-rare {
+            border-color: rgba(96, 165, 250, 0.15);
+        }
+        .card-item.rarity-rare:hover {
+            box-shadow: 0 14px 52px rgba(0, 0, 0, 0.50), 0 0 40px rgba(96, 165, 250, 0.12);
+            border-color: rgba(96, 165, 250, 0.30);
+        }
+        .card-item.rarity-rare .rarity-badge {
+            color: #60a5fa;
+            border-color: rgba(96, 165, 250, 0.20);
+        }
+
+        /* ---- RARITY: EPIC (PURPLE GLOW + MAGICAL PARTICLES) ---- */
+        .card-item.rarity-epic {
+            border-color: rgba(167, 139, 250, 0.20);
+            background: linear-gradient(145deg, rgba(167, 139, 250, 0.04), rgba(10, 10, 18, 0.60));
+        }
+        .card-item.rarity-epic::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: var(--radius-card);
+            padding: 2px;
+            background: conic-gradient(from 0deg,
+                    rgba(167, 139, 250, 0.0),
+                    rgba(167, 139, 250, 0.15),
+                    rgba(167, 139, 250, 0.0),
+                    rgba(167, 139, 250, 0.15),
+                    rgba(167, 139, 250, 0.0));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.4;
+            transition: opacity 0.6s ease;
+            animation: epicBorderRotate 6s linear infinite;
+        }
+        @keyframes epicBorderRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .card-item.rarity-epic:hover::before {
+            opacity: 0.9;
+            background: conic-gradient(from 0deg,
+                    rgba(167, 139, 250, 0.0),
+                    rgba(167, 139, 250, 0.4),
+                    rgba(167, 139, 250, 0.0),
+                    rgba(167, 139, 250, 0.4),
+                    rgba(167, 139, 250, 0.0));
+        }
+        .card-item.rarity-epic:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 16px 60px rgba(0, 0, 0, 0.50), 0 0 60px rgba(167, 139, 250, 0.15), 0 0 120px rgba(167, 139, 250, 0.05);
+            border-color: rgba(167, 139, 250, 0.35);
+        }
+        .card-item.rarity-epic .rarity-badge {
+            color: #a78bfa;
+            border-color: rgba(167, 139, 250, 0.25);
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.10);
+        }
+        /* Epic shimmer overlay */
+        .card-item.rarity-epic .card-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg,
+                    transparent 0%,
+                    transparent 30%,
+                    rgba(167, 139, 250, 0.06) 50%,
+                    transparent 70%,
+                    transparent 100%);
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            background-size: 300% 300%;
+        }
+        .card-item.rarity-epic:hover .card-img::after {
+            opacity: 1;
+            animation: epicShimmer 1.8s ease forwards;
+        }
+        @keyframes epicShimmer {
+            0% {
+                background-position: 150% 150%;
+            }
+            100% {
+                background-position: -50% -50%;
+            }
+        }
+
+        /* ---- RARITY: LEGENDARY (GOLDEN GLOW + FIRE EFFECTS) ---- */
+        .card-item.rarity-legendary {
+            border-color: rgba(251, 191, 36, 0.25);
+            background: linear-gradient(145deg, rgba(251, 191, 36, 0.06), rgba(10, 10, 18, 0.50));
+            animation: cardFadeIn 0.55s ease forwards, legendaryPulse 3s ease-in-out infinite;
+        }
+        @keyframes legendaryPulse {
+            0%,
+            100% {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30), 0 0 20px rgba(251, 191, 36, 0.04);
+            }
+            50% {
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.30), 0 0 40px rgba(251, 191, 36, 0.10);
+            }
+        }
+        /* Legendary golden border ring */
+        .card-item.rarity-legendary::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: var(--radius-card);
+            padding: 3px;
+            background: conic-gradient(from 0deg,
+                    rgba(251, 191, 36, 0.0),
+                    rgba(251, 191, 36, 0.6),
+                    rgba(245, 166, 35, 0.8),
+                    rgba(251, 191, 36, 0.6),
+                    rgba(251, 191, 36, 0.0));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.6;
+            animation: legendaryBorderRotate 4s linear infinite;
+        }
+        @keyframes legendaryBorderRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .card-item.rarity-legendary:hover::before {
+            opacity: 1;
+            background: conic-gradient(from 0deg,
+                    rgba(251, 191, 36, 0.0),
+                    rgba(251, 191, 36, 0.9),
+                    rgba(245, 166, 35, 1),
+                    rgba(251, 191, 36, 0.9),
+                    rgba(251, 191, 36, 0.0));
+            animation-duration: 1.8s;
+        }
+
+        /* Legendary golden glow ring (outer) */
+        .card-item.rarity-legendary::after {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: calc(var(--radius-card) + 4px);
+            background: radial-gradient(ellipse at 50% 50%,
+                    rgba(251, 191, 36, 0.15) 0%,
+                    transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            filter: blur(8px);
+        }
+        .card-item.rarity-legendary:hover::after {
+            opacity: 1;
+            animation: legendaryGlowPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes legendaryGlowPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        /* Legendary fire/flame particles (CSS only) */
+        .card-item.rarity-legendary .card-img::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(245, 166, 35, 0.06) 0%, transparent 35%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.3;
+            transition: opacity 0.6s ease;
+        }
+        .card-item.rarity-legendary:hover .card-img::before {
+            opacity: 0.8;
+            animation: legendaryFireDance 2.4s ease-in-out infinite;
+        }
+        @keyframes legendaryFireDance {
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            25% {
+                background-position: 10% 5%;
+            }
+            50% {
+                background-position: 5% 15%;
+            }
+            75% {
+                background-position: 15% 5%;
+            }
+        }
+
+        /* Legendary golden sparkles overlay */
+        .card-item.rarity-legendary .card-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(2px 2px at 10% 20%, rgba(251, 191, 36, 0.3), transparent),
+                radial-gradient(3px 3px at 30% 60%, rgba(251, 191, 36, 0.2), transparent),
+                radial-gradient(2px 2px at 60% 30%, rgba(251, 191, 36, 0.35), transparent),
+                radial-gradient(4px 4px at 80% 70%, rgba(251, 191, 36, 0.15), transparent),
+                radial-gradient(2px 2px at 45% 85%, rgba(251, 191, 36, 0.25), transparent),
+                radial-gradient(3px 3px at 75% 15%, rgba(251, 191, 36, 0.2), transparent),
+                radial-gradient(2px 2px at 20% 45%, rgba(251, 191, 36, 0.3), transparent),
+                radial-gradient(3px 3px at 90% 50%, rgba(251, 191, 36, 0.15), transparent);
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            background-size: 100% 100%;
+        }
+        .card-item.rarity-legendary:hover .card-img::after {
+            opacity: 1;
+            animation: legendarySparkle 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes legendarySparkle {
+            0% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.02);
+            }
+        }
+
+        /* Legendary card hover - extra glow */
+        .card-item.rarity-legendary:hover {
+            transform: translateY(-10px) scale(1.04);
+            box-shadow: 0 20px 70px rgba(0, 0, 0, 0.50), 0 0 80px rgba(251, 191, 36, 0.15), 0 0 160px rgba(251, 191, 36, 0.06);
+            border-color: rgba(251, 191, 36, 0.45);
+            animation: none;
+        }
+        .card-item.rarity-legendary .rarity-badge {
+            color: #fbbf24;
+            border-color: rgba(251, 191, 36, 0.30);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.05);
+            background: rgba(0, 0, 0, 0.70);
+            backdrop-filter: blur(4px);
+            text-shadow: 0 0 20px rgba(251, 191, 36, 0.20);
+        }
+
+        /* ---- Legendary golden text glow on card name ---- */
+        .card-item.rarity-legendary .card-info .cname {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(251, 191, 36, 0.10);
+            font-weight: 700;
+        }
+        .card-item.rarity-epic .card-info .cname {
+            color: #a78bfa;
+            font-weight: 600;
+        }
+        .card-item.rarity-rare .card-info .cname {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* ---- Card inner structure ---- */
+        .card-item .card-img {
+            position: relative;
+            overflow: hidden;
+            background: #141425;
+            flex: 1;
+            min-height: 0;
+            z-index: 0;
+        }
+        .card-item .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .card-item:hover .card-img img {
+            transform: scale(1.04);
+        }
+        .card-item .card-img .img-placeholder {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            color: var(--text-muted);
+            background: linear-gradient(145deg, #161625, #1e1e30);
+            z-index: 2;
+        }
+        .card-item .card-img .img-placeholder .pname {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+        .card-item .card-img .img-loading {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #141425 25%, #22223a 50%, #141425 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.2s ease-in-out infinite;
+            z-index: 1;
+        }
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        .card-item .card-img .rarity-badge {
+            position: absolute;
+            top: 0.6rem;
+            right: 0.6rem;
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.2rem 0.7rem;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.70);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.06em;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            z-index: 4;
+            transition: all 0.4s ease;
+        }
+
+        .card-item .card-info {
+            padding: 0.6rem 0.9rem 0.85rem;
+            background: rgba(0, 0, 0, 0.50);
+            backdrop-filter: blur(4px);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+        .card-item .card-info .cname {
+            font-weight: 600;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-item .card-info .cdesc {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.1rem;
+        }
+
+        /* ----- USERS LIST ----- */
+        .users-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
+        }
+        .user-chip {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .user-chip:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.30);
+        }
+        .user-chip .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #0b0b12;
+            margin-bottom: 0.2rem;
+        }
+        .user-chip .uname {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .user-chip .ucount {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+               ADMIN FAB
+               ============================================================ */
+        .admin-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 200;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-2), #c0392b);
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+            box-shadow: 0 4px 28px rgba(232, 93, 58, 0.30);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-fab:hover {
+            transform: scale(1.08) rotate(-4deg);
+            box-shadow: 0 8px 44px rgba(232, 93, 58, 0.40);
+        }
+        .admin-fab:active {
+            transform: scale(0.92);
+        }
+
+        /* ============================================================
+               MODALS
+               ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-radius: 28px;
+            padding: 2.2rem;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.60);
+            transform: scale(0.92) translateY(24px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.open .modal-box {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-box .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-box .modal-title .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+            padding: 0 0.3rem;
+        }
+        .modal-box .modal-title .close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-box label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: 1.1rem;
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+        .modal-box input,
+        .modal-box select,
+        .modal-box textarea {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+        .modal-box input:focus,
+        .modal-box select:focus,
+        .modal-box textarea:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.08);
+        }
+        .modal-box select option {
+            background: #1a1a2a;
+            color: #fff;
+        }
+        .modal-box textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .modal-box .hint {
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+        }
+
+        .modal-box .btn-submit {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 0.8rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent-1), #d48a1f);
+            color: #0b0b12;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .modal-box .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(245, 166, 35, 0.22);
+        }
+        .modal-box .btn-submit:active {
+            transform: scale(0.97);
+        }
+        .modal-box .btn-submit.danger {
+            background: linear-gradient(135deg, var(--accent-2), #c0392b);
+            color: #fff;
+        }
+        .modal-box .btn-submit.danger:hover {
+            box-shadow: 0 8px 30px rgba(232, 93, 58, 0.28);
+        }
+        .modal-box .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .modal-box .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .modal-box .status-msg {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 0.6rem;
+            min-height: 1.4rem;
+        }
+        .modal-box .status-msg.success {
+            color: #4ade80;
+        }
+        .modal-box .status-msg.error {
+            color: #f87171;
+        }
+
+        .modal-box .admin-list {
+            margin-top: 0.5rem;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .modal-box .admin-list .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+        }
+        .modal-box .admin-list .list-item .actions {
+            display: flex;
+            gap: 0.4rem;
+        }
+        .modal-box .admin-list .list-item .actions button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            padding: 0.15rem 0.7rem;
+            border-radius: 14px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .modal-box .admin-list .list-item .actions button:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+        }
+        .modal-box .admin-list .list-item .actions button.give {
+            border-color: rgba(245, 166, 35, 0.15);
+            color: var(--accent-1);
+        }
+        .modal-box .admin-list .list-item .actions button.give:hover {
+            background: rgba(245, 166, 35, 0.08);
+        }
+        .modal-box .admin-list .list-item .actions button.del {
+            border-color: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+        .modal-box .admin-list .list-item .actions button.del:hover {
+            background: rgba(248, 113, 113, 0.08);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.3rem;
+            margin-bottom: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .admin-tabs .atab {
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .admin-tabs .atab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .admin-tabs .atab.active {
+            background: rgba(245, 166, 35, 0.10);
+            color: var(--accent-1);
+        }
+
+        /* ============================================================
+               REVEAL MODAL — ENHANCED with rarity colors
+               ============================================================ */
+        #revealModal .modal-box {
+            max-width: 480px;
+            text-align: center;
+            padding: 2.2rem 1.8rem 2rem;
+            background: radial-gradient(ellipse at 50% 30%, #1a1a30, #0a0a16);
+            border-color: rgba(245, 166, 35, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        #revealModal .modal-box::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 28px;
+            padding: 2px;
+            background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2), var(--accent-3), var(--accent-4), var(
+                        --accent-1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+            animation: borderRotate 4s linear infinite;
+        }
+        @keyframes borderRotate {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #revealModal .modal-box>* {
+            position: relative;
+            z-index: 1;
+        }
+
+        #revealModal .reveal-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-1), #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.2rem;
+            text-shadow: 0 0 40px rgba(245, 166, 35, 0.15);
+        }
+        #revealModal .reveal-sub {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.4rem;
+        }
+        #revealModal .reveal-sub .rarity-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .rarity-label.common {
+            color: #9ca3af;
+        }
+        .rarity-label.rare {
+            color: #60a5fa;
+        }
+        .rarity-label.epic {
+            color: #a78bfa;
+        }
+        .rarity-label.legendary {
+            color: #fbbf24;
+            text-shadow: 0 0 30px rgba(251, 191, 36, 0.30);
+        }
+
+        .reveal-card-wrapper {
+            perspective: 1000px;
+            width: 210px;
+            height: 295px;
+            margin: 0 auto 1.4rem;
+            position: relative;
+        }
+        .reveal-card-wrapper .reveal-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border-radius: var(--radius-card);
+            background: #151530;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 0 60px rgba(245, 166, 35, 0.06);
+            transform-style: preserve-3d;
+            transition: transform 0.1s;
+        }
+        .reveal-card-wrapper .reveal-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .reveal-card-wrapper .reveal-card .card-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            text-shadow: 0 2px 24px rgba(0, 0, 0, 0.80);
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.60) 40%);
+            padding: 2rem 0.5rem 0.9rem;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .reveal-card-wrapper .glow-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: var(--radius-card);
+            border: 2px solid transparent;
+            background: conic-gradient(from 0deg, var(--ring-color1), var(--ring-color2), var(--ring-color3), var(
+                        --ring-color1)) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: spinGlow 3s linear infinite;
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 3;
+            transition: opacity 0.5s ease;
+        }
+        .reveal-card-wrapper.revealing .glow-ring {
+            opacity: 1;
+            animation-duration: 1.2s;
+        }
+        @keyframes spinGlow {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .reveal-card-wrapper .shine-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            background: linear-gradient(135deg,
+                    transparent 0%,
+                    transparent 40%,
+                    rgba(255, 255, 255, 0.25) 50%,
+                    transparent 60%,
+                    transparent 100%);
+            background-size: 300% 300%;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            border-radius: var(--radius-card);
+        }
+        .reveal-card-wrapper.revealing .shine-overlay {
+            opacity: 1;
+            animation: shineSweep 1.2s ease forwards;
+        }
+        @keyframes shineSweep {
+            0% {
+                background-position: 150% 150%;
+            }
+            100% {
+                background-position: -50% -50%;
+            }
+        }
+
+        .reveal-card-wrapper.spinning .reveal-card {
+            animation: cardFlipReveal 2.2s cubic-bezier(0.15, 0.85, 0.35, 1.05) forwards;
+        }
+        @keyframes cardFlipReveal {
+            0% {
+                transform: rotateY(0deg) rotateX(0deg) scale(0.5) perspective(800px);
+                opacity: 0.2;
+                filter: blur(8px);
+            }
+            20% {
+                transform: rotateY(540deg) rotateX(10deg) scale(1.1) perspective(800px);
+                opacity: 1;
+                filter: blur(0px);
+            }
+            40% {
+                transform: rotateY(900deg) rotateX(-5deg) scale(0.95) perspective(800px);
+                opacity: 1;
+            }
+            65% {
+                transform: rotateY(1260deg) rotateX(5deg) scale(1.05) perspective(800px);
+                opacity: 1;
+            }
+            85% {
+                transform: rotateY(1440deg) rotateX(0deg) scale(0.98) perspective(800px);
+                opacity: 1;
+            }
+            100% {
+                transform: rotateY(1440deg) rotateX(0deg) scale(1) perspective(800px);
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+
+        .reveal-card-wrapper.bounce .reveal-card {
+            animation: cardBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes cardBounce {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.06);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .reveal-btn-close {
+            margin-top: 0.6rem;
+            padding: 0.7rem 2.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .reveal-btn-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: scale(1.03);
+        }
+
+        /* ============================================================
+               CONFETTI — enhanced with rarity colors
+               ============================================================ */
+        .reveal-confetti {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 600;
+            overflow: hidden;
+        }
+        .confetti-piece {
+            position: absolute;
+            top: -10px;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(110vh) rotate(720deg) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        .sparkle-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 601;
+            border-radius: 50%;
+            animation: sparkleBurst 1.2s ease-out forwards;
+        }
+        @keyframes sparkleBurst {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* ============================================================
+               ADMIN PROMPT
+               ============================================================ */
+        #adminPrompt .modal-box {
+            max-width: 400px;
+            text-align: center;
+        }
+        #adminPrompt .modal-box .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 640px) {
+            .app-header {
+                padding: 0.6rem 1rem;
+                flex-wrap: wrap;
+                gap: 0.4rem;
+            }
+            .app-header .brand {
+                font-size: 1.2rem;
+            }
+            .app-header .user-info .uname {
+                font-size: 0.8rem;
+            }
+            .app-header .user-info .badge {
+                font-size: 0.65rem;
+                padding: 0.15rem 0.6rem;
+            }
+            .app-tabs {
+                padding: 0.4rem 1rem;
+                overflow-x: auto;
+                gap: 0.2rem;
+            }
+            .app-tabs .tab {
+                font-size: 0.75rem;
+                padding: 0.35rem 1rem;
+                white-space: nowrap;
+            }
+            .app-content {
+                padding: 1rem 1rem 5rem;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 1rem;
+            }
+            .users-list {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 0.8rem;
+            }
+            .modal-box {
+                padding: 1.5rem;
+            }
+            .modal-box .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            .login-box {
+                padding: 2rem 1.5rem;
+            }
+            .admin-fab {
+                width: 50px;
+                height: 50px;
+                font-size: 1.3rem;
+                bottom: 1.2rem;
+                right: 1.2rem;
+            }
+            .reveal-card-wrapper {
+                width: 160px;
+                height: 225px;
+            }
+            #revealModal .modal-box {
+                padding: 1.6rem 1.2rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+                gap: 0.8rem;
+            }
+            .card-item .card-info .cname {
+                font-size: 0.7rem;
+            }
+            .card-item .card-info .cdesc {
+                font-size: 0.6rem;
+            }
+            .reveal-card-wrapper {
+                width: 130px;
+                height: 185px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    LANDING
+    ============================================================ -->
+    <div id="landing">
+        <canvas id="particles-canvas"></canvas>
+        <div class="landing-title" id="landingTitle">ZION</div>
+        <div class="landing-sub">Card <span>Collection</span> · Firebase</div>
+        <div class="landing-loader"></div>
+    </div>
+
+    <!-- ============================================================
+    LOGIN
+    ============================================================ -->
+    <div id="login" class="hidden">
+        <div class="login-box">
+            <div class="logo">✦ Zion</div>
+            <div class="sub">Enter your <span>username</span></div>
+            <div class="input-group">
+                <input type="text" id="loginInput" placeholder="Your username..." autocomplete="off" />
+            </div>
+            <button class="btn-login" id="loginBtn">Continue →</button>
+            <div class="error-msg" id="loginError"></div>
+
+            <button class="admin-toggle" id="adminToggle">🔐 Admin Login</button>
+            <div class="admin-password-wrap" id="adminPasswordWrap">
+                <input type="password" id="adminLoginPass" placeholder="Admin Password" />
+                <button class="btn-login" id="adminLoginBtn" style="margin-top:0.6rem;background:linear-gradient(135deg,#e85d3a,#c0392b);">Admin Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    MAIN APP
+    ============================================================ -->
+    <div id="app">
+        <header class="app-header">
+            <span class="brand">✦ Zion</span>
+            <div class="user-info">
+                <span class="uname" id="appUsername">—</span>
+                <span class="badge" id="appCardCount">0 cards</span>
+                <button class="btn-logout" id="logoutBtn">✕</button>
+            </div>
+        </header>
+
+        <div class="app-tabs">
+            <button class="tab active" data-tab="collection">📚 My Collection</button>
+            <button class="tab" data-tab="users">👥 All Users</button>
+        </div>
+
+        <div class="app-content" id="appContent">
+            <div id="tabCollection" class="tab-content">
+                <div class="cards-grid" id="myCardsGrid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <div>Loading your cards...</div>
+                    </div>
+                </div>
+            </div>
+            <div id="tabUsers" class="tab-content hidden">
+                <div class="users-list" id="usersList"></div>
+            </div>
+        </div>
+
+        <button class="admin-fab" id="adminFab" title="Admin Panel">⚙</button>
+    </div>
+
+    <!-- ============================================================
+    ADMIN PROMPT
+    ============================================================ -->
+    <div class="modal-overlay" id="adminPrompt">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>🔐 Admin Access</span>
+                <button class="close-btn" data-close="adminPrompt">✕</button>
+            </div>
+            <div class="lock-icon">⚙</div>
+            <p style="color:var(--text-secondary);margin-bottom:1.2rem;">Enter admin password to continue</p>
+            <input type="password" id="adminPassInput" placeholder="Password" />
+            <button class="btn-submit" id="adminPassBtn">Unlock</button>
+            <div style="color:#f87171;font-size:0.85rem;margin-top:0.6rem;min-height:1.4rem;" id="adminPassError"></div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    ADMIN PANEL
+    ============================================================ -->
+    <div class="modal-overlay" id="adminPanel">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span>⚙ Admin Panel</span>
+                <button class="close-btn" data-close="adminPanel">✕</button>
+            </div>
+
+            <div class="admin-tabs" id="adminTabs">
+                <button class="atab active" data-atab="addcard">➕ Add Card</button>
+                <button class="atab" data-atab="adduser">👤 Add User</button>
+                <button class="atab" data-atab="assign">📤 Assign</button>
+                <button class="atab" data-atab="manage">📋 Manage</button>
+            </div>
+
+            <!-- Add Card -->
+            <div id="atabAddcard">
+                <label>Card Name</label>
+                <input type="text" id="acName" placeholder="e.g. Dragon's Fury" />
+                <label>Image URL</label>
+                <input type="text" id="acImage" placeholder="https://i.ibb.co/XXXXX/image.jpg or Google Drive link" />
+                <div class="hint">✅ Supports: ImgBB, Google Drive (any format), or any direct image URL</div>
+                <label>Rarity</label>
+                <select id="acRarity">
+                    <option value="common">Common</option>
+                    <option value="rare">Rare</option>
+                    <option value="epic">Epic</option>
+                    <option value="legendary">Legendary</option>
+                </select>
+                <label>Description</label>
+                <textarea id="acDesc" placeholder="A brief description..."></textarea>
+                <button class="btn-submit" id="acSubmit">Create Card</button>
+                <div class="status-msg" id="acStatus"></div>
+            </div>
+
+            <!-- Add User -->
+            <div id="atabAdduser" class="hidden">
+                <label>Username</label>
+                <input type="text" id="auName" placeholder="new_user" />
+                <button class="btn-submit" id="auSubmit">Create User</button>
+                <div class="status-msg" id="auStatus"></div>
+            </div>
+
+            <!-- Assign -->
+            <div id="atabAssign" class="hidden">
+                <label>User</label>
+                <select id="asUser"></select>
+                <label>Card</label>
+                <select id="asCard"></select>
+                <button class="btn-submit" id="asSubmit">Assign Card</button>
+                <div class="status-msg" id="asStatus"></div>
+            </div>
+
+            <!-- Manage -->
+            <div id="atabManage" class="hidden">
+                <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:0.8rem;">All users and their card counts</p>
+                <div class="admin-list" id="manageList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    REVEAL MODAL — ENHANCED
+    ============================================================ -->
+    <div class="modal-overlay" id="revealModal">
+        <div class="modal-box">
+            <div class="reveal-title">✦ NEW CARD ACQUIRED!</div>
+            <div class="reveal-sub" id="revealSub">
+                You received a <span class="rarity-label" id="revealRarityLabel">Common</span> card!
+            </div>
+            <div class="reveal-card-wrapper" id="revealWrapper">
+                <div class="reveal-card" id="revealCard">
+                    <div class="glow-ring" id="glowRing"></div>
+                    <div class="shine-overlay"></div>
+                    <img id="revealCardImg" src="" alt="Card" referrerpolicy="no-referrer" />
+                    <div class="card-label" id="revealLabel">Card Name</div>
+                </div>
+            </div>
+            <button class="reveal-btn-close" id="revealClose">✦ Awesome!</button>
+        </div>
+    </div>
+
+    <!-- ============================================================
+    CONFETTI + SPARKLES CONTAINER
+    ============================================================ -->
+    <div class="reveal-confetti" id="confettiContainer"></div>
+
+    <!-- ============================================================
+    JAVASCRIPT
+    ============================================================ -->
+    <script>
+        // ============================================================
+        //  FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyARguxf3-DdOCE9tGLfPLcGIWxRMmHZdns",
+            authDomain: "control-my-v1.firebaseapp.com",
+            databaseURL: "https://control-my-v1-default-rtdb.firebaseio.com",
+            projectId: "control-my-v1",
+            storageBucket: "control-my-v1.firebasestorage.app",
+            messagingSenderId: "780907108895",
+            appId: "1:780907108895:web:2e6455329d329fcf38932a",
+            measurementId: "G-PWGS7VL1RV"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const ADMIN_PASSWORD = "126805";
+
+        // ============================================================
+        //  STATE
+        // ============================================================
+        let currentUser = null;
+        let allUsers = {};
+        let allCards = {};
+        let myCardIds = {};
+        let userCards = {};
+        let isAdmin = false;
+        let isInitialRender = true;
+        let _prevKeys = [];
+        let revealQueue = [];
+        let isRevealing = false;
+
+        // ============================================================
+        //  DOM REFS
+        // ============================================================
+        const $ = id => document.getElementById(id);
+
+        const landing = $('landing');
+        const login = $('login');
+        const loginInput = $('loginInput');
+        const loginBtn = $('loginBtn');
+        const loginError = $('loginError');
+        const adminToggle = $('adminToggle');
+        const adminPasswordWrap = $('adminPasswordWrap');
+        const adminLoginPass = $('adminLoginPass');
+        const adminLoginBtn = $('adminLoginBtn');
+        const app = $('app');
+        const appUsername = $('appUsername');
+        const appCardCount = $('appCardCount');
+        const logoutBtn = $('logoutBtn');
+        const myCardsGrid = $('myCardsGrid');
+        const usersList = $('usersList');
+        const adminFab = $('adminFab');
+        const adminPrompt = $('adminPrompt');
+        const adminPassInput = $('adminPassInput');
+        const adminPassBtn = $('adminPassBtn');
+        const adminPassError = $('adminPassError');
+        const adminPanel = $('adminPanel');
+        const revealModal = $('revealModal');
+        const revealCard = $('revealCard');
+        const revealCardImg = $('revealCardImg');
+        const revealLabel = $('revealLabel');
+        const revealSub = $('revealSub');
+        const revealRarityLabel = $('revealRarityLabel');
+        const revealClose = $('revealClose');
+        const revealWrapper = $('revealWrapper');
+        const glowRing = $('glowRing');
+        const confettiContainer = $('confettiContainer');
+
+        const acName = $('acName');
+        const acImage = $('acImage');
+        const acRarity = $('acRarity');
+        const acDesc = $('acDesc');
+        const acSubmit = $('acSubmit');
+        const acStatus = $('acStatus');
+        const auName = $('auName');
+        const auSubmit = $('auSubmit');
+        const auStatus = $('auStatus');
+        const asUser = $('asUser');
+        const asCard = $('asCard');
+        const asSubmit = $('asSubmit');
+        const asStatus = $('asStatus');
+        const manageList = $('manageList');
+
+        // ============================================================
+        //  LOCAL STORAGE HELPERS — track seen cards
+        // ============================================================
+        function getSeenKey(username) {
+            return 'zion_seen_' + username;
+        }
+
+        function getSeenCards(username) {
+            const key = getSeenKey(username);
+            const data = localStorage.getItem(key);
+            if (data) {
+                try {
+                    return JSON.parse(data);
+                } catch (e) {
+                    return {};
+                }
+            }
+            return {};
+        }
+
+        function setSeenCards(username, cardIds) {
+            const key = getSeenKey(username);
+            localStorage.setItem(key, JSON.stringify(cardIds));
+        }
+
+        // ============================================================
+        //  IMAGE URL HANDLER — Supports: ImgBB, Google Drive, Direct
+        // ============================================================
+        function getDirectImageUrl(url) {
+            if (!url) return '';
+            const trimmed = url.trim();
+
+            if (/\.(jpg|jpeg|png|gif|webp|bmp|svg|ico)(\?.*)?$/i.test(trimmed)) {
+                return trimmed;
+            }
+
+            if (trimmed.includes('i.ibb.co')) {
+                return trimmed;
+            }
+
+            if (trimmed.includes('ibb.co') && !trimmed.includes('i.ibb.co')) {
+                const match = trimmed.match(/ibb\.co\/([a-zA-Z0-9]+)/);
+                if (match) {
+                    return `https://i.ibb.co/${match[1]}/image.jpg`;
+                }
+                return trimmed;
+            }
+
+            const fileId = extractGoogleDriveFileId(trimmed);
+            if (fileId) {
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+            }
+
+            if (trimmed.includes('drive.google.com')) {
+                const altMatch = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+                if (altMatch) {
+                    return `https://drive.google.com/thumbnail?id=${altMatch[1]}&sz=w1000`;
+                }
+                const fileIdMatch = trimmed.match(/([a-zA-Z0-9_-]{25,})/);
+                if (fileIdMatch) {
+                    return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+                }
+                return trimmed;
+            }
+
+            return trimmed;
+        }
+
+        function extractGoogleDriveFileId(url) {
+            if (!url) return null;
+            const clean = url.trim();
+
+            const patterns = [
+                /\/file\/d\/([a-zA-Z0-9_-]+)/,
+                /[?&]id=([a-zA-Z0-9_-]+)/,
+                /\/uc\?id=([a-zA-Z0-9_-]+)/,
+                /\/open\?id=([a-zA-Z0-9_-]+)/,
+                /\/d\/([a-zA-Z0-9_-]+)/,
+                /id=([a-zA-Z0-9_-]+)/
+            ];
+
+            for (const pattern of patterns) {
+                const match = clean.match(pattern);
+                if (match) return match[1];
+            }
+
+            if (clean.includes('drive.google.com')) {
+                const genericMatch = clean.match(/([a-zA-Z0-9_-]{25,})/);
+                if (genericMatch) return genericMatch[1];
+            }
+
+            return null;
+        }
+
+        // ============================================================
+        //  PARTICLES (LANDING)
+        // ============================================================
+        function initParticles() {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const particles = [];
+            const count = 130;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                    this.opacity = Math.random() * 0.5 + 0.15;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x < 0 || this.x > w) this.speedX *= -1;
+                    if (this.y < 0 || this.y > h) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255,255,255,${this.opacity})`;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < count; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                particles.forEach(p => { p.update();
+                    p.draw(); });
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 130) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.strokeStyle = `rgba(255,255,255,${0.06 * (1 - dist/130)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.stroke();
+                        }
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // ============================================================
+        //  LANDING ANIMATION
+        // ============================================================
+        function runLanding() {
+            initParticles();
+            const title = document.getElementById('landingTitle');
+            const text = 'ZION';
+            title.innerHTML = '';
+            for (let i = 0; i < text.length; i++) {
+                const span = document.createElement('span');
+                span.className = 'char';
+                span.textContent = text[i];
+                title.appendChild(span);
+            }
+
+            const chars = document.querySelectorAll('.landing-title .char');
+            anime({
+                targets: chars,
+                opacity: [0, 1],
+                translateY: [50, 0],
+                rotateX: [45, 0],
+                filter: ['blur(6px)', 'blur(0px)'],
+                duration: 1000,
+                delay: (el, i) => i * 130 + 200,
+                easing: 'easeOutCubic',
+                complete: () => {
+                    anime({
+                        targets: chars,
+                        scale: [1, 1.05, 1],
+                        duration: 2200,
+                        delay: (el, i) => i * 40,
+                        loop: true,
+                        easing: 'easeInOutSine',
+                        direction: 'alternate'
+                    });
+                }
+            });
+
+            setTimeout(() => {
+                landing.classList.add('fade-out');
+                setTimeout(() => {
+                    landing.style.display = 'none';
+                    login.classList.remove('hidden');
+                    loginInput.focus();
+                }, 850);
+            }, 3400);
+        }
+
+        // ============================================================
+        //  LOGIN
+        // ============================================================
+        function handleLogin() {
+            const name = loginInput.value.trim();
+            if (!name) { loginError.textContent = 'Please enter a username.'; return; }
+            if (name.length < 2) { loginError.textContent = 'Username must be at least 2 characters.'; return; }
+            if (!/^[a-zA-Z0-9_]+$/.test(name)) { loginError.textContent = 'Only letters, numbers and underscore.'; return; }
+
+            loginError.textContent = '';
+            loginBtn.textContent = 'Checking...';
+            loginBtn.disabled = true;
+
+            db.ref('users/' + name).once('value').then(snap => {
+                if (snap.exists()) {
+                    currentUser = name;
+                    isAdmin = false;
+                    enterApp(name);
+                } else {
+                    loginError.textContent = '❌ User "' + name + '" does not exist. Contact admin.';
+                    loginBtn.textContent = 'Continue →';
+                    loginBtn.disabled = false;
+                }
+            }).catch(err => {
+                loginError.textContent = 'Error: ' + err.message;
+                loginBtn.textContent = 'Continue →';
+                loginBtn.disabled = false;
+            });
+        }
+
+        function handleAdminLogin() {
+            const pass = adminLoginPass.value.trim();
+            if (pass === ADMIN_PASSWORD) {
+                isAdmin = true;
+                currentUser = 'Admin';
+                login.classList.add('hidden');
+                app.classList.add('visible');
+                appUsername.textContent = '👑 Admin';
+                appCardCount.textContent = '⚙️ full access';
+                loadAllUsers();
+                loadAllCards();
+                setupRealtimeAdmin();
+                adminPanel.classList.remove('open');
+                adminPrompt.classList.remove('open');
+            } else {
+                adminLoginPass.value = '';
+                adminLoginPass.focus();
+                loginError.textContent = '❌ Incorrect admin password.';
+                setTimeout(() => loginError.textContent = '', 3000);
+            }
+        }
+
+        // ============================================================
+        //  ENTER APP — with unseen card detection
+        // ============================================================
+        function enterApp(username) {
+            login.classList.add('hidden');
+            app.classList.add('visible');
+            appUsername.textContent = username;
+            isInitialRender = true;
+
+            myCardsGrid.innerHTML = `
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <div>Loading your cards...</div>
+                </div>
+            `;
+
+            revealQueue = [];
+            isRevealing = false;
+
+            db.ref('users/' + username + '/cards').once('value').then(snap => {
+                const currentIds = snap.val() || {};
+                const currentKeys = Object.keys(currentIds);
+
+                const seenCards = getSeenCards(username);
+                const seenKeys = Object.keys(seenCards);
+
+                const newKeys = currentKeys.filter(k => !seenKeys.includes(k));
+
+                _prevKeys = currentKeys;
+                myCardIds = currentIds;
+
+                if (newKeys.length > 0) {
+                    const promises = newKeys.map(id =>
+                        db.ref('cards/' + id).once('value').then(s => ({ id, data: s.val() }))
+                    );
+                    Promise.all(promises).then(results => {
+                        const newCards = [];
+                        results.forEach(({ id, data }) => {
+                            if (data) {
+                                newCards.push({ id, ...data });
+                            }
+                        });
+                        if (newCards.length > 0) {
+                            revealQueue = newCards;
+                            processRevealQueue();
+                        }
+                        finishLoad(username, currentIds, currentKeys);
+                    }).catch(err => {
+                        console.error('Error fetching new card data:', err);
+                        finishLoad(username, currentIds, currentKeys);
+                    });
+                } else {
+                    finishLoad(username, currentIds, currentKeys);
+                }
+
+                const seenObj = {};
+                currentKeys.forEach(k => { seenObj[k] = true; });
+                setSeenCards(username, seenObj);
+
+            }).catch(err => {
+                console.error('Error loading card IDs:', err);
+                finishLoad(username, {}, []);
+            });
+
+            adminPanel.classList.remove('open');
+            adminPrompt.classList.remove('open');
+        }
+
+        // ============================================================
+        //  Finish loading after detecting new cards
+        // ============================================================
+        function finishLoad(username, ids, keys) {
+            myCardIds = ids;
+            _prevKeys = keys;
+
+            const idList = Object.keys(ids);
+            if (idList.length === 0) {
+                userCards = {};
+                renderMyCards();
+                updateCardCount();
+                loadAllUsers();
+                loadAllCards();
+                setupRealtime(username);
+                isInitialRender = false;
+                return;
+            }
+
+            const promises = idList.map(id =>
+                db.ref('cards/' + id).once('value').then(s => ({ id, data: s.val() }))
+            );
+            Promise.all(promises).then(results => {
+                const cards = {};
+                results.forEach(({ id, data }) => {
+                    if (data) cards[id] = data;
+                });
+                userCards = cards;
+                renderMyCards();
+                updateCardCount();
+                loadAllUsers();
+                loadAllCards();
+                setupRealtime(username);
+                isInitialRender = false;
+            }).catch(err => {
+                console.error('Error loading user cards:', err);
+                renderMyCards();
+                updateCardCount();
+                loadAllUsers();
+                loadAllCards();
+                setupRealtime(username);
+                isInitialRender = false;
+            });
+        }
+
+        // ============================================================
+        //  REVEAL QUEUE PROCESSOR
+        // ============================================================
+        function processRevealQueue() {
+            if (revealQueue.length === 0) return;
+            if (isRevealing) return;
+
+            isRevealing = true;
+            const card = revealQueue.shift();
+            showReveal(card, () => {
+                isRevealing = false;
+                setTimeout(() => {
+                    processRevealQueue();
+                }, 1200);
+            });
+        }
+
+        // ============================================================
+        //  REALTIME ADMIN
+        // ============================================================
+        function setupRealtimeAdmin() {
+            if (window._cardListener) window._cardListener();
+            if (window._userListener) window._userListener();
+            if (window._cardListListener) window._cardListListener();
+
+            const userRef = db.ref('users');
+            window._userListener = userRef.on('value', snap => {
+                allUsers = snap.val() || {};
+                renderUsers();
+                populateAdminUserSelect();
+                populateManageList();
+            });
+
+            const cardRef = db.ref('cards');
+            window._cardListListener = cardRef.on('value', snap => {
+                allCards = snap.val() || {};
+                populateAdminCardSelect();
+            });
+        }
+
+        // ============================================================
+        //  LOGOUT
+        // ============================================================
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Log out?')) {
+                currentUser = null;
+                isAdmin = false;
+                app.classList.remove('visible');
+                login.classList.remove('hidden');
+                loginInput.value = '';
+                loginBtn.textContent = 'Continue →';
+                loginBtn.disabled = false;
+                loginError.textContent = '';
+                if (window._cardListener) { window._cardListener();
+                    window._cardListener = null; }
+                if (window._userListener) { window._userListener();
+                    window._userListener = null; }
+                if (window._cardListListener) { window._cardListListener();
+                    window._cardListListener = null; }
+                if (window._userCardListener) { window._userCardListener();
+                    window._userCardListener = null; }
+                revealQueue = [];
+                isRevealing = false;
+            }
+        });
+
+        // ============================================================
+        //  LOAD DATA (legacy)
+        // ============================================================
+        function loadAllUsers() {
+            db.ref('users').once('value').then(snap => {
+                allUsers = snap.val() || {};
+                renderUsers();
+                populateAdminUserSelect();
+                populateManageList();
+            });
+        }
+
+        function loadAllCards() {
+            db.ref('cards').once('value').then(snap => {
+                allCards = snap.val() || {};
+                populateAdminCardSelect();
+            });
+        }
+
+        // ============================================================
+        //  REALTIME (user) — also updates seen cards
+        // ============================================================
+        function setupRealtime(username) {
+            if (window._cardListener) window._cardListener();
+            if (window._userListener) window._userListener();
+            if (window._cardListListener) window._cardListListener();
+            if (window._userCardListener) window._userCardListener();
+
+            const userCardRef = db.ref('users/' + username + '/cards');
+            window._userCardListener = userCardRef.on('value', snap => {
+                const newIds = snap.val() || {};
+                const newKeys = Object.keys(newIds);
+
+                const added = newKeys.filter(k => !_prevKeys.includes(k));
+                _prevKeys = newKeys;
+                myCardIds = newIds;
+
+                const seenObj = {};
+                newKeys.forEach(k => { seenObj[k] = true; });
+                setSeenCards(username, seenObj);
+
+                if (newKeys.length === 0) {
+                    userCards = {};
+                    renderMyCards();
+                    updateCardCount();
+                    return;
+                }
+
+                const promises = newKeys.map(id =>
+                    db.ref('cards/' + id).once('value').then(s => ({ id, data: s.val() }))
+                );
+                Promise.all(promises).then(results => {
+                    const cards = {};
+                    results.forEach(({ id, data }) => {
+                        if (data) cards[id] = data;
+                    });
+                    userCards = cards;
+                    renderMyCards();
+                    updateCardCount();
+
+                    if (added.length > 0 && currentUser === username) {
+                        const addedCards = [];
+                        added.forEach(cardId => {
+                            if (userCards[cardId]) {
+                                addedCards.push({ id: cardId, ...userCards[cardId] });
+                            }
+                        });
+                        if (addedCards.length > 0) {
+                            revealQueue = [...revealQueue, ...addedCards];
+                            if (!isRevealing) {
+                                processRevealQueue();
+                            }
+                        }
+                    }
+                }).catch(err => {
+                    console.error('Error fetching card data on update:', err);
+                });
+            });
+
+            if (window._userListener) window._userListener();
+            const userRef = db.ref('users');
+            window._userListener = userRef.on('value', snap => {
+                allUsers = snap.val() || {};
+                renderUsers();
+                populateAdminUserSelect();
+                populateManageList();
+            });
+
+            if (window._cardListListener) window._cardListListener();
+            const cardRef = db.ref('cards');
+            window._cardListListener = cardRef.on('value', snap => {
+                allCards = snap.val() || {};
+                populateAdminCardSelect();
+            });
+        }
+
+        // ============================================================
+        //  RENDER: MY CARDS
+        // ============================================================
+        function renderMyCards() {
+            const ids = Object.keys(userCards);
+
+            if (ids.length === 0) {
+                if (Object.keys(myCardIds).length > 0) {
+                    myCardsGrid.innerHTML = `
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <div>Loading your cards...</div>
+                        </div>
+                    `;
+                } else {
+                    myCardsGrid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🃏</div>
+                            <div>No cards yet.<br /><span style="font-size:0.8rem;color:var(--text-muted);">Wait for admin to send you one!</span></div>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            let html = '';
+            ids.forEach(id => {
+                const card = userCards[id];
+                if (!card) return;
+
+                const directUrl = getDirectImageUrl(card.imageUrl || '');
+                const rarityClass = 'rarity-' + (card.rarity || 'common');
+                const escapedName = escHtml(card.name || 'Untitled');
+                const escapedDesc = escHtml(card.description || '');
+                const rarityLabel = card.rarity || 'common';
+
+                let imgHtml = '';
+                if (directUrl) {
+                    imgHtml = `
+                        <img src="${directUrl}" 
+                             referrerpolicy="no-referrer" 
+                             loading="lazy" 
+                             alt="${escapedName}" 
+                             style="width:100%;height:100%;object-fit:cover;display:block;position:relative;z-index:1;"
+                             onload="this.style.display='block'; this.parentElement.querySelector('.img-loading').style.display='none';"
+                             onerror="this.style.display='none'; this.parentElement.querySelector('.img-loading').style.display='none'; this.parentElement.querySelector('.img-placeholder').style.display='flex';"
+                        />
+                        <div class="img-loading" style="display:block;"></div>
+                        <div class="img-placeholder" style="display:none;flex-direction:column;">
+                            <span>🖼️</span>
+                            <span class="pname">${escapedName}</span>
+                        </div>
+                    `;
+                } else {
+                    imgHtml = `
+                        <div class="img-placeholder" style="display:flex;flex-direction:column;">
+                            <span>🖼️</span>
+                            <span class="pname">${escapedName}</span>
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="card-item ${rarityClass}">
+                        <div class="card-img">
+                            ${imgHtml}
+                            <span class="rarity-badge">${rarityLabel}</span>
+                        </div>
+                        <div class="card-info">
+                            <div class="cname">${escapedName}</div>
+                            <div class="cdesc">${escapedDesc}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            myCardsGrid.innerHTML = html;
+
+            const items = myCardsGrid.querySelectorAll('.card-item');
+            items.forEach((el, i) => {
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = `cardFadeIn 0.55s ease forwards`;
+                el.style.animationDelay = `${(i % 12) * 0.04 + 0.04}s`;
+            });
+        }
+
+        function updateCardCount() {
+            if (currentUser === 'Admin') { appCardCount.textContent = '⚙️ admin'; return; }
+            const count = Object.keys(userCards).length;
+            appCardCount.textContent = count + ' card' + (count !== 1 ? 's' : '');
+        }
+
+        // ============================================================
+        //  RENDER: USERS
+        // ============================================================
+        function renderUsers() {
+            const names = Object.keys(allUsers).filter(n => n !== currentUser);
+            if (names.length === 0 && !allUsers[currentUser]) {
+                usersList.innerHTML =
+                    `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">👤</div><div>No other users yet.</div></div>`;
+                return;
+            }
+            let html = '';
+            if (currentUser && currentUser !== 'Admin' && allUsers[currentUser]) {
+                html += userChip(currentUser, allUsers[currentUser]);
+            }
+            names.forEach(name => { html += userChip(name, allUsers[name]); });
+            usersList.innerHTML = html;
+        }
+
+        function userChip(name, data) {
+            const count = data.cards ? Object.keys(data.cards).length : 0;
+            const initial = name.charAt(0).toUpperCase();
+            return `
+                <div class="user-chip" data-username="${escHtml(name)}">
+                    <div class="avatar">${initial}</div>
+                    <div class="uname">${escHtml(name)}</div>
+                    <div class="ucount">${count} card${count !== 1 ? 's' : ''}</div>
+                </div>
+            `;
+        }
+
+        usersList.addEventListener('click', e => {
+            const chip = e.target.closest('.user-chip');
+            if (!chip) return;
+            const name = chip.dataset.username;
+            if (name && name !== currentUser) viewUserCollection(name);
+        });
+
+        // ============================================================
+        //  VIEW OTHER USER'S COLLECTION
+        // ============================================================
+        function viewUserCollection(username) {
+            const ref = db.ref('users/' + username + '/cards');
+            ref.once('value').then(snap => {
+                const cardIds = snap.val() || {};
+                const ids = Object.keys(cardIds);
+                if (ids.length === 0) { alert(username + ' has no cards yet.'); return; }
+                const cardPromises = ids.map(id => db.ref('cards/' + id).once('value').then(s => s.val()));
+                Promise.all(cardPromises).then(cards => {
+                    const valid = cards.filter(c => c !== null);
+                    if (valid.length === 0) { alert('No card data found.'); return; }
+                    showUserCollectionModal(username, valid, ids);
+                });
+            });
+        }
+
+        function showUserCollectionModal(username, cards, ids) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay open';
+            overlay.style.zIndex = '400';
+            let html = `
+                <div class="modal-box" style="max-width:600px;">
+                    <div class="modal-title">
+                        <span>📚 ${escHtml(username)}'s Collection</span>
+                        <button class="close-btn" onclick="this.closest('.modal-overlay').remove()">✕</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1rem;">
+            `;
+            cards.forEach((card) => {
+                const directUrl = getDirectImageUrl(card.imageUrl || '');
+                const rClass = 'rarity-' + (card.rarity || 'common');
+                const escapedName = escHtml(card.name || 'Untitled');
+                const escapedDesc = escHtml(card.description || '');
+
+                let imgHtml = '';
+                if (directUrl) {
+                    imgHtml =
+                        `<img src="${directUrl}" referrerpolicy="no-referrer" loading="lazy" alt="${escapedName}" style="width:100%;height:100%;object-fit:cover;" />`;
+                } else {
+                    imgHtml =
+                        `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--text-muted);background:#151525;">🖼️</div>`;
+                }
+
+                html += `
+                    <div class="card-item ${rClass}" style="aspect-ratio:2/3;cursor:default;">
+                        <div class="card-img">${imgHtml}<span class="rarity-badge">${card.rarity || 'common'}</span></div>
+                        <div class="card-info">
+                            <div class="cname">${escapedName}</div>
+                            <div class="cdesc">${escapedDesc}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div></div>`;
+            overlay.innerHTML = html;
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+        }
+
+        // ============================================================
+        //  CARD REVEAL — with callback for queue
+        // ============================================================
+        function showReveal(cardData, onClose) {
+            const directUrl = getDirectImageUrl(cardData.imageUrl || '');
+            const name = cardData.name || 'Mystery Card';
+            const rarity = cardData.rarity || 'common';
+
+            const rarityColors = {
+                common: {
+                    bg: '#9ca3af',
+                    text: 'Common',
+                    ringColors: ['#9ca3af', '#d1d5db', '#9ca3af'],
+                    confettiColors: ['#9ca3af', '#d1d5db', '#6b7280']
+                },
+                rare: {
+                    bg: '#60a5fa',
+                    text: 'Rare',
+                    ringColors: ['#60a5fa', '#93c5fd', '#3b82f6'],
+                    confettiColors: ['#60a5fa', '#93c5fd', '#3b82f6', '#1d4ed8']
+                },
+                epic: {
+                    bg: '#a78bfa',
+                    text: 'Epic',
+                    ringColors: ['#a78bfa', '#c4b5fd', '#8b5cf6'],
+                    confettiColors: ['#a78bfa', '#c4b5fd', '#8b5cf6', '#7c3aed']
+                },
+                legendary: {
+                    bg: '#fbbf24',
+                    text: 'Legendary',
+                    ringColors: ['#fbbf24', '#fcd34d', '#f59e0b', '#d97706'],
+                    confettiColors: ['#fbbf24', '#fcd34d', '#f59e0b', '#d97706', '#ffffff']
+                }
+            };
+
+            const colors = rarityColors[rarity] || rarityColors.common;
+
+            revealCardImg.src = directUrl || '';
+            revealCardImg.alt = name;
+            revealCardImg.referrerpolicy = "no-referrer";
+
+            revealLabel.textContent = name;
+            revealRarityLabel.textContent = colors.text;
+            revealRarityLabel.className = 'rarity-label ' + rarity;
+            revealSub.innerHTML =
+                `You received a <span class="rarity-label ${rarity}">${colors.text}</span> card!`;
+
+            revealCard.style.borderColor = colors.bg + '66';
+
+            if (glowRing) {
+                glowRing.style.setProperty('--ring-color1', colors.ringColors[0] || colors.bg);
+                glowRing.style.setProperty('--ring-color2', colors.ringColors[1] || colors.bg);
+                glowRing.style.setProperty('--ring-color3', colors.ringColors[2] || colors.bg);
+            }
+
+            revealWrapper.classList.remove('spinning', 'bounce', 'revealing');
+            void revealWrapper.offsetWidth;
+
+            revealWrapper.classList.add('spinning', 'revealing');
+
+            launchEnhancedConfetti(colors.confettiColors);
+            launchSparkles(colors.bg);
+
+            revealModal.classList.add('open');
+
+            const closeHandler = function() {
+                revealModal.classList.remove('open');
+                confettiContainer.innerHTML = '';
+                document.querySelectorAll('.sparkle-particle').forEach(el => el.remove());
+                if (onClose) onClose();
+            };
+
+            const newCloseBtn = revealClose.cloneNode(true);
+            revealClose.parentNode.replaceChild(newCloseBtn, revealClose);
+            newCloseBtn.addEventListener('click', closeHandler);
+
+            const overlayClickHandler = function(e) {
+                if (e.target === revealModal) {
+                    closeHandler();
+                }
+            };
+            const oldOverlayHandler = revealModal._overlayHandler;
+            if (oldOverlayHandler) {
+                revealModal.removeEventListener('click', oldOverlayHandler);
+            }
+            revealModal._overlayHandler = overlayClickHandler;
+            revealModal.addEventListener('click', overlayClickHandler);
+
+            revealModal._closeHandler = closeHandler;
+
+            setTimeout(() => {
+                revealWrapper.classList.remove('spinning');
+                revealWrapper.classList.add('bounce');
+            }, 2200);
+
+            setTimeout(() => {
+                revealWrapper.classList.remove('bounce');
+            }, 3200);
+        }
+
+        // ============================================================
+        //  ENHANCED CONFETTI
+        // ============================================================
+        function launchEnhancedConfetti(colorPalette) {
+            const container = confettiContainer;
+            container.innerHTML = '';
+            const colors = colorPalette || ['#fbbf24', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6', '#3b82f6', '#22d3ee',
+                '#34d399'
+            ];
+
+            for (let i = 0; i < 120; i++) {
+                const el = document.createElement('div');
+                el.className = 'confetti-piece';
+                const size = 4 + Math.random() * 10;
+                const left = Math.random() * 100;
+                const dur = 1.8 + Math.random() * 2.8;
+                const delay = Math.random() * 1.4;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const shape = Math.random() > 0.5 ? '50%' : '2px';
+                el.style.cssText = `
+                    left:${left}%;
+                    width:${size}px;
+                    height:${size * (0.5 + Math.random() * 0.9)}px;
+                    background:${color};
+                    border-radius:${shape};
+                    animation-duration:${dur}s;
+                    animation-delay:${delay}s;
+                    transform:rotate(${Math.random()*360}deg);
+                    box-shadow: 0 0 6px ${color}44;
+                `;
+                container.appendChild(el);
+            }
+
+            setTimeout(() => { container.innerHTML = ''; }, 5000);
+        }
+
+        // ============================================================
+        //  SPARKLE PARTICLES
+        // ============================================================
+        function launchSparkles(mainColor) {
+            const container = document.body;
+            const colors = [mainColor || '#fbbf24', '#ffffff', '#fcd34d', '#f59e0b'];
+
+            const rect = revealCard.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+
+            for (let i = 0; i < 40; i++) {
+                const el = document.createElement('div');
+                el.className = 'sparkle-particle';
+                const size = 3 + Math.random() * 6;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 60 + Math.random() * 180;
+                const tx = Math.cos(angle) * dist;
+                const ty = Math.sin(angle) * dist - 30;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const dur = 0.8 + Math.random() * 0.8;
+                const delay = Math.random() * 0.5;
+
+                el.style.cssText = `
+                    left:${cx}px;
+                    top:${cy}px;
+                    width:${size}px;
+                    height:${size}px;
+                    background:${color};
+                    box-shadow: 0 0 12px ${color}88;
+                    --tx:${tx}px;
+                    --ty:${ty}px;
+                    animation-duration:${dur}s;
+                    animation-delay:${delay}s;
+                    border-radius:50%;
+                `;
+                container.appendChild(el);
+
+                setTimeout(() => {
+                    if (el.parentNode) el.remove();
+                }, (dur + delay) * 1000 + 200);
+            }
+        }
+
+        // ============================================================
+        //  ADMIN: PASSWORD PROMPT
+        // ============================================================
+        adminFab.addEventListener('click', () => {
+            if (isAdmin) { adminPanel.classList.add('open');
+                refreshAdminPanel(); return; }
+            adminPrompt.classList.add('open');
+            adminPassInput.value = '';
+            adminPassError.textContent = '';
+            setTimeout(() => adminPassInput.focus(), 200);
+        });
+
+        adminPassBtn.addEventListener('click', () => {
+            const pass = adminPassInput.value.trim();
+            if (pass === ADMIN_PASSWORD) {
+                isAdmin = true;
+                adminPrompt.classList.remove('open');
+                adminPanel.classList.add('open');
+                refreshAdminPanel();
+            } else {
+                adminPassError.textContent = '❌ Incorrect password.';
+                adminPassInput.value = '';
+                adminPassInput.focus();
+            }
+        });
+
+        adminPassInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminPassBtn.click(); });
+
+        document.querySelectorAll('[data-close]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.getElementById(btn.dataset.close).classList.remove('open');
+            });
+        });
+
+        adminPanel.addEventListener('click', e => { if (e.target === adminPanel) adminPanel.classList.remove('open'); });
+        adminPrompt.addEventListener('click', e => { if (e.target === adminPrompt) adminPrompt.classList.remove('open'); });
+
+        // ============================================================
+        //  ADMIN: REFRESH
+        // ============================================================
+        function refreshAdminPanel() {
+            loadAllUsers();
+            loadAllCards();
+            populateAdminUserSelect();
+            populateAdminCardSelect();
+            populateManageList();
+            acStatus.textContent = '';
+            auStatus.textContent = '';
+            asStatus.textContent = '';
+        }
+
+        function populateAdminUserSelect() {
+            const names = Object.keys(allUsers);
+            asUser.innerHTML = '';
+            names.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                const count = allUsers[name].cards ? Object.keys(allUsers[name].cards).length : 0;
+                opt.textContent = name + ' (' + count + ' cards)';
+                asUser.appendChild(opt);
+            });
+        }
+
+        function populateAdminCardSelect() {
+            const ids = Object.keys(allCards);
+            asCard.innerHTML = '';
+            ids.forEach(id => {
+                const card = allCards[id];
+                if (!card) return;
+                const opt = document.createElement('option');
+                opt.value = id;
+                opt.textContent = card.name + ' (' + (card.rarity || 'common') + ')';
+                asCard.appendChild(opt);
+            });
+        }
+
+        function populateManageList() {
+            const names = Object.keys(allUsers);
+            if (names.length === 0) {
+                manageList.innerHTML = '<div style="color:var(--text-muted);padding:1rem 0;">No users yet.</div>';
+                return;
+            }
+            let html = '';
+            names.forEach(name => {
+                const u = allUsers[name];
+                const count = u.cards ? Object.keys(u.cards).length : 0;
+                html += `
+                    <div class="list-item">
+                        <span><strong>${escHtml(name)}</strong> · ${count} cards</span>
+                        <div class="actions">
+                            <button class="give" data-action="give" data-user="${escHtml(name)}">📤 Give</button>
+                            <button class="del" data-action="deleteuser" data-user="${escHtml(name)}">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            manageList.innerHTML = html;
+
+            manageList.querySelectorAll('[data-action="give"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const user = btn.dataset.user;
+                    switchAdminTab('assign');
+                    const opts = asUser.options;
+                    for (let i = 0; i < opts.length; i++) {
+                        if (opts[i].value === user) { asUser.selectedIndex = i; break; }
+                    }
+                });
+            });
+
+            manageList.querySelectorAll('[data-action="deleteuser"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const user = btn.dataset.user;
+                    if (user === currentUser) { alert('Cannot delete yourself!'); return; }
+                    if (confirm('Delete user "' + user + '" and all their cards?')) {
+                        db.ref('users/' + user).remove().then(() => {
+                            loadAllUsers();
+                            populateManageList();
+                        }).catch(err => alert('Error: ' + err.message));
+                    }
+                });
+            });
+        }
+
+        // ============================================================
+        //  ADMIN TAB SWITCHING
+        // ============================================================
+        document.querySelectorAll('.atab').forEach(btn => {
+            btn.addEventListener('click', () => { switchAdminTab(btn.dataset.atab); });
+        });
+
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.atab').forEach(b => {
+                b.classList.remove('active');
+            });
+            document.querySelector(`.atab[data-atab="${tab}"]`).classList.add('active');
+
+            ['addcard', 'adduser', 'assign', 'manage'].forEach(id => {
+                const el = document.getElementById('atab' + id.charAt(0).toUpperCase() + id.slice(1));
+                if (el) el.classList.toggle('hidden', id !== tab);
+            });
+            if (tab === 'assign') { populateAdminUserSelect();
+                populateAdminCardSelect(); }
+            if (tab === 'manage') { populateManageList(); }
+        }
+
+        // ============================================================
+        //  ADMIN: ADD CARD
+        // ============================================================
+        acSubmit.addEventListener('click', () => {
+            const name = acName.value.trim();
+            let image = acImage.value.trim();
+            const rarity = acRarity.value;
+            const desc = acDesc.value.trim();
+
+            if (!name) { setStatus(acStatus, '❌ Card name required.', 'error'); return; }
+            if (!image) { setStatus(acStatus, '❌ Image URL required.', 'error'); return; }
+
+            const directUrl = getDirectImageUrl(image);
+            if (!directUrl) { setStatus(acStatus, '❌ Could not parse image URL. Use ImgBB or Google Drive.', 'error'); return; }
+
+            setStatus(acStatus, 'Creating...', '');
+            acSubmit.disabled = true;
+
+            const newRef = db.ref('cards').push();
+            newRef.set({
+                name: name,
+                imageUrl: directUrl,
+                rarity: rarity,
+                description: desc,
+                createdAt: Date.now(),
+                createdBy: currentUser || 'admin'
+            }).then(() => {
+                setStatus(acStatus, '✅ Card created successfully!', 'success');
+                acName.value = '';
+                acImage.value = '';
+                acDesc.value = '';
+                acSubmit.disabled = false;
+                loadAllCards();
+                populateAdminCardSelect();
+                setTimeout(() => { if (acStatus.textContent.includes('success')) acStatus.textContent = ''; }, 3500);
+            }).catch(err => {
+                setStatus(acStatus, '❌ ' + err.message, 'error');
+                acSubmit.disabled = false;
+            });
+        });
+
+        // ============================================================
+        //  ADMIN: ADD USER
+        // ============================================================
+        auSubmit.addEventListener('click', () => {
+            const name = auName.value.trim();
+            if (!name) { setStatus(auStatus, '❌ Username required.', 'error'); return; }
+            if (!/^[a-zA-Z0-9_]+$/.test(name)) { setStatus(auStatus, '❌ Only letters, numbers, underscore.', 'error'); return; }
+            if (allUsers[name]) { setStatus(auStatus, '❌ User already exists.', 'error'); return; }
+
+            setStatus(auStatus, 'Creating...', '');
+            auSubmit.disabled = true;
+
+            db.ref('users/' + name).set({
+                username: name,
+                cards: {},
+                cardCount: 0,
+                joinedAt: Date.now()
+            }).then(() => {
+                setStatus(auStatus, '✅ User "' + name + '" created!', 'success');
+                auName.value = '';
+                auSubmit.disabled = false;
+                loadAllUsers();
+                populateAdminUserSelect();
+                populateManageList();
+                setTimeout(() => { if (auStatus.textContent.includes('success')) auStatus.textContent = ''; }, 3500);
+            }).catch(err => {
+                setStatus(auStatus, '❌ ' + err.message, 'error');
+                auSubmit.disabled = false;
+            });
+        });
+
+        // ============================================================
+        //  ADMIN: ASSIGN CARD
+        // ============================================================
+        asSubmit.addEventListener('click', () => {
+            const user = asUser.value;
+            const cardId = asCard.value;
+            if (!user) { setStatus(asStatus, '❌ Select a user.', 'error'); return; }
+            if (!cardId) { setStatus(asStatus, '❌ Select a card.', 'error'); return; }
+
+            setStatus(asStatus, 'Assigning...', '');
+            asSubmit.disabled = true;
+
+            const cardRef = db.ref('users/' + user + '/cards/' + cardId);
+            cardRef.set(true).then(() => {
+                return db.ref('users/' + user + '/cardCount').transaction(current => { return (current || 0) + 1; });
+            }).then(() => {
+                setStatus(asStatus, '✅ Card assigned to ' + user + '!', 'success');
+                asSubmit.disabled = false;
+                loadAllUsers();
+                populateAdminUserSelect();
+                populateManageList();
+                setTimeout(() => { if (asStatus.textContent.includes('success')) asStatus.textContent = ''; }, 3500);
+            }).catch(err => {
+                setStatus(asStatus, '❌ ' + err.message, 'error');
+                asSubmit.disabled = false;
+            });
+        });
+
+        // ============================================================
+        //  UTILITY
+        // ============================================================
+        function setStatus(el, msg, type) {
+            el.textContent = msg;
+            el.className = 'status-msg' + (type ? ' ' + type : '');
+        }
+
+        function escHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ============================================================
+        //  TAB SWITCHING (main)
+        // ============================================================
+        document.querySelectorAll('.app-tabs .tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.app-tabs .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const target = tab.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                if (target === 'collection') {
+                    document.getElementById('tabCollection').classList.remove('hidden');
+                } else {
+                    document.getElementById('tabUsers').classList.remove('hidden');
+                    renderUsers();
+                }
+            });
+        });
+
+        // ============================================================
+        //  ADMIN TOGGLE ON LOGIN
+        // ============================================================
+        adminToggle.addEventListener('click', () => {
+            adminPasswordWrap.classList.toggle('show');
+            adminToggle.classList.toggle('active');
+            if (adminPasswordWrap.classList.contains('show')) {
+                adminLoginPass.focus();
+                adminToggle.textContent = '🔒 Cancel Admin';
+            } else {
+                adminToggle.textContent = '🔐 Admin Login';
+                adminLoginPass.value = '';
+                loginError.textContent = '';
+            }
+        });
+
+        adminLoginBtn.addEventListener('click', handleAdminLogin);
+        adminLoginPass.addEventListener('keydown', e => { if (e.key === 'Enter') handleAdminLogin(); });
+
+        // ============================================================
+        //  ENTER KEY SUPPORT
+        // ============================================================
+        loginInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+        loginBtn.addEventListener('click', handleLogin);
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            runLanding();
+        });
+
+        console.log('✦ Zion Card Collection v11 — ENHANCED RARITY EFFECTS');
+        console.log('🔥 Legendary: Golden glow, fire particles, rotating border, sparkles');
+        console.log('💜 Epic: Purple glow, magical shimmer, rotating border');
+        console.log('🔵 Rare: Blue glow with subtle effects');
+        console.log('⚪ Common: Minimal effects');
+        console.log('🔑 Admin password: 126805');
+    </script>
+
+</body>
+</html>
