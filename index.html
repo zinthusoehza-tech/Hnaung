@@ -1589,6 +1589,7 @@ async function loadAdminData() {
     startAutoRefresh();
   } catch (err) {
     toast('Failed to load admin data: ' + err.message, 'error');
+    throw err;
   }
 }
 
