@@ -711,6 +711,38 @@ input,textarea,select{font-family:inherit}
 }
 .modal-box::-webkit-scrollbar{width:5px}
 .modal-box::-webkit-scrollbar-thumb{background:var(--accent-1);border-radius:10px}
+/* ============================================================
+   GLOBAL LOADING OVERLAY
+   ============================================================ */
+#loadingOverlay{position:fixed;inset:0;z-index:8000;background:rgba(5,5,16,.75);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;
+  align-items:center;justify-content:center;flex-direction:column;gap:1.2rem;
+  opacity:0;pointer-events:none;transition:opacity .25s ease}
+#loadingOverlay.show{opacity:1;pointer-events:auto}
+#loadingOverlay .loader-ring{width:64px;height:64px;position:relative}
+#loadingOverlay .loader-ring::before,#loadingOverlay .loader-ring::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  border:3px solid transparent;border-top-color:var(--accent-1);
+  animation:spin 1s linear infinite}
+#loadingOverlay .loader-ring::after{inset:10px;border-top-color:var(--accent-2);
+  animation-duration:1.4s;animation-direction:reverse}
+#loadingOverlay .loader-text{font-size:.95rem;color:var(--text-secondary);
+  font-weight:500;letter-spacing:.02em;text-align:center;padding:0 1.5rem}
+#loadingOverlay .loader-sub{font-size:.75rem;color:var(--text-muted);
+  margin-top:-.6rem;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:.9}}
+
+/* Inline small spinner for buttons */
+.spinner-inline{display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.15);border-top-color:currentColor;
+  border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;
+  margin-right:.4rem}
+
+/* Skeleton loading for card grids */
+.skeleton-card{width:var(--card-width);height:var(--card-height);
+  border-radius:var(--radius-card);background:linear-gradient(90deg,#141425 25%,#1e1e35 50%,#141425 75%);
+  background-size:200% 100%;animation:shimmer 1.2s ease-in-out infinite;
+  opacity:0;animation:cardFadeIn .4s ease forwards,shimmer 1.2s ease-in-out infinite .4s}
 </style>
 </head>
 <body>
@@ -963,6 +995,12 @@ input,textarea,select{font-family:inherit}
 </div>
 
 <div class="reveal-confetti" id="confettiContainer"></div>
+<!-- GLOBAL LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="loader-ring"></div>
+  <div class="loader-text" id="loadingText">Loading...</div>
+  <div class="loader-sub" id="loadingSub">Please wait</div>
+</div>
 
 <script>
 /* ============================================================
@@ -974,26 +1012,43 @@ const ADMIN_PASSWORD = '126805';
 /* ============================================================
  * API HELPER — POST with GET fallback
  * ============================================================ */
+/* ============================================================
+ * API HELPER — with timeout + auto GET fallback
+ * ============================================================ */
 async function api(action, params = {}) {
   const payload = Object.assign({ action: action }, params);
+  const timeoutMs = action === 'uploadImage' ? 60000 : 25000;
 
-  // Try POST (JSON body, no Content-Type header → avoids CORS preflight)
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetchWithTimeout(API_URL, {
       method: 'POST',
       body: JSON.stringify(payload)
-    });
+    }, timeoutMs);
     const text = await res.text();
-    try {
-      return JSON.parse(text);
-    } catch (e) {
-      console.warn('POST returned non-JSON, trying GET fallback');
+    try { return JSON.parse(text); }
+    catch (e) {
+      console.warn('POST non-JSON, trying GET');
       return await apiGet(action, params);
     }
   } catch (err) {
-    console.warn('POST failed:', err.message, '→ trying GET');
-    return await apiGet(action, params);
+    console.warn('POST failed:', err.message, '→ GET fallback');
+    try { return await apiGet(action, params); }
+    catch (e2) {
+      return { success: false, error: err.message + ' / ' + e2.message };
+    }
   }
+}
+
+async function apiGet(action, params = {}) {
+  const flat = { action: action };
+  for (const k in params) {
+    flat[k] = (typeof params[k] === 'object') ? JSON.stringify(params[k]) : String(params[k]);
+  }
+  const qs = new URLSearchParams(flat).toString();
+  const res = await fetchWithTimeout(API_URL + '?' + qs, { method: 'GET' }, 25000);
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch (e) { throw new Error('Invalid response: ' + text.substring(0, 200)); }
 }
 
 async function apiGet(action, params = {}) {
@@ -1103,7 +1158,79 @@ function getSeenCards(u) {
 function setSeenCards(u, obj) {
   try { localStorage.setItem(getSeenKey(u), JSON.stringify(obj)); } catch (_) {}
 }
+/* ============================================================
+ * LOADING OVERLAY HELPERS
+ * ============================================================ */
+let _loadingCount = 0;
+let _loadingTimeout = null;
 
+function showLoading(text, sub) {
+  _loadingCount++;
+  const ov = document.getElementById('loadingOverlay');
+  document.getElementById('loadingText').textContent = text || 'Loading...';
+  document.getElementById('loadingSub').textContent = sub || 'Please wait';
+  ov.classList.add('show');
+
+  // After 4 seconds, change message to "still loading"
+  clearTimeout(_loadingTimeout);
+  _loadingTimeout = setTimeout(() => {
+    if (_loadingCount > 0) {
+      document.getElementById('loadingSub').textContent =
+        'Still loading… Google Sheets can be slow. Please be patient.';
+    }
+  }, 4000);
+}
+
+function hideLoading() {
+  _loadingCount = Math.max(0, _loadingCount - 1);
+  if (_loadingCount === 0) {
+    clearTimeout(_loadingTimeout);
+    document.getElementById('loadingOverlay').classList.remove('show');
+  }
+}
+
+/* ============================================================
+ * API TIMEOUT WRAPPER — prevents infinite hangs
+ * ============================================================ */
+function fetchWithTimeout(url, options, timeoutMs) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout — server is slow')), timeoutMs || 30000)
+    )
+  ]);
+}
+
+/* ============================================================
+ * SESSION CACHE — skip API calls when data is fresh
+ * ============================================================ */
+const CACHE_TTL = 30 * 1000; // 30 seconds
+
+function cacheGet(key) {
+  try {
+    const raw = sessionStorage.getItem('zion_cache_' + key);
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (Date.now() - obj.t > CACHE_TTL) return null;
+    return obj.d;
+  } catch (_) { return null; }
+}
+
+function cacheSet(key, data) {
+  try {
+    sessionStorage.setItem('zion_cache_' + key,
+      JSON.stringify({ t: Date.now(), d: data }));
+  } catch (_) {}
+}
+
+function cacheClear(prefix) {
+  try {
+    const keys = Object.keys(sessionStorage);
+    keys.forEach(k => {
+      if (k.startsWith('zion_cache_' + (prefix || ''))) sessionStorage.removeItem(k);
+    });
+  } catch (_) {}
+}
 /* ============================================================
  * IMAGE URL NORMALIZER
  * ============================================================ */
@@ -1291,9 +1418,12 @@ async function handleLogin() {
   if (!name) { loginError.textContent = 'Please enter a username.'; return; }
   if (name.length < 2) { loginError.textContent = 'Username must be at least 2 characters.'; return; }
   if (!/^[a-zA-Z0-9_]+$/.test(name)) { loginError.textContent = 'Only letters, numbers and underscore.'; return; }
+
   loginError.textContent = '';
   loginBtn.textContent = 'Checking...';
   loginBtn.disabled = true;
+  showLoading('Signing in as ' + name + '...', 'Loading your data');
+
   try {
     const r = await api('login', { username: name });
     if (r.success) {
@@ -1310,6 +1440,8 @@ async function handleLogin() {
     loginError.textContent = 'Error: ' + err.message;
     loginBtn.textContent = 'Continue →';
     loginBtn.disabled = false;
+  } finally {
+    hideLoading();
   }
 }
 
@@ -1318,6 +1450,8 @@ async function handleAdminLogin() {
   if (!pass) return;
   adminLoginBtn.disabled = true;
   adminLoginBtn.textContent = 'Checking...';
+  showLoading('Admin sign-in...', 'Verifying password');
+
   try {
     const r = await api('adminLogin', { password: pass });
     if (r.success) {
@@ -1327,6 +1461,8 @@ async function handleAdminLogin() {
       app.classList.add('visible');
       appUsername.textContent = '👑 Admin';
       appCardCount.textContent = '⚙️ full access';
+      document.getElementById('loadingText').textContent = 'Loading admin data...';
+      document.getElementById('loadingSub').textContent = 'Fetching users, cards, messages';
       await loadAdminData();
       toast('👑 Admin access granted', 'success');
     } else {
@@ -1340,6 +1476,7 @@ async function handleAdminLogin() {
   } finally {
     adminLoginBtn.disabled = false;
     adminLoginBtn.textContent = 'Admin Login';
+    hideLoading();
   }
 }
 
@@ -1353,55 +1490,73 @@ async function enterApp(username) {
   myCardsGrid.innerHTML =
     '<div class="loading-state"><div class="spinner"></div><div>Loading your cards...</div></div>';
 
+  // ---- Try cache first for instant load ----
+  const cached = cacheGet('user_' + username);
+  if (cached) {
+    applyUserData(cached, username);
+    // Still fetch fresh in background (silent)
+    api('initUser', { username: username }).then(r => {
+      if (r.success) {
+        cacheSet('user_' + username, r);
+        applyUserData(r, username);
+      }
+    }).catch(() => {});
+    return;
+  }
+
   try {
     const r = await api('initUser', { username: username });
     if (!r.success) throw new Error(r.error || 'Failed to load data');
-
-    allUsers = {};
-    (r.users || []).forEach(u => {
-      allUsers[u.username] = { username: u.username, cardCount: u.cardCount || 0 };
-    });
-    allCards = {};
-    (r.cards || []).forEach(c => { allCards[c.id] = c; });
-    userCardIds = r.userCardIds || [];
-
-    userMessages = {};
-    (r.messages || []).forEach(m => {
-      const isRead = m.readBy && m.readBy[username] === true;
-      userMessages[m.id] = Object.assign({}, m, { isRead: isRead });
-    });
-    updateUnreadCount();
-    updateMsgBell();
-
-    const seen = getSeenCards(username);
-    const seenKeys = Object.keys(seen);
-    const newIds = userCardIds.filter(id => !seenKeys.includes(id));
-
-    const newSeen = {};
-    userCardIds.forEach(id => { newSeen[id] = true; });
-    setSeenCards(username, newSeen);
-
-    renderMyCards();
-    renderUsers();
-    renderAllCards();
-    renderMessagesTab();
-    updateCardCount();
-
-    if (newIds.length > 0) {
-      revealQueue = newIds
-        .filter(id => allCards[id])
-        .map(id => Object.assign({ id: id }, allCards[id]));
-      processRevealQueue();
-    }
-
-    queueMessageNotifications();
-    startAutoRefresh();
+    cacheSet('user_' + username, r);
+    applyUserData(r, username);
   } catch (err) {
     console.error(err);
     myCardsGrid.innerHTML =
       '<div class="empty-state"><div class="icon">⚠️</div><div>Failed to load: ' +
       escHtml(err.message) + '</div></div>';
   }
+}
+
+function applyUserData(r, username) {
+  allUsers = {};
+  (r.users || []).forEach(u => {
+    allUsers[u.username] = { username: u.username, cardCount: u.cardCount || 0 };
+  });
+  allCards = {};
+  (r.cards || []).forEach(c => { allCards[c.id] = c; });
+  userCardIds = r.userCardIds || [];
+
+  userMessages = {};
+  (r.messages || []).forEach(m => {
+    const isRead = m.readBy && m.readBy[username] === true;
+    userMessages[m.id] = Object.assign({}, m, { isRead: isRead });
+  });
+  updateUnreadCount();
+  updateMsgBell();
+
+  const seen = getSeenCards(username);
+  const seenKeys = Object.keys(seen);
+  const newIds = userCardIds.filter(id => !seenKeys.includes(id));
+
+  const newSeen = {};
+  userCardIds.forEach(id => { newSeen[id] = true; });
+  setSeenCards(username, newSeen);
+
+  renderMyCards();
+  renderUsers();
+  renderAllCards();
+  renderMessagesTab();
+  updateCardCount();
+
+  if (newIds.length > 0) {
+    revealQueue = newIds
+      .filter(id => allCards[id])
+      .map(id => Object.assign({ id: id }, allCards[id]));
+    processRevealQueue();
+  }
+
+  queueMessageNotifications();
+  startAutoRefresh();
 }
 
 /* ============================================================
@@ -1493,7 +1648,7 @@ function startAutoRefresh() {
     } catch (err) {
       console.warn('Auto-refresh failed:', err.message);
     }
-  }, 60000);
+  }, 180000);
 }
 
 /* ============================================================
@@ -1521,7 +1676,12 @@ refreshBtn.addEventListener('click', async () => {
   if (!currentUser) return;
   refreshBtn.textContent = '⏳';
   refreshBtn.disabled = true;
+  showLoading('Refreshing...', 'Fetching latest data from Google Sheets');
+
   try {
+    // Clear cache to force fresh data
+    cacheClear('');
+
     if (isAdmin) {
       await loadAdminData();
     } else {
@@ -1558,12 +1718,13 @@ refreshBtn.addEventListener('click', async () => {
         }
       }
     }
-    toast('✓ Refreshed');
+    toast('✓ Refreshed', 'success');
   } catch (err) {
     toast('Refresh failed: ' + err.message, 'error');
   } finally {
     refreshBtn.textContent = '↻';
     refreshBtn.disabled = false;
+    hideLoading();
   }
 });
 
@@ -2139,23 +2300,65 @@ usersList.addEventListener('click', async e => {
   const chip = e.target.closest('.user-chip');
   if (!chip) return;
   const name = chip.dataset.username;
-  if (name && name !== currentUser) viewUserCollection(name);
+  if (!name || name === currentUser) return;
+
+  // Immediate visual feedback
+  const originalHtml = chip.innerHTML;
+  chip.innerHTML = '<div class="spinner-inline"></div><div class="uname">Loading...</div>';
+  chip.style.pointerEvents = 'none';
+
+  try {
+    await viewUserCollection(name);
+  } finally {
+    chip.innerHTML = originalHtml;
+    chip.style.pointerEvents = '';
+  }
 });
 
 /* ============================================================
  * VIEW USER COLLECTION
  * ============================================================ */
 async function viewUserCollection(username) {
+  showLoading('Loading ' + username + "'s collection...", 'Fetching from Google Sheets');
   try {
+    // Try to fetch fresh data from API (small payload — only card IDs)
     const r = await api('getUserCards', { username: username });
-    if (!r.success) { toast('Failed: ' + r.error, 'error'); return; }
+    if (!r.success) {
+      toast('Failed: ' + r.error, 'error');
+      return;
+    }
     const ids = r.cardIds || [];
-    if (ids.length === 0) { toast(username + ' has no cards yet.'); return; }
+    if (ids.length === 0) {
+      toast(username + ' has no cards yet.');
+      return;
+    }
+
+    // We already have allCards in memory — just look them up (fast!)
     const valid = ids.filter(id => allCards[id])
       .map(id => Object.assign({ id: id }, allCards[id]));
-    if (valid.length === 0) { toast('No card data found.'); return; }
+
+    // If some cards are missing from cache, fetch only the missing ones in parallel
+    const missingIds = ids.filter(id => !allCards[id]);
+    if (missingIds.length > 0) {
+      const fresh = await api('getCards');
+      if (fresh.success) {
+        (fresh.cards || []).forEach(c => { allCards[c.id] = c; });
+        missingIds.forEach(id => {
+          if (allCards[id]) valid.push(Object.assign({ id: id }, allCards[id]));
+        });
+      }
+    }
+
+    if (valid.length === 0) {
+      toast('No card data found.');
+      return;
+    }
     showUserCollectionModal(username, valid);
-  } catch (err) { toast('Error: ' + err.message, 'error'); }
+  } catch (err) {
+    toast('Error: ' + err.message, 'error');
+  } finally {
+    hideLoading();
+  }
 }
 
 function showUserCollectionModal(username, cards) {
