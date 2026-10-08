@@ -202,6 +202,30 @@ input,textarea,select{font-family:inherit}
   font-size:.75rem;font-weight:600;color:var(--text-2);}
 .upload-meta .pct{color:var(--gold);font-variant-numeric:tabular-nums}
 
+/* ===== ADMIN UPLOAD ZONE ENHANCEMENTS ===== */
+.admin-img-drop{position:relative;padding:0;overflow:hidden;}
+.admin-img-drop .drop-inner{padding:1.2rem;text-align:center;}
+.admin-img-drop .preview-img{width:100%;max-height:180px;object-fit:contain;border-radius:12px;display:block;background:#0a0a0f;}
+.admin-img-drop .success-badge{
+  position:absolute;top:.5rem;right:.5rem;width:34px;height:34px;border-radius:50%;
+  background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1.1rem;border:3px solid var(--surface);
+  box-shadow:0 4px 14px rgba(16,185,129,.5);
+  animation:successPop .4s cubic-bezier(.34,1.56,.64,1);z-index:5;
+}
+@keyframes successPop{from{transform:scale(0) rotate(-180deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.admin-img-drop .remove-btn{
+  position:absolute;top:.5rem;left:.5rem;width:34px;height:34px;border-radius:50%;
+  background:rgba(239,68,68,.92);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;border:3px solid var(--surface);z-index:5;
+  box-shadow:0 4px 14px rgba(239,68,68,.5);cursor:pointer;
+  transition:transform .15s;
+}
+.admin-img-drop .remove-btn:active{transform:scale(.9)}
+.admin-img-drop.uploading{border-color:var(--gold);background:rgba(245,166,35,.06)}
+.admin-img-drop.success{border-color:var(--green);background:rgba(16,185,129,.06)}
+.admin-img-drop.error{border-color:var(--red);background:rgba(239,68,68,.06)}
+
 /* APP SHELL */
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);
   opacity:0;pointer-events:none;transition:opacity .4s;}
@@ -242,10 +266,6 @@ input,textarea,select{font-family:inherit}
 .tab-bar button:active{transform:scale(.9)}
 .tab-bar button svg{width:24px;height:24px;stroke-width:2;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
 .tab-bar button.active svg{stroke:url(#tabGrad)}
-.tab-bar button .badge{position:absolute;top:8px;right:calc(50% - 22px);min-width:16px;height:16px;
-  border-radius:8px;background:var(--red);color:#fff;font-size:9px;font-weight:700;
-  display:none;align-items:center;justify-content:center;padding:0 4px;}
-.tab-bar button .badge.show{display:flex}
 .tab-bar .create-btn svg{width:30px;height:30px;stroke-width:1.8}
 
 /* SKELETON */
@@ -389,7 +409,6 @@ input,textarea,select{font-family:inherit}
   background:linear-gradient(135deg,var(--gold),var(--pink));color:#000;
   display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;
   box-shadow:0 6px 20px rgba(245,166,35,.4);transition:transform .2s;}
-.coin-card .buy-btn:hover{transform:scale(1.1) rotate(90deg)}
 .profile-tabs{display:flex;border-bottom:1px solid var(--border);margin-top:.5rem;}
 .profile-tabs button{flex:1;padding:.85rem;font-size:.85rem;font-weight:600;color:var(--text-3);
   position:relative;transition:color .2s;}
@@ -754,7 +773,6 @@ input,textarea,select{font-family:inherit}
   font-size:.62rem;color:var(--text-3);opacity:.75;font-weight:500;
 }
 
-/* SENDING state */
 .chat-msg.pending .bubble{opacity:.82}
 .chat-msg .sending-indicator{
   display:flex;flex-direction:column;gap:.25rem;width:100%;min-width:130px;align-items:stretch;
@@ -784,20 +802,16 @@ input,textarea,select{font-family:inherit}
   50%{opacity:1;transform:scale(1.15)}
 }
 
-/* DELETING state — RED & prominent */
 .chat-msg.deleting .bubble{
-  opacity:.42;
-  filter:grayscale(.5);
+  opacity:.42;filter:grayscale(.5);
   transition:opacity .3s, filter .3s;
 }
 .chat-msg .deleting-indicator{
   display:flex;flex-direction:column;gap:.3rem;
-  width:100%;min-width:150px;align-items:stretch;
-  padding:.2rem 0;
+  width:100%;min-width:150px;align-items:stretch;padding:.2rem 0;
 }
 .chat-msg .deleting-bar{
-  height:5px;width:100%;
-  background:rgba(239,68,68,.2);
+  height:5px;width:100%;background:rgba(239,68,68,.2);
   border-radius:100px;overflow:hidden;position:relative;
   box-shadow:0 0 10px rgba(239,68,68,.25);
 }
@@ -812,18 +826,14 @@ input,textarea,select{font-family:inherit}
 .chat-msg .deleting-label{
   font-size:.65rem;color:var(--red);font-weight:800;
   display:inline-flex;align-items:center;gap:.3rem;
-  letter-spacing:.03em;
-  text-transform:uppercase;
+  letter-spacing:.03em;text-transform:uppercase;
 }
 .chat-msg .deleting-label::before{
   content:'';width:7px;height:7px;border-radius:50%;
-  background:var(--red);
-  animation:sendingDot 1s ease-in-out infinite;
-  display:inline-block;
-  box-shadow:0 0 8px var(--red),0 0 14px rgba(239,68,68,.6);
+  background:var(--red);animation:sendingDot 1s ease-in-out infinite;
+  display:inline-block;box-shadow:0 0 8px var(--red),0 0 14px rgba(239,68,68,.6);
 }
 
-/* Removing animation */
 .chat-msg.removing{
   animation:msgRemove .45s cubic-bezier(.4,0,.2,1) forwards;
   pointer-events:none;overflow:hidden;
@@ -834,7 +844,6 @@ input,textarea,select{font-family:inherit}
   100%{opacity:0;transform:scale(.82);max-height:0;margin-top:-.35rem;margin-bottom:0;}
 }
 
-/* FAILED state */
 .chat-msg.failed .bubble{
   background:rgba(239,68,68,.12) !important;
   color:var(--text) !important;
@@ -853,7 +862,6 @@ input,textarea,select{font-family:inherit}
 .chat-msg .failed-label:hover{background:rgba(239,68,68,.2)}
 .chat-msg .failed-label:active{transform:scale(.95)}
 
-/* Selection */
 .chat-msg.selected .bubble{
   outline:2px solid var(--gold);outline-offset:2px;
   box-shadow:0 0 16px rgba(245,166,35,.4);
@@ -933,7 +941,6 @@ input,textarea,select{font-family:inherit}
 .user-picker-item .name{font-weight:600;font-size:.9rem}
 .user-picker-item .username{font-size:.75rem;color:var(--text-3)}
 
-/* RESPONSIVE */
 @media (min-width:720px){
   .app-header,.tab-bar{max-width:640px;left:50%;transform:translateX(-50%);right:auto;width:100%}
   .app-main{max-width:640px;margin:0 auto;width:100%}
@@ -1419,9 +1426,12 @@ input,textarea,select{font-family:inherit}
       <div class="field"><label>KPay Account Name</label><input id="setKpayName" /></div>
       <div class="field">
         <label>KPay QR Image</label>
-        <div class="file-drop" id="setKpayQrDrop">
-          <img id="setKpayQrPreview" class="hidden" />
-          <div id="setKpayQrEmpty"><div class="icon">📱</div><p>Upload QR</p></div>
+        <div class="file-drop admin-img-drop" id="setKpayQrDrop">
+          <div class="drop-inner" id="setKpayQrInner">
+            <div class="icon">📱</div>
+            <p>Tap to upload QR</p>
+            <small>PNG / JPG · Max 10MB</small>
+          </div>
         </div>
         <input type="file" class="hidden" id="setKpayQrInput" accept="image/*" />
       </div>
@@ -1429,9 +1439,12 @@ input,textarea,select{font-family:inherit}
       <div class="field"><label>Wave Account Name</label><input id="setWaveName" /></div>
       <div class="field">
         <label>Wave QR Image</label>
-        <div class="file-drop" id="setWaveQrDrop">
-          <img id="setWaveQrPreview" class="hidden" />
-          <div id="setWaveQrEmpty"><div class="icon">📱</div><p>Upload QR</p></div>
+        <div class="file-drop admin-img-drop" id="setWaveQrDrop">
+          <div class="drop-inner" id="setWaveQrInner">
+            <div class="icon">📱</div>
+            <p>Tap to upload QR</p>
+            <small>PNG / JPG · Max 10MB</small>
+          </div>
         </div>
         <input type="file" class="hidden" id="setWaveQrInput" accept="image/*" />
       </div>
@@ -1455,9 +1468,12 @@ input,textarea,select{font-family:inherit}
     <div class="field"><label>Price (MMK)</label><input id="pkgPrice" type="number" /></div>
     <div class="field">
       <label>Image (optional)</label>
-      <div class="file-drop" id="pkgImgDrop">
-        <img id="pkgImgPreview" class="hidden" />
-        <div id="pkgImgEmpty"><div class="icon">🪙</div><p>Upload image</p></div>
+      <div class="file-drop admin-img-drop" id="pkgImgDrop">
+        <div class="drop-inner" id="pkgImgInner">
+          <div class="icon">🪙</div>
+          <p>Tap to upload image</p>
+          <small>PNG / JPG · Max 10MB</small>
+        </div>
       </div>
       <input type="file" class="hidden" id="pkgImgInput" accept="image/*" />
     </div>
@@ -1480,14 +1496,14 @@ input,textarea,select{font-family:inherit}
 
 <script>
 /* =====================================================================
-   ⚙️ BRAND CONFIG — Edit these values to customize
+   ⚙️ BRAND CONFIG
    ===================================================================== */
 const CONFIG = {
   LOGO_URL: 'https://lh3.googleusercontent.com/d/1L9G1HQVRzYhjYsNrgD9kFoQebwlHt8Da=w400',
   BRAND_MM: 'နှောင်း',
   BRAND_EN: 'Hnaung',
   WELCOME_TITLE: 'မင်္ဂလာပါ',
-  WELCOME_SUB: 'သင့်စိတ်ကူးတွေကိုထုတ်ဖော်လိုက်ပါ။'
+  WELCOME_SUB: 'သင့်ရဲ့ လူမှုကွန်ရက်လေးထဲ ပျော်ရွှင်စွာ နေထိုင်ပါ'
 };
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbzzvsCOpZozxt-n1Ngk7R6zqCaSzax_waIjE9s7QpfI04NV8IJTCpOtYxfpun9qctIO/exec';
@@ -1603,16 +1619,10 @@ const State = {
   currentView: 'home',
   blockedUsers: [],
   chat: {
-    conversations: [],
-    activeOther: null,
-    activeUser: null,
-    messages: [],
-    messagesMap: {},
-    selectMode: false,
-    selectedIds: new Set(),
-    deletingIds: new Set(),   // ✅ robust delete tracking
-    pendingImage: null,
-    pollTimer: null
+    conversations: [], activeOther: null, activeUser: null,
+    messages: [], messagesMap: {}, selectMode: false,
+    selectedIds: new Set(), deletingIds: new Set(),
+    pendingImage: null, pollTimer: null
   },
   chatUnread: 0
 };
@@ -1667,7 +1677,7 @@ function fileToBase64(file){
   });
 }
 
-/* ============ UPLOAD with SMOOTH PROGRESS ============ */
+/* ============ UPLOAD ============ */
 function uploadMediaWithProgress(file, kind, onProgress){
   return new Promise(async (resolve, reject) => {
     try{
@@ -1741,6 +1751,124 @@ function buildUploadProgressHTML(file){
         </div>
       </div>`
   };
+}
+
+/* =====================================================================
+   ✅ ADMIN IMAGE UPLOAD — RELIABLE HELPER
+   ===================================================================== */
+/**
+ * Wire an admin image drop zone with progress bar + preview + success + remove
+ * @param {string} dropId     ID of the .file-drop element
+ * @param {string} inputId    ID of the <input type=file>
+ * @param {function} getUrl   () => current URL
+ * @param {function} setUrl   (url) => void
+ * @param {object} opts       { rounded: true } — rounded previews for avatars
+ */
+function wireAdminImageUpload(dropId, inputId, getUrl, setUrl, opts = {}){
+  const drop = $(dropId);
+  const input = $(inputId);
+  if(!drop || !input) return;
+
+  // Show preview if URL exists
+  renderAdminPreview(drop, getUrl(), opts);
+
+  // Click to open file picker
+  drop.addEventListener('click', (e) => {
+    // Don't open picker if the remove button was clicked
+    if(e.target.closest('.remove-btn')) return;
+    input.click();
+  });
+
+  // Handle file selection
+  input.addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if(!f) return;
+
+    // Validate
+    if(!f.type || !f.type.startsWith('image/')){
+      toast('Only image files are allowed', 'error');
+      e.target.value = '';
+      return;
+    }
+    if(f.size > MAX_UPLOAD_BYTES){
+      toast('File too large. Max 10 MB', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    // Show progress UI inside the drop zone
+    const { html, objUrl } = buildUploadProgressHTML(f);
+    drop.classList.remove('success','error');
+    drop.classList.add('uploading');
+    drop.innerHTML = html;
+    const fill = drop.querySelector('.upload-bar-fill');
+    const pct  = drop.querySelector('.pct');
+
+    try{
+      const r = await uploadMediaWithProgress(f, 'profile', p => {
+        if(fill) fill.style.width = p + '%';
+        if(pct) pct.textContent = p + '%';
+      });
+      URL.revokeObjectURL(objUrl);
+      setUrl(r.url);
+      drop.classList.remove('uploading');
+      drop.classList.add('success');
+      renderAdminPreview(drop, r.url, opts);
+      toast('✓ Image uploaded', 'success');
+    }catch(err){
+      try{ URL.revokeObjectURL(objUrl); }catch(_){}
+      drop.classList.remove('uploading');
+      drop.classList.add('error');
+      renderAdminPreview(drop, getUrl(), opts); // restore previous
+      toast('❌ ' + (err.message || 'Upload failed'), 'error');
+    }
+    e.target.value = '';
+  });
+}
+
+function renderAdminPreview(drop, url, opts = {}){
+  const isRounded = !!opts.rounded;
+  const imgStyle = isRounded
+    ? 'width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto;'
+    : '';
+  if(url){
+    drop.classList.remove('error');
+    drop.classList.add('success');
+    drop.innerHTML = `
+      <div class="drop-inner" style="padding:.5rem;">
+        <img class="preview-img" src="${esc(imgUrl(url))}" alt="Preview" style="${imgStyle}" />
+        <div class="success-badge">✓</div>
+        <button class="remove-btn" type="button" title="Remove">✕</button>
+      </div>`;
+    drop.querySelector('.remove-btn').onclick = (e) => {
+      e.stopPropagation();
+      const input = drop.parentElement.querySelector('input[type=file]');
+      if(input) input.value = '';
+      // Clear url via callback
+      drop.dispatchEvent(new CustomEvent('admin-clear-image', { bubbles: true }));
+      // Reset to empty state
+      drop.classList.remove('success','error');
+      const icon = opts.icon || '🖼️';
+      const label = opts.label || 'Tap to upload';
+      const hint = opts.hint || 'PNG / JPG · Max 10MB';
+      drop.innerHTML = `<div class="drop-inner">
+        <div class="icon">${icon}</div>
+        <p>${label}</p>
+        <small>${hint}</small>
+      </div>`;
+      toast('Image removed');
+    };
+  } else {
+    drop.classList.remove('success','error');
+    const icon = opts.icon || '🖼️';
+    const label = opts.label || 'Tap to upload';
+    const hint = opts.hint || 'PNG / JPG · Max 10MB';
+    drop.innerHTML = `<div class="drop-inner">
+      <div class="icon">${icon}</div>
+      <p>${label}</p>
+      <small>${hint}</small>
+    </div>`;
+  }
 }
 
 /* ============ SESSION / THEME ============ */
@@ -2046,6 +2174,8 @@ async function enterApp(){
   updateNotifBadge(); renderShop(); setupTabBar(); setupMenu();
   refreshChatUnread();
   startChatPolling();
+  // Wire admin uploads (safe to call even if not admin - just sets up)
+  wireAdminUploads();
 }
 
 /* ============ SKELETONS ============ */
@@ -2496,9 +2626,7 @@ async function viewUserProfile(username){
     State.viewingUserPosts = (pRes.posts || []).map(p => Object.assign({}, p, { authorData: u }));
     $('statPosts').textContent = State.viewingUserPosts.length;
     renderViewingUserPosts();
-    $('msgUserBtn').onclick = () => {
-      openChatWith(username, u);
-    };
+    $('msgUserBtn').onclick = () => { openChatWith(username, u); };
   }catch(err){
     toast('Failed: ' + err.message, 'error');
     $('profileName').textContent = 'Not found';
@@ -2605,7 +2733,7 @@ $('saveProfileBtn').onclick = async () => {
   btnLoad(btn, false);
 };
 
-/* ============ CREATE POST — IMAGE ONLY ============ */
+/* ============ CREATE POST ============ */
 let _pendingPostImage = '';
 function openCreatePost(){
   $('postContent').value = '';
@@ -2623,8 +2751,6 @@ function openCreatePost(){
 $('postImgDrop').onclick = () => $('postImgInput').click();
 $('postImgInput').addEventListener('change', async e => {
   const f = e.target.files[0]; if(!f) return;
-
-  // ✅ Reject video — show coming soon
   if(f.type && f.type.startsWith('video/')){
     toast('🎥 Video upload coming soon! Please upload an image.', 'info');
     e.target.value = '';
@@ -2635,12 +2761,7 @@ $('postImgInput').addEventListener('change', async e => {
     e.target.value = '';
     return;
   }
-  if(f.size > MAX_UPLOAD_BYTES){
-    toast('File too large (max 10MB)', 'error');
-    e.target.value = '';
-    return;
-  }
-
+  if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
   const drop = $('postImgDrop');
   State.postUploading = true;
   $('submitPostBtn').disabled = true;
@@ -2682,12 +2803,9 @@ $('submitPostBtn').onclick = async () => {
   const btn = $('submitPostBtn');
   btnLoad(btn, true);
   const payload = {
-    username: State.user.username,
-    content,
-    imageUrl: _pendingPostImage,
-    imageFileId: '',
-    videoUrl: '',
-    videoFileId: ''
+    username: State.user.username, content,
+    imageUrl: _pendingPostImage, imageFileId: '',
+    videoUrl: '', videoFileId: ''
   };
   try{
     const r = await api('createPost', payload, { progress: false });
@@ -3214,8 +3332,6 @@ $('msgSelectAction').onclick = () => {
     if(el) toggleMsgSelect(el);
   }
 };
-
-/* ✅ DELETE single message — reliable progress */
 $('msgDeleteAction').onclick = async () => {
   closeModal('msgActionModal');
   if(!_currentMsg) return;
@@ -3234,29 +3350,18 @@ async function deleteMessageWithProgress(id){
   if(State.chat.deletingIds.has(id)) return;
   const idx = State.chat.messages.findIndex(m => m.id === id);
   if(idx < 0) return;
-
-  // 1) Mark as deleting → red progress bar appears
   State.chat.deletingIds.add(id);
   renderChatMessages();
-
-  // 2) Give the progress bar time to be seen
   const MIN_SHOW = 900;
   const startTs = Date.now();
-
   try {
     const r = await api('deleteChatMessage', { id, username: State.user.username }, { progress: false });
     if(!r.success) throw new Error(r.error || 'Delete failed');
-
-    // 3) Ensure minimum visible duration
     const elapsed = Date.now() - startTs;
     if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
-
-    // 4) Shrink/fade animation
     const el = document.querySelector(`.chat-msg[data-mid="${id}"]`);
     if(el) el.classList.add('removing');
     await new Promise(res => setTimeout(res, 450));
-
-    // 5) Remove from state
     State.chat.messages = State.chat.messages.filter(m => m.id !== id);
     delete State.chat.messagesMap[id];
     State.chat.deletingIds.delete(id);
@@ -3311,8 +3416,6 @@ function updateSelectCount(){
   else $('chatSelectBadge').classList.add('hidden');
 }
 $('chatSelectCancel').onclick = () => exitSelectMode();
-
-/* ✅ MULTI DELETE — reliable progress */
 $('chatSelectDelete').onclick = async () => {
   const ids = Array.from(State.chat.selectedIds);
   if(!ids.length) return;
@@ -3323,30 +3426,21 @@ $('chatSelectDelete').onclick = async () => {
     yes:'Delete'
   });
   if(!ok) return;
-
-  // Show spinner on the select-bar's delete button
   $('chatSelectBar').classList.add('deleting');
-
-  // Mark all as deleting → red bars appear
   ids.forEach(id => State.chat.deletingIds.add(id));
   renderChatMessages();
-
   const MIN_SHOW = 950;
   const startTs = Date.now();
-
   try {
     const r = await api('deleteSelectedChat', { username: State.user.username, ids }, { progress: false });
     if(!r.success) throw new Error(r.error || 'Delete failed');
-
     const elapsed = Date.now() - startTs;
     if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
-
     ids.forEach(id => {
       const el = document.querySelector(`.chat-msg[data-mid="${id}"]`);
       if(el) el.classList.add('removing');
     });
     await new Promise(res => setTimeout(res, 480));
-
     const idSet = new Set(ids);
     State.chat.messages = State.chat.messages.filter(m => !idSet.has(m.id));
     ids.forEach(id => {
@@ -3375,8 +3469,6 @@ $('chatViewProfileAction').onclick = () => {
     viewUserProfile(u);
   }
 };
-
-/* ✅ CLEAR CONVERSATION — progress on all */
 $('chatClearAction').onclick = async () => {
   closeModal('chatMenuModal');
   const other = State.chat.activeOther;
@@ -3388,27 +3480,21 @@ $('chatClearAction').onclick = async () => {
     yes:'Clear'
   });
   if(!ok) return;
-
   const allIds = State.chat.messages.map(m => m.id);
   allIds.forEach(id => State.chat.deletingIds.add(id));
   renderChatMessages();
-
   const MIN_SHOW = 950;
   const startTs = Date.now();
-
   try {
     const r = await api('deleteConversation', { username: State.user.username, other }, { progress: false });
     if(!r.success) throw new Error(r.error || 'Clear failed');
-
     const elapsed = Date.now() - startTs;
     if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
-
     State.chat.messages.forEach(m => {
       const el = document.querySelector(`.chat-msg[data-mid="${m.id}"]`);
       if(el) el.classList.add('removing');
     });
     await new Promise(res => setTimeout(res, 480));
-
     State.chat.messages = [];
     State.chat.messagesMap = {};
     State.chat.deletingIds = new Set();
@@ -3455,11 +3541,9 @@ async function sendCurrentChat(){
   const content = chatInputEl.value.trim();
   const pending = State.chat.pendingImage;
   if(!content && !pending) return;
-
   chatInputEl.value = '';
   $('chatSendBtn').disabled = true;
   clearPendingImage();
-
   const tempId = 'tmp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
   const nowIso = new Date().toISOString();
   const optimistic = {
@@ -3473,7 +3557,6 @@ async function sendCurrentChat(){
   State.chat.messagesMap[tempId] = optimistic;
   renderChatMessages();
   setTimeout(() => { const c = $('chatMessages'); c.scrollTop = c.scrollHeight; }, 60);
-
   try{
     const payload = {
       username: State.user.username, other, content,
@@ -3483,7 +3566,6 @@ async function sendCurrentChat(){
     };
     const r = await api('sendChatMessage', payload, { progress: false });
     if(!r.success) throw new Error(r.error);
-
     const idx = State.chat.messages.findIndex(m => m.id === tempId);
     if(idx >= 0){
       delete State.chat.messagesMap[tempId];
@@ -3554,11 +3636,7 @@ $('chatAttachBtn').onclick = () => $('chatImageInput').click();
 $('chatImageInput').addEventListener('change', async e => {
   const f = e.target.files[0]; if(!f) return;
   if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
-  if(!f.type || !f.type.startsWith('image/')){
-    toast('Only images allowed', 'error');
-    e.target.value = '';
-    return;
-  }
+  if(!f.type || !f.type.startsWith('image/')){ toast('Only images allowed', 'error'); e.target.value=''; return; }
   const bar = $('chatInputBar');
   const existing = bar.querySelector('.chat-attach-preview');
   if(existing) existing.remove();
@@ -3752,6 +3830,43 @@ function doLogout(){
   toast('Logged out', 'success');
 }
 
+/* =====================================================================
+   ✅ ADMIN — Wire upload zones ONCE (safe to call repeatedly)
+   ===================================================================== */
+let _adminUploadsWired = false;
+
+function wireAdminUploads(){
+  if(_adminUploadsWired) return;
+  _adminUploadsWired = true;
+
+  // 🪙 Package image
+  wireAdminImageUpload(
+    'pkgImgDrop',
+    'pkgImgInput',
+    () => _pkgImgUrl,
+    (url) => { _pkgImgUrl = url; },
+    { icon: '🪙', label: 'Tap to upload image', hint: 'PNG / JPG · Max 10MB' }
+  );
+
+  // 💙 KPay QR
+  wireAdminImageUpload(
+    'setKpayQrDrop',
+    'setKpayQrInput',
+    () => _setKpayQr,
+    (url) => { _setKpayQr = url; },
+    { icon: '📱', label: 'Tap to upload QR', hint: 'PNG / JPG · Max 10MB' }
+  );
+
+  // 💛 Wave QR
+  wireAdminImageUpload(
+    'setWaveQrDrop',
+    'setWaveQrInput',
+    () => _setWaveQr,
+    (url) => { _setWaveQr = url; },
+    { icon: '📱', label: 'Tap to upload QR', hint: 'PNG / JPG · Max 10MB' }
+  );
+}
+
 /* ============ ADMIN PANEL ============ */
 qa('.admin-tabs button').forEach(b => b.onclick = () => {
   qa('.admin-tabs button').forEach(x => x.classList.remove('active'));
@@ -3819,8 +3934,8 @@ function adminEditPkg(id){
   $('pkgCoins').value = p.coins || 0;
   $('pkgPrice').value = p.price || 0;
   _pkgImgUrl = p.imageUrl || '';
-  if(_pkgImgUrl){ $('pkgImgPreview').src = imgUrl(_pkgImgUrl); $('pkgImgPreview').classList.remove('hidden'); $('pkgImgEmpty').classList.add('hidden'); }
-  else { $('pkgImgPreview').classList.add('hidden'); $('pkgImgEmpty').classList.remove('hidden'); }
+  // Re-render preview
+  renderAdminPreview($('pkgImgDrop'), _pkgImgUrl, { icon:'🪙', label:'Tap to upload image', hint:'PNG / JPG · Max 10MB' });
   openModal('pkgModal');
 }
 $('addPkgBtn').onclick = () => {
@@ -3828,21 +3943,9 @@ $('addPkgBtn').onclick = () => {
   $('pkgModalTitle').textContent = 'New Package';
   $('pkgName').value = ''; $('pkgCoins').value = ''; $('pkgPrice').value = '';
   _pkgImgUrl = '';
-  $('pkgImgPreview').classList.add('hidden');
-  $('pkgImgEmpty').classList.remove('hidden');
+  renderAdminPreview($('pkgImgDrop'), '', { icon:'🪙', label:'Tap to upload image', hint:'PNG / JPG · Max 10MB' });
   openModal('pkgModal');
 };
-$('pkgImgDrop').onclick = () => $('pkgImgInput').click();
-$('pkgImgInput').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
-  if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
-  try{
-    _pkgImgUrl = await uploadImageFile(f, 'profile');
-    $('pkgImgPreview').src = imgUrl(_pkgImgUrl);
-    $('pkgImgPreview').classList.remove('hidden');
-    $('pkgImgEmpty').classList.add('hidden');
-  }catch(err){ toast(err.message, 'error'); }
-});
 $('savePkgBtn').onclick = async () => {
   const name = $('pkgName').value.trim();
   const coins = Number($('pkgCoins').value);
@@ -3920,31 +4023,9 @@ function adminRenderSettings(){
   $('setPayNote').value = s.paymentNote || '';
   _setKpayQr = s.kpayQr || '';
   _setWaveQr = s.waveQr || '';
-  if(_setKpayQr){ $('setKpayQrPreview').src = imgUrl(_setKpayQr); $('setKpayQrPreview').classList.remove('hidden'); $('setKpayQrEmpty').classList.add('hidden'); }
-  else { $('setKpayQrPreview').classList.add('hidden'); $('setKpayQrEmpty').classList.remove('hidden'); }
-  if(_setWaveQr){ $('setWaveQrPreview').src = imgUrl(_setWaveQr); $('setWaveQrPreview').classList.remove('hidden'); $('setWaveQrEmpty').classList.add('hidden'); }
-  else { $('setWaveQrPreview').classList.add('hidden'); $('setWaveQrEmpty').classList.remove('hidden'); }
+  renderAdminPreview($('setKpayQrDrop'), _setKpayQr, { icon:'📱', label:'Tap to upload QR', hint:'PNG / JPG · Max 10MB' });
+  renderAdminPreview($('setWaveQrDrop'), _setWaveQr, { icon:'📱', label:'Tap to upload QR', hint:'PNG / JPG · Max 10MB' });
 }
-$('setKpayQrDrop').onclick = () => $('setKpayQrInput').click();
-$('setWaveQrDrop').onclick = () => $('setWaveQrInput').click();
-$('setKpayQrInput').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
-  try{
-    _setKpayQr = await uploadImageFile(f, 'profile');
-    $('setKpayQrPreview').src = imgUrl(_setKpayQr);
-    $('setKpayQrPreview').classList.remove('hidden');
-    $('setKpayQrEmpty').classList.add('hidden');
-  }catch(err){ toast(err.message, 'error'); }
-});
-$('setWaveQrInput').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
-  try{
-    _setWaveQr = await uploadImageFile(f, 'profile');
-    $('setWaveQrPreview').src = imgUrl(_setWaveQr);
-    $('setWaveQrPreview').classList.remove('hidden');
-    $('setWaveQrEmpty').classList.add('hidden');
-  }catch(err){ toast(err.message, 'error'); }
-});
 $('saveSettingsBtn').onclick = async () => {
   const btn = $('saveSettingsBtn');
   btnLoad(btn, true);
@@ -4041,7 +4122,6 @@ function setupBackButton(){
     history.replaceState({ zionRoot: true }, '', location.pathname + location.search);
     history.pushState({ zionNav: 1 }, '', location.pathname + location.search);
   }catch(_){}
-
   window.addEventListener('popstate', () => {
     if(_backLocked) return;
     _backLocked = true;
@@ -4071,7 +4151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBackButton();
 });
 
-console.log('%c✦ Hnaung (နှောင်း) v7.0', 'color:#f5a623;font-size:18px;font-weight:900');
+console.log('%c✦ Hnaung (နှောင်း) v8.0', 'color:#f5a623;font-size:18px;font-weight:900');
 </script>
 </body>
 </html>
