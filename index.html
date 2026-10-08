@@ -4,16 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0a0f" />
-<title>Zion Social</title>
+<title>Hnaung</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@700;900&family=Padauk:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --gold:#f5a623;--gold-2:#fbbf24;--pink:#ec4899;--violet:#8b5cf6;
   --cyan:#06b6d4;--green:#10b981;--red:#ef4444;
   --radius:16px;--radius-lg:22px;--tab-height:64px;
   --bounce:.4s cubic-bezier(.34,1.56,.64,1);
+  --mm-font:'Padauk','Noto Sans Myanmar','Inter',serif;
 }
 body.theme-dark{
   --bg:#0a0a0f;--bg-2:#0f0f18;--surface:#16161f;--surface-2:#1d1d29;--surface-3:#242433;
@@ -56,21 +57,48 @@ input,textarea,select{font-family:inherit}
 #landing{position:fixed;inset:0;z-index:2000;
   background:radial-gradient(circle at 50% 30%,#1a1520,#0a0a12);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  transition:opacity .8s ease,transform .8s ease;}
+  transition:opacity .8s ease,transform .8s ease;padding:2rem;}
 #landing.fade-out{opacity:0;transform:scale(1.05);pointer-events:none}
-#landing .glow{position:absolute;width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(245,166,35,.3),transparent 65%);
+#landing .glow{position:absolute;width:520px;height:520px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.35),transparent 65%);
   filter:blur(70px);animation:pulseGlow 3.5s ease-in-out infinite;}
 @keyframes pulseGlow{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.2);opacity:1}}
-#landing h1{font-family:'Cinzel',serif;font-size:clamp(3.5rem,15vw,8rem);font-weight:900;letter-spacing:.06em;
+.landing-logo{
+  width:128px;height:128px;border-radius:50%;object-fit:cover;
+  border:4px solid rgba(245,166,35,.5);
+  box-shadow:0 0 0 6px rgba(245,166,35,.12),0 0 40px rgba(245,166,35,.5),0 0 80px rgba(236,72,153,.25);
+  position:relative;z-index:2;animation:logoIn 1.4s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes logoIn{
+  0%{opacity:0;transform:scale(.3) rotate(-180deg)}
+  60%{transform:scale(1.08) rotate(10deg)}
+  100%{opacity:1;transform:scale(1) rotate(0)}
+}
+#landing h1.brand-mm{
+  font-family:var(--mm-font);font-size:clamp(3rem,14vw,6.5rem);font-weight:700;
+  letter-spacing:.02em;line-height:1.15;margin-top:1.4rem;
   background:linear-gradient(135deg,#fff 20%,var(--gold) 50%,var(--pink) 80%);
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   position:relative;z-index:1;filter:drop-shadow(0 0 40px rgba(245,166,35,.4));
-  animation:titleIn 1.2s cubic-bezier(.34,1.56,.64,1);}
+  animation:titleIn 1.2s cubic-bezier(.34,1.56,.64,1);
+}
 @keyframes titleIn{from{opacity:0;transform:translateY(40px) scale(.9)}to{opacity:1;transform:none}}
-#landing .tag{margin-top:.8rem;color:var(--text-2);letter-spacing:.4em;text-transform:uppercase;
-  font-size:.75rem;opacity:0;animation:fadeIn 1s ease .8s forwards;}
-#landing .loader{margin-top:3rem;width:44px;height:44px;position:relative;opacity:0;animation:fadeIn .6s ease 1.2s forwards}
+#landing .brand-en{
+  font-family:'Cinzel',serif;font-size:.85rem;font-weight:700;
+  letter-spacing:.5em;text-transform:uppercase;color:var(--text-3);
+  margin-top:.4rem;opacity:0;animation:fadeIn 1s ease 1s forwards;
+}
+#landing .welcome-title{
+  font-family:var(--mm-font);font-size:1.15rem;font-weight:700;color:var(--gold);
+  margin-top:1.2rem;letter-spacing:.02em;
+  opacity:0;animation:fadeIn 1s ease 1.2s forwards;text-align:center;
+}
+#landing .welcome-sub{
+  font-family:var(--mm-font);font-size:.88rem;color:var(--text-2);
+  margin-top:.5rem;opacity:0;animation:fadeIn 1s ease 1.4s forwards;
+  text-align:center;line-height:1.6;max-width:320px;
+}
+#landing .loader{margin-top:2.5rem;width:44px;height:44px;position:relative;opacity:0;animation:fadeIn .6s ease 1.6s forwards}
 #landing .loader::before,#landing .loader::after{content:'';position:absolute;inset:0;border-radius:50%;
   border:2px solid transparent;border-top-color:var(--gold);animation:spin 1s linear infinite;}
 #landing .loader::after{inset:8px;border-top-color:var(--pink);animation-duration:1.5s;animation-direction:reverse}
@@ -87,10 +115,13 @@ input,textarea,select{font-family:inherit}
   border:1px solid var(--border);border-radius:var(--radius-lg);padding:2.2rem 1.8rem;
   box-shadow:var(--shadow);animation:authIn .6s cubic-bezier(.34,1.56,.64,1);}
 @keyframes authIn{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
-.auth-logo{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:900;text-align:center;
+.auth-logo{display:flex;flex-direction:column;align-items:center;gap:.6rem;margin-bottom:1rem;}
+.auth-logo img{width:76px;height:76px;border-radius:50%;object-fit:cover;
+  border:3px solid rgba(245,166,35,.4);box-shadow:0 0 24px rgba(245,166,35,.35);}
+.auth-logo .brand-mm{font-family:var(--mm-font);font-size:1.9rem;font-weight:700;
   background:linear-gradient(135deg,var(--gold),var(--pink));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem;}
-.auth-sub{text-align:center;color:var(--text-2);font-size:.85rem;margin-bottom:1.6rem}
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.2;}
+.auth-sub{text-align:center;color:var(--text-2);font-size:.85rem;margin-bottom:1.6rem;font-family:var(--mm-font);}
 .auth-tabs{display:flex;background:var(--bg-2);border-radius:12px;padding:4px;
   margin-bottom:1.4rem;border:1px solid var(--border);}
 .auth-tabs button{flex:1;padding:.65rem;border-radius:9px;font-size:.85rem;font-weight:600;
@@ -111,8 +142,7 @@ input,textarea,select{font-family:inherit}
 .auth-btn:active{transform:scale(.99)}
 .auth-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .auth-btn .btn-progress{position:absolute;bottom:0;left:0;height:3px;width:0;
-  background:rgba(0,0,0,.5);border-radius:0 0 12px 12px;pointer-events:none;
-  transition:width .05s linear;}
+  background:rgba(0,0,0,.5);border-radius:0 0 12px 12px;pointer-events:none;transition:width .05s linear;}
 .auth-btn.admin-revealed{background:linear-gradient(135deg,var(--violet),var(--pink));color:#fff}
 .auth-msg{min-height:1.2rem;font-size:.82rem;text-align:center;margin-top:.9rem;color:var(--red)}
 .auth-hint{margin-top:.8rem;text-align:center;font-size:.68rem;color:var(--text-3);
@@ -162,10 +192,7 @@ input,textarea,select{font-family:inherit}
 .upload-progress{display:flex;flex-direction:column;gap:.55rem;width:100%}
 .upload-preview{width:100%;height:150px;border-radius:10px;overflow:hidden;background:#000;
   display:flex;align-items:center;justify-content:center;position:relative;}
-.upload-preview img,.upload-preview video{width:100%;height:100%;object-fit:contain;display:block}
-.upload-preview .video-badge{position:absolute;top:.5rem;left:.5rem;
-  background:rgba(0,0,0,.7);color:#fff;padding:.2rem .55rem;border-radius:8px;
-  font-size:.65rem;font-weight:700;letter-spacing:.05em;backdrop-filter:blur(6px);}
+.upload-preview img{width:100%;height:100%;object-fit:contain;display:block}
 .upload-bar{height:6px;width:100%;background:var(--surface-3);border-radius:100px;overflow:hidden;position:relative;}
 .upload-bar-fill{height:100%;width:0%;border-radius:100px;
   background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
@@ -181,9 +208,16 @@ input,textarea,select{font-family:inherit}
 #app.visible{opacity:1;pointer-events:auto}
 .app-header{flex-shrink:0;height:56px;display:flex;align-items:center;justify-content:space-between;
   padding:0 .4rem;background:var(--bg);border-bottom:1px solid var(--border);position:relative;z-index:10;}
-.app-header .logo{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;
+.brand{display:flex;align-items:center;gap:.5rem;cursor:pointer;padding:.25rem .55rem .25rem .25rem;
+  border-radius:100px;transition:background .2s;}
+.brand:hover{background:var(--surface)}
+.brand-logo-img{width:36px;height:36px;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(245,166,35,.45);box-shadow:0 0 12px rgba(245,166,35,.4);}
+.brand-name{
+  font-family:var(--mm-font);font-weight:700;font-size:1.15rem;line-height:1;
   background:linear-gradient(135deg,var(--gold),var(--pink));
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;cursor:pointer;}
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
 .app-header .actions{display:flex;gap:0;align-items:center}
 .icon-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   color:var(--text);transition:background .25s,transform .15s;position:relative;flex-shrink:0;}
@@ -290,9 +324,6 @@ input,textarea,select{font-family:inherit}
 .post-image::before{content:'';position:absolute;left:0;right:0;bottom:0;height:60px;
   background:linear-gradient(to top,rgba(0,0,0,.35),transparent);
   pointer-events:none;opacity:.7;z-index:1;}
-.post-video{width:100%;max-height:70vh;background:#000;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;}
-.post-video video{width:100%;height:auto;max-height:70vh;display:block;background:#000;}
 .post-body{padding:.7rem .9rem .4rem}
 .post-content{font-size:.9rem;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}
 .post-actions{display:flex;gap:.2rem;padding:.55rem .7rem;
@@ -511,6 +542,11 @@ input,textarea,select{font-family:inherit}
 .file-drop p{font-size:.85rem;color:var(--text-2);font-weight:500}
 .file-drop small{font-size:.7rem;color:var(--text-3)}
 .file-drop img{max-height:140px;margin:.6rem auto;border-radius:10px}
+.file-drop .soon-tag{
+  display:inline-block;margin-top:.5rem;padding:.2rem .6rem;border-radius:100px;
+  background:rgba(245,166,35,.12);color:var(--gold);
+  font-size:.65rem;font-weight:700;letter-spacing:.03em;
+}
 
 /* TOASTS */
 .toast{position:fixed;bottom:calc(var(--tab-height) + 1rem);left:50%;
@@ -522,6 +558,7 @@ input,textarea,select{font-family:inherit}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.success{border-color:rgba(16,185,129,.4);box-shadow:0 8px 30px rgba(16,185,129,.15)}
 .toast.error{border-color:rgba(239,68,68,.4);box-shadow:0 8px 30px rgba(239,68,68,.15)}
+.toast.info{border-color:rgba(245,166,35,.4);box-shadow:0 8px 30px rgba(245,166,35,.15);color:var(--gold)}
 
 /* CONFIRM */
 #confirmDialog{z-index:1100}
@@ -604,9 +641,7 @@ input,textarea,select{font-family:inherit}
 .spinner-xs{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.15);
   border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 
-/* ============================================================
-   MESSENGER — CHAT LIST
-   ============================================================ */
+/* MESSENGER */
 .chat-badge{position:absolute;top:4px;right:4px;min-width:16px;height:16px;
   border-radius:8px;background:var(--pink);color:#fff;font-size:9px;font-weight:700;
   display:none;align-items:center;justify-content:center;padding:0 4px;
@@ -673,32 +708,166 @@ input,textarea,select{font-family:inherit}
 .chat-messages{flex:1;overflow-y:auto;overflow-x:hidden;
   padding:1rem .8rem 1.2rem;position:relative;z-index:1;
   display:flex;flex-direction:column;gap:.35rem;-webkit-overflow-scrolling:touch;}
-.chat-msg{display:flex;align-items:flex-end;gap:.4rem;max-width:80%;
-  animation:msgIn .25s ease;position:relative;}
+
+.chat-msg{
+  display:flex;align-items:flex-end;gap:.4rem;
+  max-width:80%;animation:msgIn .25s ease;position:relative;
+  transition:opacity .3s, max-height .4s;
+}
 @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.chat-msg.mine{align-self:flex-end;flex-direction:row-reverse}
+.chat-msg.mine{align-self:flex-end}
 .chat-msg.theirs{align-self:flex-start}
-.chat-msg .bubble{padding:.55rem .85rem;border-radius:18px;
+.chat-msg .msg-body{display:flex;flex-direction:column;max-width:100%;min-width:0;}
+.chat-msg.mine .msg-body{align-items:flex-end}
+.chat-msg.theirs .msg-body{align-items:flex-start}
+.chat-msg .bubble{
+  padding:.55rem .85rem;border-radius:18px;
   font-size:.9rem;line-height:1.4;color:var(--text);
-  word-break:break-word;white-space:pre-wrap;max-width:100%;position:relative;}
+  word-break:break-word;white-space:pre-wrap;
+  max-width:100%;position:relative;
+  transition:opacity .25s, filter .25s;
+}
 .chat-msg.theirs .bubble{background:var(--surface-2);border-bottom-left-radius:6px;}
-.chat-msg.mine .bubble{background:linear-gradient(135deg,var(--gold),var(--pink));
-  color:#0a0a0f;border-bottom-right-radius:6px;font-weight:500;}
+.chat-msg.mine .bubble{
+  background:linear-gradient(135deg,var(--gold),var(--pink));
+  color:#0a0a0f;border-bottom-right-radius:6px;font-weight:500;
+}
 .chat-msg .bubble.media-bubble{padding:0;overflow:hidden;background:transparent !important;border-radius:14px;}
-.chat-msg .bubble.media-bubble img{width:100%;max-width:280px;max-height:340px;
-  object-fit:cover;border-radius:14px;display:block;cursor:zoom-in;background:var(--surface-2);}
-.chat-msg .bubble.media-bubble .media-caption{padding:.5rem .85rem .6rem;font-size:.85rem;
+.chat-msg .bubble.media-bubble img{
+  width:100%;max-width:280px;max-height:340px;
+  object-fit:cover;border-radius:14px;display:block;cursor:zoom-in;background:var(--surface-2);
+}
+.chat-msg .bubble.media-bubble .media-caption{
+  padding:.5rem .85rem .6rem;font-size:.85rem;
   background:var(--surface-2);color:var(--text);
-  border-radius:0 0 14px 14px;white-space:pre-wrap;word-break:break-word;}
-.chat-msg.mine .bubble.media-bubble .media-caption{background:linear-gradient(135deg,var(--gold),var(--pink));color:#0a0a0f;font-weight:500;}
-.chat-msg .meta-time{font-size:.62rem;color:var(--text-3);flex-shrink:0;padding-bottom:.25rem;opacity:.75;}
-.chat-msg.selected .bubble{outline:2px solid var(--gold);outline-offset:2px;box-shadow:0 0 16px rgba(245,166,35,.4);}
-.chat-msg .select-check{position:absolute;top:-6px;left:-6px;width:22px;height:22px;border-radius:50%;
-  background:var(--gold);color:#0a0a0f;display:none;align-items:center;justify-content:center;
-  font-weight:900;font-size:.75rem;border:2px solid var(--surface);
-  box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:3;}
+  border-radius:0 0 14px 14px;white-space:pre-wrap;word-break:break-word;
+}
+.chat-msg.mine .bubble.media-bubble .media-caption{
+  background:linear-gradient(135deg,var(--gold),var(--pink));color:#0a0a0f;font-weight:500;
+}
+.chat-msg .msg-meta{
+  display:flex;align-items:center;justify-content:flex-end;
+  gap:.35rem;padding:.3rem .35rem 0;width:100%;min-height:14px;
+}
+.chat-msg.theirs .msg-meta{justify-content:flex-start}
+.chat-msg .msg-meta .msg-time{
+  font-size:.62rem;color:var(--text-3);opacity:.75;font-weight:500;
+}
+
+/* SENDING state */
+.chat-msg.pending .bubble{opacity:.82}
+.chat-msg .sending-indicator{
+  display:flex;flex-direction:column;gap:.25rem;width:100%;min-width:130px;align-items:stretch;
+}
+.chat-msg .sending-bar{
+  height:3px;width:100%;background:var(--surface-3);
+  border-radius:100px;overflow:hidden;position:relative;
+}
+.chat-msg .sending-fill{
+  height:100%;width:0%;border-radius:100px;
+  background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
+  background-size:200% 100%;
+  animation:sendingProgress 1.8s ease-in-out infinite, progressShine 1.5s linear infinite;
+  box-shadow:0 0 8px rgba(245,166,35,.55);
+}
+@keyframes sendingProgress{0%{width:8%}35%{width:55%}70%{width:82%}100%{width:95%}}
+.chat-msg .sending-label{
+  font-size:.6rem;color:var(--text-3);font-style:italic;
+  display:inline-flex;align-items:center;gap:.25rem;letter-spacing:.02em;
+}
+.chat-msg .sending-label::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);
+  animation:sendingDot 1s ease-in-out infinite;display:inline-block;
+}
+@keyframes sendingDot{
+  0%,100%{opacity:.35;transform:scale(.8)}
+  50%{opacity:1;transform:scale(1.15)}
+}
+
+/* DELETING state — RED & prominent */
+.chat-msg.deleting .bubble{
+  opacity:.42;
+  filter:grayscale(.5);
+  transition:opacity .3s, filter .3s;
+}
+.chat-msg .deleting-indicator{
+  display:flex;flex-direction:column;gap:.3rem;
+  width:100%;min-width:150px;align-items:stretch;
+  padding:.2rem 0;
+}
+.chat-msg .deleting-bar{
+  height:5px;width:100%;
+  background:rgba(239,68,68,.2);
+  border-radius:100px;overflow:hidden;position:relative;
+  box-shadow:0 0 10px rgba(239,68,68,.25);
+}
+.chat-msg .deleting-fill{
+  height:100%;width:0%;border-radius:100px;
+  background:linear-gradient(90deg,#ef4444,#f87171,#ef4444);
+  background-size:200% 100%;
+  animation:deletingProgress 1.4s ease-in-out infinite, progressShine 1.2s linear infinite;
+  box-shadow:0 0 12px rgba(239,68,68,.8);
+}
+@keyframes deletingProgress{0%{width:10%}45%{width:62%}100%{width:92%}}
+.chat-msg .deleting-label{
+  font-size:.65rem;color:var(--red);font-weight:800;
+  display:inline-flex;align-items:center;gap:.3rem;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.chat-msg .deleting-label::before{
+  content:'';width:7px;height:7px;border-radius:50%;
+  background:var(--red);
+  animation:sendingDot 1s ease-in-out infinite;
+  display:inline-block;
+  box-shadow:0 0 8px var(--red),0 0 14px rgba(239,68,68,.6);
+}
+
+/* Removing animation */
+.chat-msg.removing{
+  animation:msgRemove .45s cubic-bezier(.4,0,.2,1) forwards;
+  pointer-events:none;overflow:hidden;
+}
+@keyframes msgRemove{
+  0%{opacity:1;transform:scale(1);max-height:400px;margin-top:0;margin-bottom:0;}
+  40%{opacity:.6;transform:scale(.94);}
+  100%{opacity:0;transform:scale(.82);max-height:0;margin-top:-.35rem;margin-bottom:0;}
+}
+
+/* FAILED state */
+.chat-msg.failed .bubble{
+  background:rgba(239,68,68,.12) !important;
+  color:var(--text) !important;
+  border:1px solid rgba(239,68,68,.4);
+  font-weight:400;
+}
+.chat-msg.failed .bubble.media-bubble .media-caption{
+  background:rgba(239,68,68,.15) !important;color:var(--text) !important;
+}
+.chat-msg .failed-label{
+  font-size:.62rem;color:var(--red);font-style:normal;font-weight:700;
+  cursor:pointer;display:inline-flex;align-items:center;gap:.25rem;
+  padding:.15rem .45rem;border-radius:100px;background:rgba(239,68,68,.12);
+  transition:background .18s;
+}
+.chat-msg .failed-label:hover{background:rgba(239,68,68,.2)}
+.chat-msg .failed-label:active{transform:scale(.95)}
+
+/* Selection */
+.chat-msg.selected .bubble{
+  outline:2px solid var(--gold);outline-offset:2px;
+  box-shadow:0 0 16px rgba(245,166,35,.4);
+}
+.chat-msg .select-check{
+  position:absolute;top:-6px;left:-6px;width:22px;height:22px;border-radius:50%;
+  background:var(--gold);color:#0a0a0f;
+  display:none;align-items:center;justify-content:center;
+  font-weight:900;font-size:.75rem;
+  border:2px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:3;
+}
 .chat-msg.mine .select-check{left:auto;right:-6px}
 .chat-msg.selected .select-check{display:flex}
+
 .chat-date-sep{align-self:center;margin:.6rem 0;padding:.25rem .8rem;border-radius:100px;
   background:var(--surface-2);color:var(--text-3);font-size:.68rem;font-weight:600;letter-spacing:.03em;}
 .chat-input-bar{position:relative;z-index:2;
@@ -740,9 +909,20 @@ input,textarea,select{font-family:inherit}
 .chat-select-bar .count{flex:1;font-size:.85rem;font-weight:700;color:var(--text-2);}
 .chat-select-bar button{padding:.65rem 1.1rem;border-radius:12px;font-weight:700;font-size:.85rem;transition:all .2s;}
 .chat-select-bar .cancel-btn{background:var(--surface-2);color:var(--text)}
-.chat-select-bar .delete-btn{background:rgba(239,68,68,.16);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.chat-select-bar .delete-btn{
+  background:rgba(239,68,68,.16);color:var(--red);border:1px solid rgba(239,68,68,.3);
+  display:inline-flex;align-items:center;gap:.35rem;
+}
 .chat-select-bar .delete-btn:disabled{opacity:.4}
 .chat-select-bar .delete-btn:active{transform:scale(.96)}
+.chat-select-bar .delete-btn .mini-spin{
+  width:14px;height:14px;border:2px solid rgba(239,68,68,.25);
+  border-top-color:var(--red);border-radius:50%;
+  animation:spin .7s linear infinite;display:none;
+}
+.chat-select-bar.deleting .delete-btn{opacity:1;pointer-events:none}
+.chat-select-bar.deleting .delete-btn .mini-spin{display:inline-block}
+.chat-select-bar.deleting .delete-btn .del-text{display:none}
 .user-picker-item{display:flex;gap:.8rem;align-items:center;
   padding:.75rem .9rem;border-radius:14px;cursor:pointer;transition:background .18s;}
 .user-picker-item:active{background:var(--surface-2)}
@@ -765,7 +945,8 @@ input,textarea,select{font-family:inherit}
 @media (max-width:400px){
   .shop-grid{grid-template-columns:repeat(2,1fr);gap:.6rem}
   .post-image{aspect-ratio:1/1;max-height:60vh}
-  .app-header .logo{font-size:1.15rem}
+  .brand-name{font-size:1rem}
+  .brand-logo-img{width:32px;height:32px}
   .icon-btn{width:36px;height:36px}
   .icon-btn svg{width:19px;height:19px}
 }
@@ -788,16 +969,22 @@ input,textarea,select{font-family:inherit}
 <!-- LANDING -->
 <div id="landing">
   <div class="glow"></div>
-  <h1>ZION</h1>
-  <div class="tag">Social · Coins · Stories</div>
+  <img class="landing-logo" data-brand-logo alt="Logo" src="" />
+  <h1 class="brand-mm" data-brand-mm>နှောင်း</h1>
+  <div class="brand-en" data-brand-en>HNAUNG</div>
+  <div class="welcome-title" data-welcome-title>မင်္ဂလာပါ</div>
+  <div class="welcome-sub" data-welcome-sub>သင့်ရဲ့ လူမှုကွန်ရက်လေးထဲ ပျော်ရွှင်စွာ နေထိုင်ပါ</div>
   <div class="loader"></div>
 </div>
 
 <!-- AUTH -->
 <div id="authScreen" class="hidden">
   <div class="auth-card">
-    <div class="auth-logo">✦ Zion</div>
-    <div class="auth-sub">Welcome to your social space</div>
+    <div class="auth-logo">
+      <img data-brand-logo alt="Logo" src="" />
+      <div class="brand-mm" data-brand-mm>နှောင်း</div>
+    </div>
+    <div class="auth-sub" data-welcome-title>မင်္ဂလာပါ</div>
     <div class="auth-tabs">
       <button class="active" data-authtab="login">Login</button>
       <button data-authtab="register">Register</button>
@@ -870,7 +1057,10 @@ input,textarea,select{font-family:inherit}
     <button class="icon-btn back hidden" id="headerBack">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
-    <div class="logo" id="headerLogo">✦ Zion</div>
+    <button class="brand" id="headerLogo">
+      <img class="brand-logo-img" data-brand-logo alt="Logo" src="" />
+      <span class="brand-name" data-brand-mm>နှောင်း</span>
+    </button>
     <div class="actions">
       <button class="icon-btn" id="chatHeaderBtn" title="Messages">
         <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
@@ -986,7 +1176,10 @@ input,textarea,select{font-family:inherit}
   <div class="chat-select-bar" id="chatSelectBar">
     <div class="count" id="chatSelectCount">0 selected</div>
     <button class="cancel-btn" id="chatSelectCancel">Cancel</button>
-    <button class="delete-btn" id="chatSelectDelete" disabled>🗑️ Delete</button>
+    <button class="delete-btn" id="chatSelectDelete" disabled>
+      <span class="mini-spin"></span>
+      <span class="del-text">🗑️ Delete</span>
+    </button>
   </div>
 </div>
 
@@ -1063,13 +1256,14 @@ input,textarea,select{font-family:inherit}
       <textarea id="postContent" placeholder="Share a short story, poem, or thought..." maxlength="2000"></textarea>
     </div>
     <div class="field">
-      <label>Photo or Video (optional)</label>
+      <label>Photo (optional)</label>
       <div class="file-drop" id="postImgDrop">
         <div class="icon">🖼️</div>
-        <p>Tap to upload a photo or video</p>
-        <small>Max 10MB · Image or Video</small>
+        <p>Tap to upload a photo</p>
+        <small>Max 10MB · JPG / PNG / WebP</small>
+        <div class="soon-tag">🎥 Video coming soon</div>
       </div>
-      <input type="file" class="hidden" id="postImgInput" accept="image/*,video/*" />
+      <input type="file" class="hidden" id="postImgInput" accept="image/*" />
     </div>
     <button class="btn primary btn-block" id="submitPostBtn">Publish Post</button>
   </div>
@@ -1286,8 +1480,16 @@ input,textarea,select{font-family:inherit}
 
 <script>
 /* =====================================================================
-   ZION SOCIAL v5.0 — Full Frontend
+   ⚙️ BRAND CONFIG — Edit these values to customize
    ===================================================================== */
+const CONFIG = {
+  LOGO_URL: 'https://lh3.googleusercontent.com/d/1L9G1HQVRzYhjYsNrgD9kFoQebwlHt8Da=w400',
+  BRAND_MM: 'နှောင်း',
+  BRAND_EN: 'Hnaung',
+  WELCOME_TITLE: 'မင်္ဂလာပါ',
+  WELCOME_SUB: 'သင့်စိတ်ကူးတွေကိုထုတ်ဖော်လိုက်ပါ။'
+};
+
 const API_URL = 'https://script.google.com/macros/s/AKfycbzzvsCOpZozxt-n1Ngk7R6zqCaSzax_waIjE9s7QpfI04NV8IJTCpOtYxfpun9qctIO/exec';
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
@@ -1297,15 +1499,26 @@ const qa = s => document.querySelectorAll(s);
 
 function esc(s){if(s==null)return '';return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function timeAgo(iso){const d=new Date(iso);const diff=(Date.now()-d.getTime())/1000;if(diff<60)return 'just now';if(diff<3600)return Math.floor(diff/60)+'m';if(diff<86400)return Math.floor(diff/3600)+'h';if(diff<604800)return Math.floor(diff/86400)+'d';return d.toLocaleDateString();}
-function imgUrl(u, isVideo){
+function imgUrl(u){
   if(!u) return '';
   const s = String(u).trim();
-  if(isVideo) return s;
   if(s.match(/\.(mp4|webm|mov|m4v|avi|mkv|ogg)(\?|$)/i)) return s;
-  if(s.includes('lh3.googleusercontent.com/d/') && !s.includes('=')){
-    return s + '=w1200';
-  }
+  if(s.includes('lh3.googleusercontent.com/d/') && !s.includes('=')) return s + '=w1200';
   return s;
+}
+
+/* ============ BRANDING ============ */
+function applyBranding(){
+  document.title = CONFIG.BRAND_EN + ' · Social';
+  qa('[data-brand-logo]').forEach(img => {
+    img.src = CONFIG.LOGO_URL;
+    img.alt = CONFIG.BRAND_EN;
+    img.onerror = function(){ this.style.display = 'none'; };
+  });
+  qa('[data-brand-mm]').forEach(el => el.textContent = CONFIG.BRAND_MM);
+  qa('[data-brand-en]').forEach(el => el.textContent = CONFIG.BRAND_EN);
+  qa('[data-welcome-title]').forEach(el => el.textContent = CONFIG.WELCOME_TITLE);
+  qa('[data-welcome-sub]').forEach(el => el.textContent = CONFIG.WELCOME_SUB);
 }
 
 /* ============ PROGRESS ============ */
@@ -1345,7 +1558,6 @@ function toast(msg, type){
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 2600);
 }
 
-/* ============ BTN LOADING ============ */
 function btnLoad(btn, on){
   if(!btn) return;
   if(on){ btn.dataset.oldText = btn.innerHTML; btn.classList.add('loading'); btn.disabled = true; }
@@ -1389,6 +1601,7 @@ const State = {
   onboarding: { step: 1, profileImage: '', displayName: '', bio: '', backgroundImage: '' },
   adminEditingPkgId: null, postUploading: false,
   currentView: 'home',
+  blockedUsers: [],
   chat: {
     conversations: [],
     activeOther: null,
@@ -1397,6 +1610,7 @@ const State = {
     messagesMap: {},
     selectMode: false,
     selectedIds: new Set(),
+    deletingIds: new Set(),   // ✅ robust delete tracking
     pendingImage: null,
     pollTimer: null
   },
@@ -1514,17 +1728,12 @@ async function uploadImageFile(file, kind){
   return uploadMediaWithProgress(file, kind, null);
 }
 function buildUploadProgressHTML(file){
-  const isVideo = file.type.startsWith('video/');
   const objUrl = URL.createObjectURL(file);
   return {
     objUrl,
     html: `
       <div class="upload-progress">
-        <div class="upload-preview">
-          ${isVideo 
-            ? `<video src="${objUrl}" muted preload="metadata" playsinline></video><div class="video-badge">🎥 Video</div>` 
-            : `<img src="${objUrl}" />`}
-        </div>
+        <div class="upload-preview"><img src="${objUrl}" /></div>
         <div class="upload-bar"><div class="upload-bar-fill"></div></div>
         <div class="upload-meta">
           <span>Saving…</span>
@@ -1559,7 +1768,7 @@ function initLanding(){
     setTimeout(() => { l.style.display = 'none'; boot(); }, 700);
   };
   l.addEventListener('click', finish, { once: true });
-  setTimeout(finish, 2200);
+  setTimeout(finish, 3200);
 }
 
 /* ============ BOOT ============ */
@@ -1796,7 +2005,7 @@ async function finishOnboarding(){
   Progress.done();
   $('onboarding').classList.add('hidden');
   enterApp();
-  toast('🎉 Welcome to Zion!', 'success');
+  toast('🎉 ကြိုဆိုပါတယ်!', 'success');
 }
 
 /* ============ ENTER APP ============ */
@@ -1826,6 +2035,10 @@ async function enterApp(){
         State.settings = r.settings || {};
         if(r.unreadChats !== undefined) updateChatBadge(r.unreadChats);
       }
+      try{
+        const bl = await api('getBlockedUsers', { username: State.user.username }, { progress: false });
+        if(bl.success) State.blockedUsers = bl.blocked || [];
+      }catch(_){}
     }
   }catch(err){ toast('Load failed: ' + err.message, 'error'); }
   Progress.done();
@@ -1855,7 +2068,11 @@ function renderSkeletons(){
 /* ============ FEED ============ */
 function renderFeed(){
   const c = $('feedContainer');
-  if(!State.posts.length){
+  const blocked = State.blockedUsers || [];
+  const visiblePosts = (State.posts || []).filter(p =>
+    !blocked.includes(String(p.author).toLowerCase())
+  );
+  if(!visiblePosts.length){
     c.innerHTML = `
       <div class="feed-empty">
         <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 15l4-4 5 5M14 14l3-3 4 4"/><circle cx="8" cy="8" r="1.5"/></svg>
@@ -1863,7 +2080,7 @@ function renderFeed(){
       </div>`;
     return;
   }
-  c.innerHTML = State.posts.map(p => renderPostCard(p)).join('');
+  c.innerHTML = visiblePosts.map(p => renderPostCard(p)).join('');
   bindPostActions($('feedContainer'));
 }
 
@@ -1878,9 +2095,7 @@ function renderPostCard(post){
     ? `style="background-image:url('${esc(imgUrl(a.backgroundImage))}')"`
     : '';
   let mediaHtml = '';
-  if(post.videoUrl && String(post.videoUrl).trim()){
-    mediaHtml = `<div class="post-video"><video src="${esc(post.videoUrl)}" controls playsinline preload="metadata"></video></div>`;
-  } else if(post.imageUrl && String(post.imageUrl).trim()){
+  if(post.imageUrl && String(post.imageUrl).trim()){
     mediaHtml = `<div class="post-image" data-img="${esc(post.imageUrl)}"><img src="${esc(imgUrl(post.imageUrl))}" loading="lazy" referrerpolicy="no-referrer"/></div>`;
   }
   const content = post.content ? `<div class="post-content">${esc(post.content)}</div>` : '';
@@ -1964,7 +2179,7 @@ $('imageViewer').onclick = (e) => { if(e.target.id === 'imageViewer') $('imageVi
 $('viewerSave').onclick = () => {
   const a = document.createElement('a');
   a.href = imgUrl(_viewerUrl);
-  a.download = 'zion-' + Date.now() + '.jpg';
+  a.download = 'hnaung-' + Date.now() + '.jpg';
   a.target = '_blank';
   a.click();
 };
@@ -1985,7 +2200,7 @@ function openPostMenu(postId){
     closeModal('postActionsModal');
     const ok = await confirmDialog({
       icon:'🗑️', title:'Delete this post?',
-      message:'Post and any uploaded photo/video will be permanently removed.',
+      message:'Post and any uploaded photo will be permanently removed.',
       yes:'Delete'
     });
     if(!ok) return;
@@ -2164,7 +2379,7 @@ function renderProfile(){
     $('profileAvatar').innerHTML = `<span style="font-size:2.4rem">👑</span>`;
     $('profileName').textContent = 'Administrator';
     $('profileUsername').textContent = 'zinthu333777@gmail.com';
-    $('profileBio').textContent = 'Full access to Zion management console';
+    $('profileBio').textContent = 'Full access to ' + CONFIG.BRAND_EN + ' management console';
     $('statPosts').textContent = State.posts.length;
     $('statCoins').textContent = '∞';
     $('statJoined').textContent = 'Admin';
@@ -2390,22 +2605,42 @@ $('saveProfileBtn').onclick = async () => {
   btnLoad(btn, false);
 };
 
-/* ============ CREATE POST ============ */
-let _pendingPostMedia = null;
+/* ============ CREATE POST — IMAGE ONLY ============ */
+let _pendingPostImage = '';
 function openCreatePost(){
   $('postContent').value = '';
-  _pendingPostMedia = null;
+  _pendingPostImage = '';
   State.postUploading = false;
   $('postImgDrop').classList.remove('disabled');
-  $('postImgDrop').innerHTML = '<div class="icon">🖼️</div><p>Tap to upload a photo or video</p><small>Max 10MB · Image or Video</small>';
+  $('postImgDrop').innerHTML = `
+    <div class="icon">🖼️</div>
+    <p>Tap to upload a photo</p>
+    <small>Max 10MB · JPG / PNG / WebP</small>
+    <div class="soon-tag">🎥 Video coming soon</div>`;
   $('submitPostBtn').disabled = false;
   openModal('createPostModal');
 }
 $('postImgDrop').onclick = () => $('postImgInput').click();
 $('postImgInput').addEventListener('change', async e => {
   const f = e.target.files[0]; if(!f) return;
-  if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
-  const isVideo = f.type.startsWith('video/');
+
+  // ✅ Reject video — show coming soon
+  if(f.type && f.type.startsWith('video/')){
+    toast('🎥 Video upload coming soon! Please upload an image.', 'info');
+    e.target.value = '';
+    return;
+  }
+  if(!f.type || !f.type.startsWith('image/')){
+    toast('Only image files are allowed', 'error');
+    e.target.value = '';
+    return;
+  }
+  if(f.size > MAX_UPLOAD_BYTES){
+    toast('File too large (max 10MB)', 'error');
+    e.target.value = '';
+    return;
+  }
+
   const drop = $('postImgDrop');
   State.postUploading = true;
   $('submitPostBtn').disabled = true;
@@ -2420,18 +2655,18 @@ $('postImgInput').addEventListener('change', async e => {
       if(pct) pct.textContent = p + '%';
     });
     URL.revokeObjectURL(objUrl);
-    _pendingPostMedia = { type: isVideo ? 'video' : 'image', url: r.url, fileId: r.fileId };
-    if(isVideo){
-      drop.innerHTML = `<div class="upload-preview"><video src="${r.url}" controls muted preload="metadata" playsinline></video><div class="video-badge">🎥 Video ready</div></div>`;
-    } else {
-      drop.innerHTML = `<img src="${imgUrl(r.url)}" />`;
-    }
+    _pendingPostImage = r.url;
+    drop.innerHTML = `<img src="${imgUrl(r.url)}" />`;
     drop.classList.remove('disabled');
     toast('✓ Ready to publish', 'success');
   }catch(err){
     URL.revokeObjectURL(objUrl);
-    _pendingPostMedia = null;
-    drop.innerHTML = '<div class="icon">🖼️</div><p>Tap to retry</p><small>Max 10MB</small>';
+    _pendingPostImage = '';
+    drop.innerHTML = `
+      <div class="icon">🖼️</div>
+      <p>Tap to retry</p>
+      <small>Max 10MB · JPG / PNG / WebP</small>
+      <div class="soon-tag">🎥 Video coming soon</div>`;
     drop.classList.remove('disabled');
     toast(err.message, 'error');
   }finally{
@@ -2443,24 +2678,17 @@ $('postImgInput').addEventListener('change', async e => {
 $('submitPostBtn').onclick = async () => {
   if(State.postUploading){ toast('Please wait for upload...', 'error'); return; }
   const content = $('postContent').value.trim();
-  if(!content && !_pendingPostMedia){ toast('Add text or media', 'error'); return; }
+  if(!content && !_pendingPostImage){ toast('Add text or image', 'error'); return; }
   const btn = $('submitPostBtn');
   btnLoad(btn, true);
   const payload = {
     username: State.user.username,
     content,
-    imageUrl: '', imageFileId: '',
-    videoUrl: '', videoFileId: ''
+    imageUrl: _pendingPostImage,
+    imageFileId: '',
+    videoUrl: '',
+    videoFileId: ''
   };
-  if(_pendingPostMedia){
-    if(_pendingPostMedia.type === 'video'){
-      payload.videoUrl = _pendingPostMedia.url;
-      payload.videoFileId = _pendingPostMedia.fileId;
-    } else {
-      payload.imageUrl = _pendingPostMedia.url;
-      payload.imageFileId = _pendingPostMedia.fileId;
-    }
-  }
   try{
     const r = await api('createPost', payload, { progress: false });
     if(!r.success) throw new Error(r.error);
@@ -2661,18 +2889,14 @@ function updateNotifBadge(){
 }
 
 /* ============================================================
-   MESSENGER — CHAT
+   MESSENGER
    ============================================================ */
 function updateChatBadge(count){
   State.chatUnread = count || 0;
   const b = $('chatHeaderBadge');
   if(!b) return;
-  if(count > 0){
-    b.textContent = count > 99 ? '99+' : count;
-    b.classList.add('show');
-  } else {
-    b.classList.remove('show');
-  }
+  if(count > 0){ b.textContent = count > 99 ? '99+' : count; b.classList.add('show'); }
+  else b.classList.remove('show');
 }
 async function openMessagesView(){
   $('chatList').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
@@ -2736,15 +2960,12 @@ function renderConversations(){
 }
 $('chatSearchInput').addEventListener('input', () => renderConversations());
 
-/* NEW CHAT picker */
 $('newChatBtn').onclick = async () => {
   openModal('newChatModal');
   $('userPickerList').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
   try{
     const r = await api('getAllUsersPublic', { username: State.user.username }, { progress: false });
-    if(r.success){
-      renderUserPicker(r.users || []);
-    }
+    if(r.success) renderUserPicker(r.users || []);
   }catch(err){
     $('userPickerList').innerHTML = `<div style="padding:1rem;color:var(--red);">${esc(err.message)}</div>`;
   }
@@ -2776,10 +2997,7 @@ function renderUserPicker(users){
       </div>`;
   }).join('');
   c.querySelectorAll('[data-username]').forEach(el => {
-    el.onclick = () => {
-      closeModal('newChatModal');
-      openChatWith(el.dataset.username);
-    };
+    el.onclick = () => { closeModal('newChatModal'); openChatWith(el.dataset.username); };
   });
 }
 $('userPickerSearch').addEventListener('input', async () => {
@@ -2787,7 +3005,6 @@ $('userPickerSearch').addEventListener('input', async () => {
   if(r.success) renderUserPicker(r.users || []);
 });
 
-/* OPEN CHAT */
 async function openChatWith(username, userData){
   if(!username) return;
   if(String(username).toLowerCase() === String(State.user.username).toLowerCase()) return;
@@ -2797,6 +3014,7 @@ async function openChatWith(username, userData){
   State.chat.messagesMap = {};
   State.chat.selectMode = false;
   State.chat.selectedIds = new Set();
+  State.chat.deletingIds = new Set();
   State.chat.pendingImage = null;
   const other = State.chat.activeOther;
   const u = State.chat.activeUser
@@ -2851,7 +3069,11 @@ function renderChatMessages(){
       html += `<div class="chat-date-sep">${formatChatDate(d)}</div>`;
     }
     const isMine = String(m.fromUser).toLowerCase() === myUsername;
+    const isPending = !!m._pending;
+    const isFailed = !!m._failed;
+    const isDeleting = State.chat.deletingIds.has(m.id);
     const time = d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+
     let bubbleInner = '';
     if(m.mediaUrl && (m.mediaType === 'image' || !m.mediaType)){
       bubbleInner = `
@@ -2862,14 +3084,45 @@ function renderChatMessages(){
     } else {
       bubbleInner = `<div class="bubble">${esc(m.content)}</div>`;
     }
+
+    let metaContent = '';
+    if(isDeleting){
+      metaContent = `
+        <div class="deleting-indicator">
+          <div class="deleting-bar"><div class="deleting-fill"></div></div>
+          <span class="deleting-label">Deleting…</span>
+        </div>`;
+    } else if(isPending){
+      metaContent = `
+        <div class="sending-indicator">
+          <div class="sending-bar"><div class="sending-fill"></div></div>
+          <span class="sending-label">Sending…</span>
+        </div>`;
+    } else if(isFailed){
+      metaContent = `<span class="failed-label" data-retry="${esc(m.id)}">⚠ Failed · Tap to retry</span>`;
+    } else {
+      metaContent = `<span class="msg-time">${time}</span>`;
+    }
+
+    const cls = [
+      'chat-msg',
+      isMine ? 'mine' : 'theirs',
+      isPending ? 'pending' : '',
+      isFailed ? 'failed' : '',
+      isDeleting ? 'deleting' : ''
+    ].filter(Boolean).join(' ');
+
     html += `
-      <div class="chat-msg ${isMine ? 'mine' : 'theirs'}" data-mid="${esc(m.id)}">
+      <div class="${cls}" data-mid="${esc(m.id)}">
         <div class="select-check">✓</div>
-        ${bubbleInner}
-        <div class="meta-time">${time}</div>
+        <div class="msg-body">
+          ${bubbleInner}
+          <div class="msg-meta">${metaContent}</div>
+        </div>
       </div>`;
   });
   c.innerHTML = html;
+
   c.querySelectorAll('.chat-msg').forEach(el => bindMsgEvents(el));
   c.querySelectorAll('[data-chat-img]').forEach(img => {
     img.onclick = (e) => {
@@ -2877,6 +3130,9 @@ function renderChatMessages(){
       if(State.chat.selectMode){ toggleMsgSelect(img.closest('.chat-msg')); return; }
       openImageViewer(img.dataset.chatImg);
     };
+  });
+  c.querySelectorAll('[data-retry]').forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); retryFailedMessage(btn.dataset.retry); };
   });
   setTimeout(() => { c.scrollTop = c.scrollHeight; }, 30);
 }
@@ -2903,9 +3159,7 @@ function bindMsgEvents(el){
       if(navigator.vibrate) navigator.vibrate(30);
     }, 500);
   };
-  const cancelPress = () => {
-    if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
-  };
+  const cancelPress = () => { if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; } };
   el.addEventListener('mousedown', startPress);
   el.addEventListener('touchstart', startPress, { passive: true });
   el.addEventListener('mouseup', cancelPress);
@@ -2921,17 +3175,22 @@ function bindMsgEvents(el){
   el.addEventListener('click', (e) => {
     if(longPressed) return;
     if(e.target.closest('[data-chat-img]')) return;
-    if(State.chat.selectMode){
-      toggleMsgSelect(el);
-      return;
-    }
+    if(e.target.closest('[data-retry]')) return;
+    if(State.chat.selectMode){ toggleMsgSelect(el); return; }
     const mid = el.dataset.mid;
     const msg = State.chat.messagesMap[mid];
-    if(msg) openMsgActionMenu(msg);
+    if(!msg) return;
+    if(State.chat.deletingIds.has(mid)) return;
+    if(msg._failed){ retryFailedMessage(mid); return; }
+    if(msg._pending) return;
+    openMsgActionMenu(msg);
   });
 }
 let _currentMsg = null;
 function openMsgActionMenu(msg){
+  if(msg._pending) return;
+  if(State.chat.deletingIds.has(msg.id)) return;
+  if(msg._failed){ retryFailedMessage(msg.id); return; }
   _currentMsg = msg;
   const isMine = String(msg.fromUser).toLowerCase() === State.user.username.toLowerCase();
   $('msgCopyAction').style.display = msg.content ? 'flex' : 'none';
@@ -2943,9 +3202,7 @@ function openMsgActionMenu(msg){
 }
 $('msgCopyAction').onclick = () => {
   if(_currentMsg && _currentMsg.content){
-    navigator.clipboard.writeText(_currentMsg.content).then(() => {
-      toast('✓ Copied', 'success');
-    }).catch(() => toast('Copy failed', 'error'));
+    navigator.clipboard.writeText(_currentMsg.content).then(() => toast('✓ Copied', 'success')).catch(() => toast('Copy failed', 'error'));
   }
   closeModal('msgActionModal');
 };
@@ -2957,20 +3214,61 @@ $('msgSelectAction').onclick = () => {
     if(el) toggleMsgSelect(el);
   }
 };
+
+/* ✅ DELETE single message — reliable progress */
 $('msgDeleteAction').onclick = async () => {
   closeModal('msgActionModal');
   if(!_currentMsg) return;
-  const ok = await confirmDialog({ icon:'🗑️', title:'Delete this message?', message:'Media file will be removed too.', yes:'Delete' });
+  const ok = await confirmDialog({
+    icon:'🗑️', title:'Delete this message?',
+    message:'Media file will be removed too.',
+    yes:'Delete'
+  });
   if(!ok) return;
-  try{
-    await api('deleteChatMessage', { id: _currentMsg.id, username: State.user.username }, { progress: false });
-    State.chat.messages = State.chat.messages.filter(m => m.id !== _currentMsg.id);
-    delete State.chat.messagesMap[_currentMsg.id];
+  const id = _currentMsg.id;
+  _currentMsg = null;
+  await deleteMessageWithProgress(id);
+};
+
+async function deleteMessageWithProgress(id){
+  if(State.chat.deletingIds.has(id)) return;
+  const idx = State.chat.messages.findIndex(m => m.id === id);
+  if(idx < 0) return;
+
+  // 1) Mark as deleting → red progress bar appears
+  State.chat.deletingIds.add(id);
+  renderChatMessages();
+
+  // 2) Give the progress bar time to be seen
+  const MIN_SHOW = 900;
+  const startTs = Date.now();
+
+  try {
+    const r = await api('deleteChatMessage', { id, username: State.user.username }, { progress: false });
+    if(!r.success) throw new Error(r.error || 'Delete failed');
+
+    // 3) Ensure minimum visible duration
+    const elapsed = Date.now() - startTs;
+    if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
+
+    // 4) Shrink/fade animation
+    const el = document.querySelector(`.chat-msg[data-mid="${id}"]`);
+    if(el) el.classList.add('removing');
+    await new Promise(res => setTimeout(res, 450));
+
+    // 5) Remove from state
+    State.chat.messages = State.chat.messages.filter(m => m.id !== id);
+    delete State.chat.messagesMap[id];
+    State.chat.deletingIds.delete(id);
     renderChatMessages();
     toast('Deleted', 'success');
-  }catch(err){ toast(err.message, 'error'); }
-  _currentMsg = null;
-};
+  } catch(err) {
+    State.chat.deletingIds.delete(id);
+    renderChatMessages();
+    toast('Delete failed: ' + err.message, 'error');
+  }
+}
+
 function enterSelectMode(){
   State.chat.selectMode = true;
   State.chat.selectedIds = new Set();
@@ -2983,6 +3281,7 @@ function exitSelectMode(){
   State.chat.selectMode = false;
   State.chat.selectedIds = new Set();
   $('chatSelectBar').classList.remove('open');
+  $('chatSelectBar').classList.remove('deleting');
   $('chatInputBar').style.display = 'flex';
   $('chatSelectBadge').classList.add('hidden');
   updateSelectCount();
@@ -2991,6 +3290,9 @@ function exitSelectMode(){
 function toggleMsgSelect(el){
   const mid = el.dataset.mid;
   if(!mid) return;
+  const msg = State.chat.messagesMap[mid];
+  if(msg && (msg._pending || msg._failed)) return;
+  if(State.chat.deletingIds.has(mid)) return;
   if(State.chat.selectedIds.has(mid)){
     State.chat.selectedIds.delete(mid);
     el.classList.remove('selected');
@@ -3009,6 +3311,8 @@ function updateSelectCount(){
   else $('chatSelectBadge').classList.add('hidden');
 }
 $('chatSelectCancel').onclick = () => exitSelectMode();
+
+/* ✅ MULTI DELETE — reliable progress */
 $('chatSelectDelete').onclick = async () => {
   const ids = Array.from(State.chat.selectedIds);
   if(!ids.length) return;
@@ -3019,22 +3323,49 @@ $('chatSelectDelete').onclick = async () => {
     yes:'Delete'
   });
   if(!ok) return;
-  try{
+
+  // Show spinner on the select-bar's delete button
+  $('chatSelectBar').classList.add('deleting');
+
+  // Mark all as deleting → red bars appear
+  ids.forEach(id => State.chat.deletingIds.add(id));
+  renderChatMessages();
+
+  const MIN_SHOW = 950;
+  const startTs = Date.now();
+
+  try {
     const r = await api('deleteSelectedChat', { username: State.user.username, ids }, { progress: false });
-    if(!r.success) throw new Error(r.error);
+    if(!r.success) throw new Error(r.error || 'Delete failed');
+
+    const elapsed = Date.now() - startTs;
+    if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
+
+    ids.forEach(id => {
+      const el = document.querySelector(`.chat-msg[data-mid="${id}"]`);
+      if(el) el.classList.add('removing');
+    });
+    await new Promise(res => setTimeout(res, 480));
+
     const idSet = new Set(ids);
     State.chat.messages = State.chat.messages.filter(m => !idSet.has(m.id));
-    ids.forEach(id => delete State.chat.messagesMap[id]);
+    ids.forEach(id => {
+      delete State.chat.messagesMap[id];
+      State.chat.deletingIds.delete(id);
+    });
     renderChatMessages();
     exitSelectMode();
     toast(`Deleted ${ids.length}`, 'success');
-  }catch(err){ toast(err.message, 'error'); }
+  } catch(err) {
+    ids.forEach(id => State.chat.deletingIds.delete(id));
+    $('chatSelectBar').classList.remove('deleting');
+    renderChatMessages();
+    toast('Delete failed: ' + err.message, 'error');
+  }
 };
+
 $('chatMenuBtn').onclick = () => openModal('chatMenuModal');
-$('chatSelectAction').onclick = () => {
-  closeModal('chatMenuModal');
-  enterSelectMode();
-};
+$('chatSelectAction').onclick = () => { closeModal('chatMenuModal'); enterSelectMode(); };
 $('chatViewProfileAction').onclick = () => {
   closeModal('chatMenuModal');
   const u = State.chat.activeOther;
@@ -3044,6 +3375,8 @@ $('chatViewProfileAction').onclick = () => {
     viewUserProfile(u);
   }
 };
+
+/* ✅ CLEAR CONVERSATION — progress on all */
 $('chatClearAction').onclick = async () => {
   closeModal('chatMenuModal');
   const other = State.chat.activeOther;
@@ -3055,15 +3388,39 @@ $('chatClearAction').onclick = async () => {
     yes:'Clear'
   });
   if(!ok) return;
-  try{
+
+  const allIds = State.chat.messages.map(m => m.id);
+  allIds.forEach(id => State.chat.deletingIds.add(id));
+  renderChatMessages();
+
+  const MIN_SHOW = 950;
+  const startTs = Date.now();
+
+  try {
     const r = await api('deleteConversation', { username: State.user.username, other }, { progress: false });
-    if(!r.success) throw new Error(r.error);
+    if(!r.success) throw new Error(r.error || 'Clear failed');
+
+    const elapsed = Date.now() - startTs;
+    if(elapsed < MIN_SHOW) await new Promise(res => setTimeout(res, MIN_SHOW - elapsed));
+
+    State.chat.messages.forEach(m => {
+      const el = document.querySelector(`.chat-msg[data-mid="${m.id}"]`);
+      if(el) el.classList.add('removing');
+    });
+    await new Promise(res => setTimeout(res, 480));
+
     State.chat.messages = [];
     State.chat.messagesMap = {};
+    State.chat.deletingIds = new Set();
     renderChatMessages();
     toast('Conversation cleared', 'success');
-  }catch(err){ toast(err.message, 'error'); }
+  } catch(err) {
+    State.chat.deletingIds = new Set();
+    renderChatMessages();
+    toast('Clear failed: ' + err.message, 'error');
+  }
 };
+
 $('chatBackBtn').onclick = () => {
   if(State.chat.selectMode){ exitSelectMode(); return; }
   $('chatDetail').classList.remove('open');
@@ -3072,6 +3429,7 @@ $('chatBackBtn').onclick = () => {
   State.chat.activeUser = null;
   State.chat.messages = [];
   State.chat.messagesMap = {};
+  State.chat.deletingIds = new Set();
   if(getCurrentView() === 'messages') openMessagesView();
 };
 $('chatHeaderInfo').onclick = () => {
@@ -3087,48 +3445,120 @@ chatInputEl.addEventListener('input', () => {
   $('chatSendBtn').disabled = !chatInputEl.value.trim() && !State.chat.pendingImage;
 });
 chatInputEl.addEventListener('keydown', (e) => {
-  if(e.key === 'Enter' && !e.shiftKey){
-    e.preventDefault();
-    sendCurrentChat();
-  }
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendCurrentChat(); }
 });
 $('chatSendBtn').onclick = () => sendCurrentChat();
+
 async function sendCurrentChat(){
   const other = State.chat.activeOther;
   if(!other) return;
   const content = chatInputEl.value.trim();
   const pending = State.chat.pendingImage;
   if(!content && !pending) return;
+
   chatInputEl.value = '';
   $('chatSendBtn').disabled = true;
   clearPendingImage();
+
+  const tempId = 'tmp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+  const nowIso = new Date().toISOString();
+  const optimistic = {
+    id: tempId, fromUser: State.user.username, toUser: other, content,
+    mediaUrl: pending ? pending.url : '',
+    mediaFileId: pending ? pending.fileId : '',
+    mediaType: pending ? 'image' : '',
+    createdAt: nowIso, readBy: State.user.username, _pending: true
+  };
+  State.chat.messages.push(optimistic);
+  State.chat.messagesMap[tempId] = optimistic;
+  renderChatMessages();
+  setTimeout(() => { const c = $('chatMessages'); c.scrollTop = c.scrollHeight; }, 60);
+
   try{
     const payload = {
-      username: State.user.username,
-      other,
-      content,
+      username: State.user.username, other, content,
       mediaUrl: pending ? pending.url : '',
       mediaFileId: pending ? pending.fileId : '',
       mediaType: pending ? 'image' : ''
     };
     const r = await api('sendChatMessage', payload, { progress: false });
     if(!r.success) throw new Error(r.error);
-    const m = Object.assign({}, r.message, { fromData: State.user });
-    State.chat.messages.push(m);
-    State.chat.messagesMap[m.id] = m;
+
+    const idx = State.chat.messages.findIndex(m => m.id === tempId);
+    if(idx >= 0){
+      delete State.chat.messagesMap[tempId];
+      const real = Object.assign({}, r.message, { fromData: State.user });
+      State.chat.messages[idx] = real;
+      State.chat.messagesMap[real.id] = real;
+    } else {
+      const real = Object.assign({}, r.message, { fromData: State.user });
+      State.chat.messagesMap[real.id] = real;
+      State.chat.messages.push(real);
+      State.chat.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
     renderChatMessages();
+    setTimeout(() => { const cc = $('chatMessages'); cc.scrollTop = cc.scrollHeight; }, 40);
   }catch(err){
-    toast(err.message, 'error');
-    chatInputEl.value = content;
-    if(pending) State.chat.pendingImage = pending;
-    $('chatSendBtn').disabled = false;
+    const idx = State.chat.messages.findIndex(m => m.id === tempId);
+    if(idx >= 0){
+      State.chat.messages[idx]._pending = false;
+      State.chat.messages[idx]._failed = true;
+      State.chat.messages[idx]._error = err.message;
+    }
+    renderChatMessages();
+    toast('Failed: ' + err.message, 'error');
   }
 }
+
+async function retryFailedMessage(tempId){
+  const msg = State.chat.messagesMap[tempId];
+  if(!msg || !msg._failed) return;
+  const other = State.chat.activeOther;
+  if(!other) return;
+  msg._failed = false;
+  msg._pending = true;
+  delete msg._error;
+  renderChatMessages();
+  try{
+    const payload = {
+      username: State.user.username, other,
+      content: msg.content,
+      mediaUrl: msg.mediaUrl || '',
+      mediaFileId: msg.mediaFileId || '',
+      mediaType: msg.mediaType || ''
+    };
+    const r = await api('sendChatMessage', payload, { progress: false });
+    if(!r.success) throw new Error(r.error);
+    const idx = State.chat.messages.findIndex(m => m.id === tempId);
+    if(idx >= 0){
+      delete State.chat.messagesMap[tempId];
+      const real = Object.assign({}, r.message, { fromData: State.user });
+      State.chat.messages[idx] = real;
+      State.chat.messagesMap[real.id] = real;
+    }
+    renderChatMessages();
+    toast('✓ Sent', 'success');
+  }catch(err){
+    const idx = State.chat.messages.findIndex(m => m.id === tempId);
+    if(idx >= 0){
+      State.chat.messages[idx]._pending = false;
+      State.chat.messages[idx]._failed = true;
+      State.chat.messages[idx]._error = err.message;
+    }
+    renderChatMessages();
+    toast('Failed: ' + err.message, 'error');
+  }
+}
+
 $('chatAttachBtn').onclick = () => $('chatImageInput').click();
 $('chatImageInput').addEventListener('change', async e => {
   const f = e.target.files[0]; if(!f) return;
   if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
-  if(!f.type.startsWith('image/')){ toast('Only images allowed', 'error'); e.target.value=''; return; }
+  if(!f.type || !f.type.startsWith('image/')){
+    toast('Only images allowed', 'error');
+    e.target.value = '';
+    return;
+  }
   const bar = $('chatInputBar');
   const existing = bar.querySelector('.chat-attach-preview');
   if(existing) existing.remove();
@@ -3156,9 +3586,7 @@ $('chatImageInput').addEventListener('change', async e => {
     });
     preview.innerHTML = `
       <img src="${imgUrl(r.url)}" />
-      <div class="upload-info">
-        <div class="label" style="color:var(--green)">✓ Ready to send</div>
-      </div>
+      <div class="upload-info"><div class="label" style="color:var(--green)">✓ Ready to send</div></div>
       <button class="remove" type="button">✕</button>`;
     preview.querySelector('.remove').onclick = () => {
       preview.remove();
@@ -3196,7 +3624,15 @@ function startChatPolling(){
       if(!r.success) return;
       const serverMsgs = r.messages || [];
       const existing = new Set(State.chat.messages.map(m => m.id));
-      const fresh = serverMsgs.filter(m => !existing.has(m.id));
+      let fresh = serverMsgs.filter(m => !existing.has(m.id));
+      fresh = fresh.filter(m => {
+        return !State.chat.messages.some(local =>
+          (local._pending || local._failed) &&
+          String(local.fromUser).toLowerCase() === String(m.fromUser).toLowerCase() &&
+          local.content === m.content &&
+          (local.mediaUrl || '') === (m.mediaUrl || '')
+        );
+      });
       if(fresh.length){
         fresh.forEach(m => {
           State.chat.messages.push(m);
@@ -3211,17 +3647,14 @@ function startChatPolling(){
   }, 6000);
 }
 function stopChatPolling(){
-  if(State.chat.pollTimer){
-    clearInterval(State.chat.pollTimer);
-    State.chat.pollTimer = null;
-  }
+  if(State.chat.pollTimer){ clearInterval(State.chat.pollTimer); State.chat.pollTimer = null; }
 }
 $('chatHeaderBtn').onclick = () => {
   if(State.currentView === 'messages') switchView('home');
   else switchView('messages');
 };
 
-/* ============ REFRESH BUTTON ============ */
+/* ============ REFRESH ============ */
 $('refreshBtn').onclick = async () => {
   const btn = $('refreshBtn');
   btn.classList.add('spin');
@@ -3249,7 +3682,6 @@ $('refreshBtn').onclick = async () => {
     }
   }catch(err){ toast('Refresh failed: ' + err.message, 'error'); }
   Progress.done();
-  // Re-render current view
   const view = State.currentView;
   if(view === 'home'){ renderFeed(); renderStories(); }
   else if(view === 'explore') renderExplore();
@@ -3257,13 +3689,8 @@ $('refreshBtn').onclick = async () => {
   else if(view === 'profile') renderProfile();
   else if(view === 'shop') renderShop();
   else if(view === 'messages') openMessagesView();
-  if(State.isAdmin && $('adminPanelModal').classList.contains('open')){
-    await adminLoadAll();
-  }
-  setTimeout(() => {
-    btn.classList.remove('spin');
-    toast('✓ Refreshed', 'success');
-  }, 500);
+  if(State.isAdmin && $('adminPanelModal').classList.contains('open')) await adminLoadAll();
+  setTimeout(() => { btn.classList.remove('spin'); toast('✓ Refreshed', 'success'); }, 500);
 };
 
 /* ============ TAB BAR ============ */
@@ -3271,17 +3698,12 @@ function setupTabBar(){
   qa('.tab-bar button').forEach(b => b.onclick = () => {
     const v = b.dataset.view;
     if(v === 'create'){ openCreatePost(); return; }
-    if(State.currentView === v && v === 'messages'){
-      // Already on messages - refresh
-      openMessagesView();
-      return;
-    }
+    if(State.currentView === v && v === 'messages'){ openMessagesView(); return; }
     switchView(v);
   });
 }
 function getCurrentView(){ return State.currentView; }
 function switchView(view, opts = {}){
-  if(view === State.currentView && !opts.force){ /* still allow refresh */ }
   State.currentView = view;
   qa('.tab-bar button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   qa('.app-view').forEach(s => s.classList.add('hidden'));
@@ -3306,7 +3728,7 @@ function setupMenu(){
     closeModal('menuModal');
     const ok = await confirmDialog({
       icon:'👋', title:'Are you sure?',
-      message:'Do you want to log out of Zion?',
+      message:'Do you want to log out?',
       yes:'Yes, Log out', no:'Cancel'
     });
     if(ok) doLogout();
@@ -3574,24 +3996,21 @@ $('bcSendBtn').onclick = async () => {
 };
 
 /* ============================================================
-   BACK BUTTON HANDLING
+   BACK BUTTON
    ============================================================ */
 let _exitIntentTime = 0;
 let _backLocked = false;
 
 function _handleBackPress(){
-  // 1. Image viewer
   if($('imageViewer').classList.contains('open')){
     $('imageViewer').classList.remove('open');
     return true;
   }
-  // 2. Any modal (except confirm)
   const openModals = Array.from(document.querySelectorAll('.modal.open')).filter(m => m.id !== 'confirmDialog');
   if(openModals.length){
     openModals[openModals.length - 1].classList.remove('open');
     return true;
   }
-  // 3. Chat detail open?
   if($('chatDetail').classList.contains('open')){
     if(State.chat.selectMode){ exitSelectMode(); return true; }
     $('chatDetail').classList.remove('open');
@@ -3600,16 +4019,15 @@ function _handleBackPress(){
     State.chat.activeUser = null;
     State.chat.messages = [];
     State.chat.messagesMap = {};
+    State.chat.deletingIds = new Set();
     if(getCurrentView() === 'messages') openMessagesView();
     return true;
   }
-  // 4. Viewing another user profile?
   if(State.viewingUser){
     renderProfile();
     switchView('profile');
     return true;
   }
-  // 5. Not home? go home
   const cur = getCurrentView();
   if(cur && cur !== 'home'){
     switchView('home');
@@ -3629,13 +4047,10 @@ function setupBackButton(){
     _backLocked = true;
     const handled = _handleBackPress();
     if(handled){
-      // Something closed - push a state to keep stack
       try{ history.pushState({ zionNav: Date.now() }, '', location.pathname + location.search); }catch(_){}
     } else {
-      // At root level
       const now = Date.now();
       if(now - _exitIntentTime < 2000){
-        // Second press within 2s - allow exit
         try{ history.back(); }catch(_){}
       } else {
         _exitIntentTime = now;
@@ -3649,13 +4064,14 @@ function setupBackButton(){
 
 /* ============ INIT ============ */
 document.addEventListener('DOMContentLoaded', () => {
+  applyBranding();
   Progress.init();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   initLanding();
   setupBackButton();
 });
 
-console.log('%c✦ Zion Social v5.0', 'color:#f5a623;font-size:18px;font-weight:900');
+console.log('%c✦ Hnaung (နှောင်း) v7.0', 'color:#f5a623;font-size:18px;font-weight:900');
 </script>
 </body>
 </html>
