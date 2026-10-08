@@ -328,7 +328,7 @@ input,textarea,select{font-family:inherit}
   background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
   opacity:.75;z-index:1;}
 
-/* POST TITLE — beautiful gradient heading */
+/* POST TITLE */
 .post-title{
   font-family:var(--mm-font);
   font-size:1.22rem;
@@ -370,7 +370,113 @@ input,textarea,select{font-family:inherit}
 .post-image:hover::after{opacity:1;transform:scale(1.05)}
 
 .post-body{padding:.9rem 1rem .5rem}
-.post-content{font-size:.94rem;line-height:1.6;color:var(--text);white-space:pre-wrap;word-break:break-word;font-family:var(--mm-font);}
+
+/* ============================================================
+   ✦ POST CONTENT — Collapsible with Motion Blur
+   ============================================================ */
+.post-content{
+  font-size:.94rem;
+  line-height:1.6;
+  color:var(--text);
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-family:var(--mm-font);
+  position:relative;
+  overflow:hidden;
+  transition:max-height .85s cubic-bezier(.22,1,.36,1);
+  will-change:max-height, filter;
+  transform-origin:top center;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.post-content.collapsed{
+  max-height:150px;
+}
+.post-content.collapsed::after{
+  content:'';
+  position:absolute;left:0;right:0;bottom:-1px;height:100px;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 0%,var(--surface) 92%);
+  pointer-events:none;
+  transition:opacity .5s ease;
+  z-index:1;
+}
+.post-content.expanded::after{
+  opacity:0;
+  pointer-events:none;
+}
+.post-content.motion-blur{
+  animation:motionBlurReveal .85s cubic-bezier(.22,1,.36,1);
+}
+@keyframes motionBlurReveal{
+  0%{
+    filter:blur(0px) saturate(1);
+    transform:translateY(-5px) scale(1);
+    opacity:.85;
+  }
+  15%{
+    filter:blur(6px) saturate(.8);
+    transform:translateY(-2px) scale(1.008);
+    opacity:.92;
+  }
+  40%{
+    filter:blur(3.2px) saturate(.92);
+    transform:translateY(-.5px) scale(1.004);
+    opacity:.97;
+  }
+  70%{
+    filter:blur(1.2px) saturate(1);
+    transform:translateY(0) scale(1.001);
+    opacity:1;
+  }
+  100%{
+    filter:blur(0px) saturate(1);
+    transform:translateY(0) scale(1);
+    opacity:1;
+  }
+}
+
+.post-readmore{
+  display:inline-flex;
+  align-items:center;
+  gap:.38rem;
+  margin-top:.6rem;
+  padding:.42rem .95rem .42rem .9rem;
+  border-radius:100px;
+  font-family:var(--mm-font);
+  font-size:.78rem;
+  font-weight:700;
+  letter-spacing:.01em;
+  color:var(--gold);
+  background:linear-gradient(135deg,rgba(245,166,35,.14),rgba(236,72,153,.1));
+  border:1px solid rgba(245,166,35,.28);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),
+             background .3s ease,
+             border-color .3s ease,
+             box-shadow .3s ease;
+}
+.post-readmore:hover{
+  background:linear-gradient(135deg,rgba(245,166,35,.24),rgba(236,72,153,.16));
+  border-color:rgba(245,166,35,.5);
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(245,166,35,.18);
+}
+.post-readmore:active{transform:scale(.94);}
+.post-readmore svg{
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+  transition:transform .55s cubic-bezier(.34,1.56,.64,1);
+}
+.post-readmore.expanded svg{transform:rotate(180deg);}
+.post-readmore .rm-label{
+  display:inline-block;
+  transition:opacity .35s ease, transform .35s ease;
+}
 
 .post-actions{display:flex;gap:.2rem;padding:.55rem .7rem .7rem;
   border-top:1px solid var(--border);margin-top:.6rem;}
@@ -387,7 +493,7 @@ input,textarea,select{font-family:inherit}
 .feed-empty svg{width:60px;height:60px;stroke-width:1.2;fill:none;stroke:currentColor;margin-bottom:1rem;opacity:.4}
 .feed-empty h3{color:var(--text-2);font-weight:600;margin-bottom:.4rem}
 
-/* ✦ POST DIVIDER — pretty separator between posts */
+/* ✦ POST DIVIDER */
 .post-divider{
   display:flex;
   align-items:center;
@@ -418,7 +524,7 @@ input,textarea,select{font-family:inherit}
   50%{transform:scale(1.15) rotate(180deg);opacity:1}
 }
 
-/* EXPLORE — Users grid */
+/* EXPLORE */
 .explore-users-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -1636,6 +1742,11 @@ const CONFIG = {
 const API_URL = 'https://script.google.com/macros/s/AKfycbzYyasOsvKmvbtn-d77naFwtpfJPcmOXfPMGzYEdsPHG4ZbBkauMXhDcrW6j0zlesms/exec';
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
+/* ✅ Post collapse config */
+const POST_COLLAPSE_HEIGHT = 150;      // collapsed max-height in px
+const POST_COLLAPSE_MIN_CHARS = 180;    // only consider collapsing if content >= this many chars
+const POST_COLLAPSE_THRESHOLD = 190;    // actual measured px threshold
+
 const $ = id => document.getElementById(id);
 const q = s => document.querySelector(s);
 const qa = s => document.querySelectorAll(s);
@@ -1750,9 +1861,9 @@ const State = {
     messages: [], messagesMap: {}, selectMode: false,
     selectedIds: new Set(), deletingIds: new Set(),
     pendingImage: null, pollTimer: null,
-    messagesCache: {},       // ✅ per-user message cache
-    cacheTtl: {},            // ✅ timestamp map
-    idleTick: 0              // ✅ idle poll counter
+    messagesCache: {},
+    cacheTtl: {},
+    idleTick: 0
   },
   chatUnread: 0
 };
@@ -2317,7 +2428,6 @@ function renderFeed(){
       </div>`;
     return;
   }
-  // ✅ Insert pretty ✦ divider between posts
   c.innerHTML = visiblePosts.map((p, i) => {
     const card = renderPostCard(p);
     return i < visiblePosts.length - 1
@@ -2325,6 +2435,7 @@ function renderFeed(){
       : card;
   }).join('');
   bindPostActions($('feedContainer'));
+  applyPostCollapse($('feedContainer'));
 }
 
 function renderPostCard(post){
@@ -2338,7 +2449,6 @@ function renderPostCard(post){
     ? `style="background-image:url('${esc(imgUrl(a.backgroundImage))}')"`
     : '';
 
-  // ✅ Title (gradient heading) + Body (pre-wrapped text)
   const titleHtml = post.title && String(post.title).trim()
     ? `<h3 class="post-title">${esc(post.title)}</h3>`
     : '';
@@ -2349,7 +2459,6 @@ function renderPostCard(post){
     ? `<div class="post-body">${titleHtml}${bodyHtml}</div>`
     : '';
 
-  // Backward compat: still show image if post has one
   let mediaHtml = '';
   if(post.imageUrl && String(post.imageUrl).trim()){
     mediaHtml = `<div class="post-image" data-img="${esc(post.imageUrl)}"><img src="${esc(imgUrl(post.imageUrl))}" loading="lazy" referrerpolicy="no-referrer"/></div>`;
@@ -2396,6 +2505,102 @@ function bindPostActions(container){
     e.stopPropagation();
     viewUserProfile(el.dataset.userprofile);
   });
+}
+
+/* ============================================================
+   ✦ POST COLLAPSE / EXPAND — Motion Blur
+   ============================================================ */
+function applyPostCollapse(container){
+  if(!container) return;
+  container.querySelectorAll('.post-content').forEach(el => {
+    // Reset
+    el.classList.remove('collapsed','expanded','motion-blur');
+    el.style.maxHeight = '';
+    const oldBtn = el.parentElement.querySelector('.post-readmore');
+    if(oldBtn) oldBtn.remove();
+
+    // Skip if content is clearly short
+    const txt = el.textContent || '';
+    if(txt.length < POST_COLLAPSE_MIN_CHARS) return;
+
+    // Measure full height (element has no max-height right now)
+    const fullH = el.scrollHeight;
+    if(fullH > POST_COLLAPSE_THRESHOLD){
+      el.classList.add('collapsed');
+      addReadMoreButton(el);
+    }
+  });
+}
+
+function addReadMoreButton(el){
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'post-readmore';
+  btn.innerHTML = `
+    <span class="rm-label">ဆက်ဖတ်ရန်</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+         stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>`;
+  // Insert after .post-content
+  if(el.nextSibling){
+    el.parentElement.insertBefore(btn, el.nextSibling);
+  } else {
+    el.parentElement.appendChild(btn);
+  }
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    togglePostContent(el, btn);
+  });
+}
+
+function togglePostContent(el, btn){
+  const isCollapsed = el.classList.contains('collapsed');
+  const labelEl = btn.querySelector('.rm-label');
+
+  if(isCollapsed){
+    /* ===== EXPAND ===== */
+    // Measure true content height (temporarily remove constraint)
+    const prevInline = el.style.maxHeight;
+    el.style.maxHeight = 'none';
+    const fullH = el.scrollHeight;
+    // Reset to collapsed height so browser knows where to start
+    el.style.maxHeight = POST_COLLAPSE_HEIGHT + 'px';
+    // Force reflow so browser registers the starting value
+    void el.offsetHeight;
+
+    // Trigger transition
+    el.classList.remove('collapsed');
+    el.classList.add('expanded','motion-blur');
+    el.style.maxHeight = fullH + 'px';
+
+    btn.classList.add('expanded');
+    if(labelEl) labelEl.textContent = 'လျှော့ပြရန်';
+
+    // Cleanup after transition
+    setTimeout(() => {
+      el.classList.remove('motion-blur');
+      if(el.classList.contains('expanded')){
+        el.style.maxHeight = 'none';
+      }
+    }, 850);
+  } else {
+    /* ===== COLLAPSE ===== */
+    const fullH = el.scrollHeight;
+    el.style.maxHeight = fullH + 'px';
+    void el.offsetHeight;
+
+    el.classList.remove('expanded');
+    el.classList.add('collapsed','motion-blur');
+    el.style.maxHeight = POST_COLLAPSE_HEIGHT + 'px';
+
+    btn.classList.remove('expanded');
+    if(labelEl) labelEl.textContent = 'ဆက်ဖတ်ရန်';
+
+    setTimeout(() => {
+      el.classList.remove('motion-blur');
+    }, 850);
+  }
 }
 
 /* ============ LIKE ============ */
@@ -2603,7 +2808,7 @@ function renderStories(){
   row.querySelectorAll('[data-userprofile]').forEach(el => el.onclick = () => viewUserProfile(el.dataset.userprofile));
 }
 
-/* ============ EXPLORE (Now shows USERS) ============ */
+/* ============ EXPLORE ============ */
 async function renderExplore(){
   const g = $('exploreGrid');
   g.className = 'explore-users-grid';
@@ -2705,6 +2910,7 @@ function renderMyPosts(){
       : card;
   }).join('');
   bindPostActions($('profilePosts'));
+  applyPostCollapse($('profilePosts'));
 }
 async function loadMyPurchases(){
   $('tabPurchases').classList.add('active');
@@ -2795,6 +3001,7 @@ function renderViewingUserPosts(){
       : card;
   }).join('');
   bindPostActions($('profilePosts'));
+  applyPostCollapse($('profilePosts'));
 }
 $('headerBack').onclick = () => {
   renderProfile();
@@ -2887,7 +3094,7 @@ $('saveProfileBtn').onclick = async () => {
   btnLoad(btn, false);
 };
 
-/* ============ CREATE POST (Title + Body — no image) ============ */
+/* ============ CREATE POST ============ */
 function openCreatePost(){
   $('postTitle').value = '';
   $('postContent').value = '';
@@ -3117,7 +3324,6 @@ function updateChatBadge(count){
   else b.classList.remove('show');
 }
 async function openMessagesView(){
-  // ✅ If we have cached conversations, show them instantly
   if(State.chat.conversations.length){
     renderConversations();
   } else {
@@ -3250,7 +3456,6 @@ async function openChatWith(username, userData){
   document.body.style.overflow = 'hidden';
   exitSelectMode();
 
-  // ✅ Instant render from cache
   const cached = State.chat.messagesCache[other];
   if(cached && cached.length){
     State.chat.messages = cached.slice();
@@ -3266,7 +3471,6 @@ async function openChatWith(username, userData){
       State.chat.messages = r.messages || [];
       State.chat.messagesMap = {};
       State.chat.messages.forEach(m => State.chat.messagesMap[m.id] = m);
-      // ✅ Update cache
       State.chat.messagesCache[other] = State.chat.messages.slice();
       State.chat.cacheTtl[other] = Date.now();
       renderChatMessages();
@@ -3488,7 +3692,6 @@ async function deleteMessageWithProgress(id){
     State.chat.messages = State.chat.messages.filter(m => m.id !== id);
     delete State.chat.messagesMap[id];
     State.chat.deletingIds.delete(id);
-    // ✅ Update cache
     if(State.chat.activeOther) State.chat.messagesCache[State.chat.activeOther] = State.chat.messages.slice();
     renderChatMessages();
     toast('Deleted', 'success');
@@ -3820,14 +4023,12 @@ async function refreshChatUnread(){
     if(r.success) updateChatBadge(r.count);
   }catch(_){}
 }
-/* ✅ Smarter polling: 10s interval; idle ticks refresh badge every 20s */
 function startChatPolling(){
   stopChatPolling();
   State.chat.pollTimer = setInterval(async () => {
     if(document.hidden) return;
     if(!State.chat.activeOther){
       State.chat.idleTick = (State.chat.idleTick || 0) + 1;
-      // Refresh badge every other tick (≈20s)
       if(State.chat.idleTick % 2 === 0) refreshChatUnread();
       return;
     }
@@ -4278,7 +4479,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBackButton();
 });
 
-console.log('%c✦ Hnaung (နှောင်း) v8.1 — Title+Body, Faster Chat, User Explore', 'color:#f5a623;font-size:18px;font-weight:900');
+console.log('%c✦ Hnaung (နှောင်း) v8.2 — Motion-blur Read More', 'color:#f5a623;font-size:18px;font-weight:900');
 </script>
 </body>
 </html>
