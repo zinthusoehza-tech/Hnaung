@@ -202,7 +202,7 @@ input,textarea,select{font-family:inherit}
   font-size:.75rem;font-weight:600;color:var(--text-2);}
 .upload-meta .pct{color:var(--gold);font-variant-numeric:tabular-nums}
 
-/* ===== ADMIN UPLOAD ZONE ENHANCEMENTS ===== */
+/* ADMIN UPLOAD ZONE */
 .admin-img-drop{position:relative;padding:0;overflow:hidden;}
 .admin-img-drop .drop-inner{padding:1.2rem;text-align:center;}
 .admin-img-drop .preview-img{width:100%;max-height:180px;object-fit:contain;border-radius:12px;display:block;background:#0a0a0f;}
@@ -297,8 +297,8 @@ input,textarea,select{font-family:inherit}
 .story .name{font-size:.68rem;color:var(--text-2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* POST CARD */
-.post-card{background:var(--surface);border-bottom:1px solid var(--border);
-  margin-bottom:.5rem;animation:postIn .35s ease;overflow:hidden;}
+.post-card{background:var(--surface);
+  margin-bottom:0;animation:postIn .35s ease;overflow:hidden;}
 @keyframes postIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .post-head{position:relative;display:flex;align-items:center;gap:.7rem;
   padding:.7rem .9rem;min-height:62px;
@@ -327,6 +327,33 @@ input,textarea,select{font-family:inherit}
 .post-head.has-banner::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
   background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
   opacity:.75;z-index:1;}
+
+/* POST TITLE — beautiful gradient heading */
+.post-title{
+  font-family:var(--mm-font);
+  font-size:1.22rem;
+  font-weight:800;
+  line-height:1.35;
+  letter-spacing:.01em;
+  margin-bottom:.55rem;
+  padding-bottom:.55rem;
+  position:relative;
+  background:linear-gradient(135deg,var(--text) 0%,var(--gold) 70%,var(--pink) 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  word-break:break-word;
+}
+.post-title::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:46px;
+  height:2.5px;
+  border-radius:2px;
+  background:linear-gradient(90deg,var(--gold),var(--pink));
+  box-shadow:0 0 10px rgba(245,166,35,.55);
+}
+
 .post-image{width:100%;aspect-ratio:4/5;max-height:520px;
   background:linear-gradient(135deg,var(--surface-2),var(--surface-3));
   overflow:hidden;position:relative;cursor:zoom-in;}
@@ -341,13 +368,12 @@ input,textarea,select{font-family:inherit}
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   border:1px solid rgba(255,255,255,.15);z-index:2;}
 .post-image:hover::after{opacity:1;transform:scale(1.05)}
-.post-image::before{content:'';position:absolute;left:0;right:0;bottom:0;height:60px;
-  background:linear-gradient(to top,rgba(0,0,0,.35),transparent);
-  pointer-events:none;opacity:.7;z-index:1;}
-.post-body{padding:.7rem .9rem .4rem}
-.post-content{font-size:.9rem;line-height:1.5;color:var(--text);white-space:pre-wrap;word-break:break-word}
-.post-actions{display:flex;gap:.2rem;padding:.55rem .7rem;
-  border-top:1px solid var(--border);margin-top:.5rem;}
+
+.post-body{padding:.9rem 1rem .5rem}
+.post-content{font-size:.94rem;line-height:1.6;color:var(--text);white-space:pre-wrap;word-break:break-word;font-family:var(--mm-font);}
+
+.post-actions{display:flex;gap:.2rem;padding:.55rem .7rem .7rem;
+  border-top:1px solid var(--border);margin-top:.6rem;}
 .post-actions button{display:flex;align-items:center;gap:.35rem;padding:.4rem .7rem;
   border-radius:10px;color:var(--text-2);font-size:.78rem;font-weight:500;transition:all .2s;}
 .post-actions button:hover{background:var(--surface-2);color:var(--text)}
@@ -361,13 +387,105 @@ input,textarea,select{font-family:inherit}
 .feed-empty svg{width:60px;height:60px;stroke-width:1.2;fill:none;stroke:currentColor;margin-bottom:1rem;opacity:.4}
 .feed-empty h3{color:var(--text-2);font-weight:600;margin-bottom:.4rem}
 
-/* EXPLORE */
-.explore-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;padding:2px;}
-.explore-item{aspect-ratio:1;background:var(--surface);overflow:hidden;position:relative;
-  cursor:pointer;transition:transform .2s;}
-.explore-item img{width:100%;height:100%;object-fit:cover}
-.explore-item:active{transform:scale(.96)}
-.explore-empty{text-align:center;padding:4rem 1.5rem;color:var(--text-3);grid-column:1/-1}
+/* ✦ POST DIVIDER — pretty separator between posts */
+.post-divider{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.75rem;
+  padding:1rem 1.5rem;
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.post-divider::before,
+.post-divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border-2) 40%,var(--border-2) 60%,transparent);
+}
+.post-divider .ornament{
+  font-size:.85rem;
+  line-height:1;
+  background:linear-gradient(135deg,var(--gold),var(--pink));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 8px rgba(245,166,35,.55));
+  animation:ornamentPulse 3s ease-in-out infinite;
+}
+@keyframes ornamentPulse{
+  0%,100%{transform:scale(1) rotate(0deg);opacity:.85}
+  50%{transform:scale(1.15) rotate(180deg);opacity:1}
+}
+
+/* EXPLORE — Users grid */
+.explore-users-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:.85rem;
+  padding:1rem;
+}
+.explore-user-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:1.2rem .9rem 1rem;
+  text-align:center;
+  cursor:pointer;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .25s,box-shadow .25s;
+  position:relative;
+  overflow:hidden;
+}
+.explore-user-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
+  opacity:.75;
+}
+.explore-user-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(245,166,35,.35);
+  box-shadow:0 12px 32px rgba(245,166,35,.12);
+}
+.explore-user-card:active{transform:scale(.97)}
+.explore-user-card .av{
+  width:76px;height:76px;
+  border-radius:50%;
+  margin:0 auto .7rem;
+  overflow:hidden;
+  background:linear-gradient(135deg,var(--gold),var(--pink));
+  display:flex;align-items:center;justify-content:center;
+  color:#000;font-weight:800;font-size:1.7rem;
+  border:3px solid var(--surface);
+  box-shadow:0 6px 20px rgba(245,166,35,.28),0 0 0 2px var(--border);
+}
+.explore-user-card .av img{width:100%;height:100%;object-fit:cover}
+.explore-user-card .nm{
+  font-weight:700;font-size:.9rem;margin-bottom:.15rem;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--text);
+}
+.explore-user-card .un{
+  font-size:.72rem;color:var(--text-3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  margin-bottom:.55rem;
+}
+.explore-user-card .coins{
+  display:inline-flex;align-items:center;gap:.25rem;
+  padding:.22rem .65rem;
+  border-radius:100px;
+  background:linear-gradient(135deg,rgba(245,166,35,.16),rgba(236,72,153,.1));
+  border:1px solid rgba(245,166,35,.22);
+  color:var(--gold);
+  font-size:.68rem;
+  font-weight:700;
+}
+.explore-empty{
+  text-align:center;padding:4rem 1.5rem;color:var(--text-3);
+  grid-column:1/-1;font-size:.9rem;
+}
 
 /* PROFILE */
 .profile-header{position:relative}
@@ -508,6 +626,18 @@ input,textarea,select{font-family:inherit}
 .field input:focus,.field textarea:focus,.field select:focus{
   border-color:var(--gold);box-shadow:0 0 0 4px rgba(245,166,35,.12);}
 .field textarea{resize:vertical;min-height:80px}
+.field input.post-title-input{
+  font-family:var(--mm-font);
+  font-size:1.05rem;
+  font-weight:700;
+  padding:.85rem 1rem;
+}
+.field textarea.post-body-input{
+  font-family:var(--mm-font);
+  font-size:.95rem;
+  line-height:1.6;
+  min-height:140px;
+}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
   padding:.75rem 1.3rem;border-radius:12px;font-weight:600;font-size:.88rem;
   transition:all .25s;border:1px solid transparent;position:relative;}
@@ -956,6 +1086,9 @@ input,textarea,select{font-family:inherit}
   .brand-logo-img{width:32px;height:32px}
   .icon-btn{width:36px;height:36px}
   .icon-btn svg{width:19px;height:19px}
+  .explore-users-grid{gap:.6rem;padding:.75rem}
+  .explore-user-card{padding:1rem .7rem .85rem}
+  .explore-user-card .av{width:64px;height:64px;font-size:1.45rem}
 }
 </style>
 </head>
@@ -1090,7 +1223,7 @@ input,textarea,select{font-family:inherit}
       <div class="stories-row" id="storiesRow"></div>
       <div class="feed" id="feedContainer"></div>
     </section>
-    <section class="app-view hidden" id="viewExplore"><div class="explore-grid" id="exploreGrid"></div></section>
+    <section class="app-view hidden" id="viewExplore"><div class="explore-users-grid" id="exploreGrid"></div></section>
     <section class="app-view hidden" id="viewMessages">
       <div class="messages-head">
         <h2>💬 Messages</h2>
@@ -1259,18 +1392,12 @@ input,textarea,select{font-family:inherit}
   <div class="modal-box">
     <div class="modal-head"><h3>✍️ Create Post</h3><button class="close" data-close="createPostModal">✕</button></div>
     <div class="field">
-      <label>What's on your mind?</label>
-      <textarea id="postContent" placeholder="Share a short story, poem, or thought..." maxlength="2000"></textarea>
+      <label>Title</label>
+      <input class="post-title-input" id="postTitle" placeholder="A beautiful title…" maxlength="120" />
     </div>
     <div class="field">
-      <label>Photo (optional)</label>
-      <div class="file-drop" id="postImgDrop">
-        <div class="icon">🖼️</div>
-        <p>Tap to upload a photo</p>
-        <small>Max 10MB · JPG / PNG / WebP</small>
-        <div class="soon-tag">🎥 Video coming soon</div>
-      </div>
-      <input type="file" class="hidden" id="postImgInput" accept="image/*" />
+      <label>Body</label>
+      <textarea class="post-body-input" id="postContent" placeholder="Share your story, poem, or thought…" maxlength="2000"></textarea>
     </div>
     <button class="btn primary btn-block" id="submitPostBtn">Publish Post</button>
   </div>
@@ -1503,10 +1630,10 @@ const CONFIG = {
   BRAND_MM: 'နှောင်း',
   BRAND_EN: 'Hnaung',
   WELCOME_TITLE: 'မင်္ဂလာပါ',
-  WELCOME_SUB: 'သင့်ရဲ့ လူမှုကွန်ရက်လေးထဲ ပျော်ရွှင်စွာ နေထိုင်ပါ'
+  WELCOME_SUB: 'သင့်ရဲ့ လူမှုကွန်ရက်လေးထဲ ပျော်ရွင်စွာ နေထိုင်ပါ'
 };
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbzzvsCOpZozxt-n1Ngk7R6zqCaSzax_waIjE9s7QpfI04NV8IJTCpOtYxfpun9qctIO/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzYyasOsvKmvbtn-d77naFwtpfJPcmOXfPMGzYEdsPHG4ZbBkauMXhDcrW6j0zlesms/exec';
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 const $ = id => document.getElementById(id);
@@ -1622,7 +1749,10 @@ const State = {
     conversations: [], activeOther: null, activeUser: null,
     messages: [], messagesMap: {}, selectMode: false,
     selectedIds: new Set(), deletingIds: new Set(),
-    pendingImage: null, pollTimer: null
+    pendingImage: null, pollTimer: null,
+    messagesCache: {},       // ✅ per-user message cache
+    cacheTtl: {},            // ✅ timestamp map
+    idleTick: 0              // ✅ idle poll counter
   },
   chatUnread: 0
 };
@@ -1753,38 +1883,23 @@ function buildUploadProgressHTML(file){
   };
 }
 
-/* =====================================================================
-   ✅ ADMIN IMAGE UPLOAD — RELIABLE HELPER
-   ===================================================================== */
-/**
- * Wire an admin image drop zone with progress bar + preview + success + remove
- * @param {string} dropId     ID of the .file-drop element
- * @param {string} inputId    ID of the <input type=file>
- * @param {function} getUrl   () => current URL
- * @param {function} setUrl   (url) => void
- * @param {object} opts       { rounded: true } — rounded previews for avatars
- */
+/* ============ ADMIN IMAGE UPLOAD ============ */
 function wireAdminImageUpload(dropId, inputId, getUrl, setUrl, opts = {}){
   const drop = $(dropId);
   const input = $(inputId);
   if(!drop || !input) return;
 
-  // Show preview if URL exists
   renderAdminPreview(drop, getUrl(), opts);
 
-  // Click to open file picker
   drop.addEventListener('click', (e) => {
-    // Don't open picker if the remove button was clicked
     if(e.target.closest('.remove-btn')) return;
     input.click();
   });
 
-  // Handle file selection
   input.addEventListener('change', async (e) => {
     const f = e.target.files[0];
     if(!f) return;
 
-    // Validate
     if(!f.type || !f.type.startsWith('image/')){
       toast('Only image files are allowed', 'error');
       e.target.value = '';
@@ -1796,7 +1911,6 @@ function wireAdminImageUpload(dropId, inputId, getUrl, setUrl, opts = {}){
       return;
     }
 
-    // Show progress UI inside the drop zone
     const { html, objUrl } = buildUploadProgressHTML(f);
     drop.classList.remove('success','error');
     drop.classList.add('uploading');
@@ -1819,7 +1933,7 @@ function wireAdminImageUpload(dropId, inputId, getUrl, setUrl, opts = {}){
       try{ URL.revokeObjectURL(objUrl); }catch(_){}
       drop.classList.remove('uploading');
       drop.classList.add('error');
-      renderAdminPreview(drop, getUrl(), opts); // restore previous
+      renderAdminPreview(drop, getUrl(), opts);
       toast('❌ ' + (err.message || 'Upload failed'), 'error');
     }
     e.target.value = '';
@@ -1844,9 +1958,7 @@ function renderAdminPreview(drop, url, opts = {}){
       e.stopPropagation();
       const input = drop.parentElement.querySelector('input[type=file]');
       if(input) input.value = '';
-      // Clear url via callback
       drop.dispatchEvent(new CustomEvent('admin-clear-image', { bubbles: true }));
-      // Reset to empty state
       drop.classList.remove('success','error');
       const icon = opts.icon || '🖼️';
       const label = opts.label || 'Tap to upload';
@@ -2163,10 +2275,6 @@ async function enterApp(){
         State.settings = r.settings || {};
         if(r.unreadChats !== undefined) updateChatBadge(r.unreadChats);
       }
-      try{
-        const bl = await api('getBlockedUsers', { username: State.user.username }, { progress: false });
-        if(bl.success) State.blockedUsers = bl.blocked || [];
-      }catch(_){}
     }
   }catch(err){ toast('Load failed: ' + err.message, 'error'); }
   Progress.done();
@@ -2174,7 +2282,6 @@ async function enterApp(){
   updateNotifBadge(); renderShop(); setupTabBar(); setupMenu();
   refreshChatUnread();
   startChatPolling();
-  // Wire admin uploads (safe to call even if not admin - just sets up)
   wireAdminUploads();
 }
 
@@ -2210,7 +2317,13 @@ function renderFeed(){
       </div>`;
     return;
   }
-  c.innerHTML = visiblePosts.map(p => renderPostCard(p)).join('');
+  // ✅ Insert pretty ✦ divider between posts
+  c.innerHTML = visiblePosts.map((p, i) => {
+    const card = renderPostCard(p);
+    return i < visiblePosts.length - 1
+      ? card + '<div class="post-divider"><span class="ornament">✦</span></div>'
+      : card;
+  }).join('');
   bindPostActions($('feedContainer'));
 }
 
@@ -2224,11 +2337,24 @@ function renderPostCard(post){
   const headStyle = hasBanner
     ? `style="background-image:url('${esc(imgUrl(a.backgroundImage))}')"`
     : '';
+
+  // ✅ Title (gradient heading) + Body (pre-wrapped text)
+  const titleHtml = post.title && String(post.title).trim()
+    ? `<h3 class="post-title">${esc(post.title)}</h3>`
+    : '';
+  const bodyHtml = post.content && String(post.content).trim()
+    ? `<div class="post-content">${esc(post.content)}</div>`
+    : '';
+  const bodyBlock = (titleHtml || bodyHtml)
+    ? `<div class="post-body">${titleHtml}${bodyHtml}</div>`
+    : '';
+
+  // Backward compat: still show image if post has one
   let mediaHtml = '';
   if(post.imageUrl && String(post.imageUrl).trim()){
     mediaHtml = `<div class="post-image" data-img="${esc(post.imageUrl)}"><img src="${esc(imgUrl(post.imageUrl))}" loading="lazy" referrerpolicy="no-referrer"/></div>`;
   }
-  const content = post.content ? `<div class="post-content">${esc(post.content)}</div>` : '';
+
   return `
     <div class="post-card" data-postid="${esc(post.id)}" data-author="${esc(a.username)}">
       <div class="${headClass}" ${headStyle}>
@@ -2241,7 +2367,7 @@ function renderPostCard(post){
           <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
         </button>
       </div>
-      ${content ? `<div class="post-body">${content}</div>` : ''}
+      ${bodyBlock}
       ${mediaHtml}
       <div class="post-actions">
         <button data-action="like" data-postid="${esc(post.id)}" class="${post.likedByMe ? 'liked' : ''}">
@@ -2330,7 +2456,7 @@ function openPostMenu(postId){
     closeModal('postActionsModal');
     const ok = await confirmDialog({
       icon:'🗑️', title:'Delete this post?',
-      message:'Post and any uploaded photo will be permanently removed.',
+      message:'Post will be permanently removed.',
       yes:'Delete'
     });
     if(!ok) return;
@@ -2340,7 +2466,7 @@ function openPostMenu(postId){
       State.myPosts = State.myPosts.filter(p => p.id !== postId);
       State.viewingUserPosts = State.viewingUserPosts.filter(p => p.id !== postId);
       renderFeed(); renderMyPosts(); renderViewingUserPosts();
-      toast('Deleted (incl. media)', 'success');
+      toast('Deleted', 'success');
     }catch(err){ toast(err.message, 'error'); }
   };
   $('viewAuthorAction').onclick = () => {
@@ -2477,18 +2603,36 @@ function renderStories(){
   row.querySelectorAll('[data-userprofile]').forEach(el => el.onclick = () => viewUserProfile(el.dataset.userprofile));
 }
 
-/* ============ EXPLORE ============ */
-function renderExplore(){
+/* ============ EXPLORE (Now shows USERS) ============ */
+async function renderExplore(){
   const g = $('exploreGrid');
-  const withImg = State.posts.filter(p => p.imageUrl);
-  if(!withImg.length){
-    g.innerHTML = '<div class="explore-empty">No image posts yet</div>';
-    return;
+  g.className = 'explore-users-grid';
+  g.innerHTML = '<div class="explore-empty"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
+  try{
+    const r = await api('getAllUsersPublic', { username: State.user.username }, { progress: false });
+    const users = r.users || [];
+    if(!users.length){
+      g.innerHTML = '<div class="explore-empty">No users yet 🌱</div>';
+      return;
+    }
+    g.innerHTML = users.map(u => {
+      const avatar = u.profileImage
+        ? `<img src="${esc(imgUrl(u.profileImage))}" referrerpolicy="no-referrer"/>`
+        : `<span>${esc((u.displayName || u.username).charAt(0).toUpperCase())}</span>`;
+      return `
+        <div class="explore-user-card" data-username="${esc(u.username)}">
+          <div class="av">${avatar}</div>
+          <div class="nm">${esc(u.displayName || u.username)}</div>
+          <div class="un">@${esc(u.username)}</div>
+          <div class="coins">🪙 ${u.coins || 0}</div>
+        </div>`;
+    }).join('');
+    g.querySelectorAll('[data-username]').forEach(el => {
+      el.onclick = () => viewUserProfile(el.dataset.username);
+    });
+  }catch(err){
+    g.innerHTML = `<div class="explore-empty">${esc(err.message)}</div>`;
   }
-  g.innerHTML = withImg.map(p => `
-    <div class="explore-item"><img src="${esc(imgUrl(p.imageUrl))}" referrerpolicy="no-referrer" loading="lazy" /></div>
-  `).join('');
-  qa('.explore-item').forEach((it, i) => it.onclick = () => openImageViewer(withImg[i].imageUrl));
 }
 
 /* ============ PROFILE ============ */
@@ -2554,7 +2698,12 @@ function renderMyPosts(){
     c.innerHTML = '<div class="feed-empty" style="padding:2rem;"><p>No posts yet.</p></div>';
     return;
   }
-  c.innerHTML = State.myPosts.map(p => renderPostCard(p)).join('');
+  c.innerHTML = State.myPosts.map((p, i) => {
+    const card = renderPostCard(p);
+    return i < State.myPosts.length - 1
+      ? card + '<div class="post-divider"><span class="ornament">✦</span></div>'
+      : card;
+  }).join('');
   bindPostActions($('profilePosts'));
 }
 async function loadMyPurchases(){
@@ -2639,7 +2788,12 @@ function renderViewingUserPosts(){
     c.innerHTML = '<div class="feed-empty" style="padding:2rem;"><p>No posts yet.</p></div>';
     return;
   }
-  c.innerHTML = State.viewingUserPosts.map(p => renderPostCard(p)).join('');
+  c.innerHTML = State.viewingUserPosts.map((p, i) => {
+    const card = renderPostCard(p);
+    return i < State.viewingUserPosts.length - 1
+      ? card + '<div class="post-divider"><span class="ornament">✦</span></div>'
+      : card;
+  }).join('');
   bindPostActions($('profilePosts'));
 }
 $('headerBack').onclick = () => {
@@ -2733,78 +2887,24 @@ $('saveProfileBtn').onclick = async () => {
   btnLoad(btn, false);
 };
 
-/* ============ CREATE POST ============ */
-let _pendingPostImage = '';
+/* ============ CREATE POST (Title + Body — no image) ============ */
 function openCreatePost(){
+  $('postTitle').value = '';
   $('postContent').value = '';
-  _pendingPostImage = '';
-  State.postUploading = false;
-  $('postImgDrop').classList.remove('disabled');
-  $('postImgDrop').innerHTML = `
-    <div class="icon">🖼️</div>
-    <p>Tap to upload a photo</p>
-    <small>Max 10MB · JPG / PNG / WebP</small>
-    <div class="soon-tag">🎥 Video coming soon</div>`;
   $('submitPostBtn').disabled = false;
   openModal('createPostModal');
+  setTimeout(() => $('postTitle').focus(), 300);
 }
-$('postImgDrop').onclick = () => $('postImgInput').click();
-$('postImgInput').addEventListener('change', async e => {
-  const f = e.target.files[0]; if(!f) return;
-  if(f.type && f.type.startsWith('video/')){
-    toast('🎥 Video upload coming soon! Please upload an image.', 'info');
-    e.target.value = '';
-    return;
-  }
-  if(!f.type || !f.type.startsWith('image/')){
-    toast('Only image files are allowed', 'error');
-    e.target.value = '';
-    return;
-  }
-  if(f.size > MAX_UPLOAD_BYTES){ toast('File too large (max 10MB)', 'error'); e.target.value=''; return; }
-  const drop = $('postImgDrop');
-  State.postUploading = true;
-  $('submitPostBtn').disabled = true;
-  drop.classList.add('disabled');
-  const { html, objUrl } = buildUploadProgressHTML(f);
-  drop.innerHTML = html;
-  const fill = drop.querySelector('.upload-bar-fill');
-  const pct = drop.querySelector('.pct');
-  try{
-    const r = await uploadMediaWithProgress(f, 'post', p => {
-      if(fill) fill.style.width = p + '%';
-      if(pct) pct.textContent = p + '%';
-    });
-    URL.revokeObjectURL(objUrl);
-    _pendingPostImage = r.url;
-    drop.innerHTML = `<img src="${imgUrl(r.url)}" />`;
-    drop.classList.remove('disabled');
-    toast('✓ Ready to publish', 'success');
-  }catch(err){
-    URL.revokeObjectURL(objUrl);
-    _pendingPostImage = '';
-    drop.innerHTML = `
-      <div class="icon">🖼️</div>
-      <p>Tap to retry</p>
-      <small>Max 10MB · JPG / PNG / WebP</small>
-      <div class="soon-tag">🎥 Video coming soon</div>`;
-    drop.classList.remove('disabled');
-    toast(err.message, 'error');
-  }finally{
-    State.postUploading = false;
-    $('submitPostBtn').disabled = false;
-  }
-  e.target.value = '';
-});
 $('submitPostBtn').onclick = async () => {
-  if(State.postUploading){ toast('Please wait for upload...', 'error'); return; }
+  const title = $('postTitle').value.trim();
   const content = $('postContent').value.trim();
-  if(!content && !_pendingPostImage){ toast('Add text or image', 'error'); return; }
+  if(!title && !content){ toast('Please write a title or body', 'error'); return; }
   const btn = $('submitPostBtn');
   btnLoad(btn, true);
   const payload = {
-    username: State.user.username, content,
-    imageUrl: _pendingPostImage, imageFileId: '',
+    username: State.user.username,
+    title, content,
+    imageUrl: '', imageFileId: '',
     videoUrl: '', videoFileId: ''
   };
   try{
@@ -3017,7 +3117,12 @@ function updateChatBadge(count){
   else b.classList.remove('show');
 }
 async function openMessagesView(){
-  $('chatList').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
+  // ✅ If we have cached conversations, show them instantly
+  if(State.chat.conversations.length){
+    renderConversations();
+  } else {
+    $('chatList').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
+  }
   try{
     const r = await api('getConversations', { username: State.user.username }, { progress: false });
     if(r.success){
@@ -3025,7 +3130,9 @@ async function openMessagesView(){
       renderConversations();
     }
   }catch(err){
-    $('chatList').innerHTML = `<div class="chat-empty"><p>${esc(err.message)}</p></div>`;
+    if(!State.chat.conversations.length){
+      $('chatList').innerHTML = `<div class="chat-empty"><p>${esc(err.message)}</p></div>`;
+    }
   }
 }
 function renderConversations(){
@@ -3142,20 +3249,36 @@ async function openChatWith(username, userData){
   $('chatDetail').classList.add('open');
   document.body.style.overflow = 'hidden';
   exitSelectMode();
-  $('chatMessages').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
+
+  // ✅ Instant render from cache
+  const cached = State.chat.messagesCache[other];
+  if(cached && cached.length){
+    State.chat.messages = cached.slice();
+    cached.forEach(m => State.chat.messagesMap[m.id] = m);
+    renderChatMessages();
+  } else {
+    $('chatMessages').innerHTML = '<div style="text-align:center;padding:2rem;"><div class="spinner-xs" style="width:22px;height:22px;border-color:rgba(245,166,35,.2);border-top-color:var(--gold)"></div></div>';
+  }
+
   try{
-    const r = await api('getChatMessages', { username: State.user.username, other }, { progress: false });
+    const r = await api('getChatMessages', { username: State.user.username, other, limit: 150 }, { progress: false });
     if(r.success){
       State.chat.messages = r.messages || [];
+      State.chat.messagesMap = {};
       State.chat.messages.forEach(m => State.chat.messagesMap[m.id] = m);
+      // ✅ Update cache
+      State.chat.messagesCache[other] = State.chat.messages.slice();
+      State.chat.cacheTtl[other] = Date.now();
       renderChatMessages();
       api('markChatRead', { username: State.user.username, other }, { progress: false }).catch(() => {});
-      setTimeout(() => refreshChatUnread(), 500);
+      setTimeout(() => refreshChatUnread(), 400);
     }
   }catch(err){
-    $('chatMessages').innerHTML = `<div style="text-align:center;padding:2rem;color:var(--red);">${esc(err.message)}</div>`;
+    if(!cached){
+      $('chatMessages').innerHTML = `<div style="text-align:center;padding:2rem;color:var(--red);">${esc(err.message)}</div>`;
+    }
   }
-  setTimeout(() => $('chatTextInput').focus(), 350);
+  setTimeout(() => $('chatTextInput').focus(), 300);
 }
 function updateChatHeader(u){
   $('chatHeaderName').textContent = u.displayName || u.username;
@@ -3365,6 +3488,8 @@ async function deleteMessageWithProgress(id){
     State.chat.messages = State.chat.messages.filter(m => m.id !== id);
     delete State.chat.messagesMap[id];
     State.chat.deletingIds.delete(id);
+    // ✅ Update cache
+    if(State.chat.activeOther) State.chat.messagesCache[State.chat.activeOther] = State.chat.messages.slice();
     renderChatMessages();
     toast('Deleted', 'success');
   } catch(err) {
@@ -3447,6 +3572,7 @@ $('chatSelectDelete').onclick = async () => {
       delete State.chat.messagesMap[id];
       State.chat.deletingIds.delete(id);
     });
+    if(State.chat.activeOther) State.chat.messagesCache[State.chat.activeOther] = State.chat.messages.slice();
     renderChatMessages();
     exitSelectMode();
     toast(`Deleted ${ids.length}`, 'success');
@@ -3498,6 +3624,7 @@ $('chatClearAction').onclick = async () => {
     State.chat.messages = [];
     State.chat.messagesMap = {};
     State.chat.deletingIds = new Set();
+    State.chat.messagesCache[other] = [];
     renderChatMessages();
     toast('Conversation cleared', 'success');
   } catch(err) {
@@ -3578,6 +3705,7 @@ async function sendCurrentChat(){
       State.chat.messages.push(real);
       State.chat.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     }
+    State.chat.messagesCache[other] = State.chat.messages.slice();
     renderChatMessages();
     setTimeout(() => { const cc = $('chatMessages'); cc.scrollTop = cc.scrollHeight; }, 40);
   }catch(err){
@@ -3618,6 +3746,7 @@ async function retryFailedMessage(tempId){
       State.chat.messages[idx] = real;
       State.chat.messagesMap[real.id] = real;
     }
+    State.chat.messagesCache[other] = State.chat.messages.slice();
     renderChatMessages();
     toast('✓ Sent', 'success');
   }catch(err){
@@ -3691,14 +3820,20 @@ async function refreshChatUnread(){
     if(r.success) updateChatBadge(r.count);
   }catch(_){}
 }
+/* ✅ Smarter polling: 10s interval; idle ticks refresh badge every 20s */
 function startChatPolling(){
   stopChatPolling();
   State.chat.pollTimer = setInterval(async () => {
     if(document.hidden) return;
-    if(!State.chat.activeOther){ refreshChatUnread(); return; }
+    if(!State.chat.activeOther){
+      State.chat.idleTick = (State.chat.idleTick || 0) + 1;
+      // Refresh badge every other tick (≈20s)
+      if(State.chat.idleTick % 2 === 0) refreshChatUnread();
+      return;
+    }
     const other = State.chat.activeOther;
     try{
-      const r = await api('getChatMessages', { username: State.user.username, other, limit: 200 }, { progress: false });
+      const r = await api('getChatMessages', { username: State.user.username, other, limit: 150 }, { progress: false });
       if(!r.success) return;
       const serverMsgs = r.messages || [];
       const existing = new Set(State.chat.messages.map(m => m.id));
@@ -3717,12 +3852,12 @@ function startChatPolling(){
           State.chat.messagesMap[m.id] = m;
         });
         State.chat.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        State.chat.messagesCache[other] = State.chat.messages.slice();
         renderChatMessages();
         api('markChatRead', { username: State.user.username, other }, { progress: false }).catch(() => {});
       }
     }catch(_){}
-    refreshChatUnread();
-  }, 6000);
+  }, 10000);
 }
 function stopChatPolling(){
   if(State.chat.pollTimer){ clearInterval(State.chat.pollTimer); State.chat.pollTimer = null; }
@@ -3821,6 +3956,7 @@ function doLogout(){
   State.posts = []; State.myPosts = []; State.viewingUserPosts = [];
   State.notifications = []; State.commentsCache = {}; State.viewingUser = null;
   State.chat.conversations = []; State.chat.messages = [];
+  State.chat.messagesCache = {}; State.chat.cacheTtl = {};
   $('app').classList.remove('visible');
   $('authScreen').classList.remove('hidden');
   ['loginUser','loginPass','regUser','regEmail','regPass','regPass2','adminPass'].forEach(id => $(id).value = '');
@@ -3830,37 +3966,29 @@ function doLogout(){
   toast('Logged out', 'success');
 }
 
-/* =====================================================================
-   ✅ ADMIN — Wire upload zones ONCE (safe to call repeatedly)
-   ===================================================================== */
+/* ============ ADMIN — Wire upload zones ONCE ============ */
 let _adminUploadsWired = false;
 
 function wireAdminUploads(){
   if(_adminUploadsWired) return;
   _adminUploadsWired = true;
 
-  // 🪙 Package image
   wireAdminImageUpload(
-    'pkgImgDrop',
-    'pkgImgInput',
+    'pkgImgDrop', 'pkgImgInput',
     () => _pkgImgUrl,
     (url) => { _pkgImgUrl = url; },
     { icon: '🪙', label: 'Tap to upload image', hint: 'PNG / JPG · Max 10MB' }
   );
 
-  // 💙 KPay QR
   wireAdminImageUpload(
-    'setKpayQrDrop',
-    'setKpayQrInput',
+    'setKpayQrDrop', 'setKpayQrInput',
     () => _setKpayQr,
     (url) => { _setKpayQr = url; },
     { icon: '📱', label: 'Tap to upload QR', hint: 'PNG / JPG · Max 10MB' }
   );
 
-  // 💛 Wave QR
   wireAdminImageUpload(
-    'setWaveQrDrop',
-    'setWaveQrInput',
+    'setWaveQrDrop', 'setWaveQrInput',
     () => _setWaveQr,
     (url) => { _setWaveQr = url; },
     { icon: '📱', label: 'Tap to upload QR', hint: 'PNG / JPG · Max 10MB' }
@@ -3934,7 +4062,6 @@ function adminEditPkg(id){
   $('pkgCoins').value = p.coins || 0;
   $('pkgPrice').value = p.price || 0;
   _pkgImgUrl = p.imageUrl || '';
-  // Re-render preview
   renderAdminPreview($('pkgImgDrop'), _pkgImgUrl, { icon:'🪙', label:'Tap to upload image', hint:'PNG / JPG · Max 10MB' });
   openModal('pkgModal');
 }
@@ -4151,7 +4278,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupBackButton();
 });
 
-console.log('%c✦ Hnaung (နှောင်း) v8.0', 'color:#f5a623;font-size:18px;font-weight:900');
+console.log('%c✦ Hnaung (နှောင်း) v8.1 — Title+Body, Faster Chat, User Explore', 'color:#f5a623;font-size:18px;font-weight:900');
 </script>
 </body>
 </html>
