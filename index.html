@@ -1739,7 +1739,7 @@ const CONFIG = {
   WELCOME_SUB: 'ကြိုဆိုပါတယ်။'
 };
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbzYyasOsvKmvbtn-d77naFwtpfJPcmOXfPMGzYEdsPHG4ZbBkauMXhDcrW6j0zlesms/exec';
+const API_URL = 'https://hnaung-api.vercel.app/api/index';
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 /* ✅ Post collapse config */
@@ -1878,14 +1878,13 @@ async function api(action, params = {}, opts = {}){
     const res = await fetchTimeout(API_URL, {
       method: 'POST',
       body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+      headers: { 'Content-Type': 'application/json' }
     }, timeoutMs);
     const txt = await res.text();
     try{ return JSON.parse(txt); }
-    catch(_){ return await apiGet(action, params, timeoutMs); }
+    catch(_){ return { success: false, error: 'Bad response: ' + txt.slice(0, 100) }; }
   }catch(err){
-    try{ return await apiGet(action, params, timeoutMs); }
-    catch(e2){ return { success: false, error: (err.message || '') + ' / ' + (e2.message || '') }; }
+    return { success: false, error: err.message || 'Request failed' };
   }finally{
     if(showProgress) Progress.done();
   }
