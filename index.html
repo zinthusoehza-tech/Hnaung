@@ -45,7 +45,6 @@ input,textarea,select{font-family:inherit}
 ::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--gold),var(--pink));border-radius:10px}
 ::-webkit-scrollbar-track{background:transparent}
 
-/* TOP PROGRESS */
 #topProgress{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;pointer-events:none;}
 #topProgress .bar{height:100%;width:0;
   background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
@@ -53,7 +52,6 @@ input,textarea,select{font-family:inherit}
   transition:width .35s ease,opacity .3s;animation:progressShine 2s linear infinite;}
 @keyframes progressShine{to{background-position:200% 0}}
 
-/* LANDING */
 #landing{position:fixed;inset:0;z-index:2000;
   background:radial-gradient(circle at 50% 30%,#1a1520,#0a0a12);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -105,7 +103,6 @@ input,textarea,select{font-family:inherit}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeIn{to{opacity:1}}
 
-/* AUTH */
 #authScreen{position:fixed;inset:0;z-index:1500;background:var(--bg);
   display:flex;align-items:center;justify-content:center;padding:1.5rem;overflow-y:auto;}
 #authScreen::before{content:'';position:absolute;inset:0;pointer-events:none;
@@ -149,7 +146,6 @@ input,textarea,select{font-family:inherit}
   opacity:.6;letter-spacing:.02em;transition:opacity .3s;}
 .auth-hint.visible{opacity:1;color:var(--gold)}
 
-/* ONBOARDING */
 #onboarding{position:fixed;inset:0;z-index:1400;background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:2rem 1.5rem;overflow-y:auto;}
@@ -188,7 +184,6 @@ input,textarea,select{font-family:inherit}
 .onb-actions .skip{background:var(--surface);color:var(--text-2);border:1px solid var(--border)}
 .onb-actions .next{background:linear-gradient(135deg,var(--gold),var(--pink));color:#000}
 
-/* UPLOAD PROGRESS */
 .upload-progress{display:flex;flex-direction:column;gap:.55rem;width:100%}
 .upload-preview{width:100%;height:150px;border-radius:10px;overflow:hidden;background:#000;
   display:flex;align-items:center;justify-content:center;position:relative;}
@@ -202,7 +197,6 @@ input,textarea,select{font-family:inherit}
   font-size:.75rem;font-weight:600;color:var(--text-2);}
 .upload-meta .pct{color:var(--gold);font-variant-numeric:tabular-nums}
 
-/* ADMIN UPLOAD ZONE */
 .admin-img-drop{position:relative;padding:0;overflow:hidden;}
 .admin-img-drop .drop-inner{padding:1.2rem;text-align:center;}
 .admin-img-drop .preview-img{width:100%;max-height:180px;object-fit:contain;border-radius:12px;display:block;background:#0a0a0f;}
@@ -226,7 +220,6 @@ input,textarea,select{font-family:inherit}
 .admin-img-drop.success{border-color:var(--green);background:rgba(16,185,129,.06)}
 .admin-img-drop.error{border-color:var(--red);background:rgba(239,68,68,.06)}
 
-/* APP SHELL */
 #app{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);
   opacity:0;pointer-events:none;transition:opacity .4s;}
 #app.visible{opacity:1;pointer-events:auto}
@@ -254,7 +247,6 @@ input,textarea,select{font-family:inherit}
 .app-view{animation:viewIn .3s ease}
 @keyframes viewIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
-/* TAB BAR */
 .tab-bar{position:fixed;bottom:0;left:0;right:0;height:var(--tab-height);
   background:var(--glass);border-top:1px solid var(--border);
   display:flex;align-items:center;justify-content:space-around;
@@ -268,7 +260,6 @@ input,textarea,select{font-family:inherit}
 .tab-bar button.active svg{stroke:url(#tabGrad)}
 .tab-bar .create-btn svg{width:30px;height:30px;stroke-width:1.8}
 
-/* SKELETON */
 .sk-post{background:var(--surface);border-bottom:1px solid var(--border);margin-bottom:.5rem;overflow:hidden}
 .sk-head{display:flex;gap:.7rem;padding:.7rem .9rem;align-items:center}
 .sk-avatar{width:38px;height:38px;border-radius:50%;background:var(--skeleton);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
@@ -279,7 +270,6 @@ input,textarea,select{font-family:inherit}
 .sk-body{padding:.9rem}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* STORIES */
 .stories-row{display:flex;gap:.9rem;padding:.7rem 1rem 1rem;overflow-x:auto;
   border-bottom:1px solid var(--border);scrollbar-width:none;}
 .stories-row::-webkit-scrollbar{display:none}
@@ -296,7 +286,6 @@ input,textarea,select{font-family:inherit}
 .story .ring .inner span{font-size:1.4rem;font-weight:700;color:var(--gold)}
 .story .name{font-size:.68rem;color:var(--text-2);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-/* POST CARD */
 .post-card{background:var(--surface);
   margin-bottom:0;animation:postIn .35s ease;overflow:hidden;}
 @keyframes postIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -328,7 +317,6 @@ input,textarea,select{font-family:inherit}
   background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
   opacity:.75;z-index:1;}
 
-/* POST TITLE */
 .post-title{
   font-family:var(--mm-font);
   font-size:1.22rem;
@@ -371,9 +359,6 @@ input,textarea,select{font-family:inherit}
 
 .post-body{padding:.9rem 1rem .5rem}
 
-/* ============================================================
-   ✦ POST CONTENT — Collapsible with Motion Blur
-   ============================================================ */
 .post-content{
   font-size:.94rem;
   line-height:1.6;
@@ -389,75 +374,32 @@ input,textarea,select{font-family:inherit}
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
 }
-.post-content.collapsed{
-  max-height:150px;
-}
+.post-content.collapsed{max-height:150px;}
 .post-content.collapsed::after{
-  content:'';
-  position:absolute;left:0;right:0;bottom:-1px;height:100px;
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:100px;
   background:linear-gradient(180deg,rgba(0,0,0,0) 0%,var(--surface) 92%);
-  pointer-events:none;
-  transition:opacity .5s ease;
-  z-index:1;
+  pointer-events:none;transition:opacity .5s ease;z-index:1;
 }
-.post-content.expanded::after{
-  opacity:0;
-  pointer-events:none;
-}
-.post-content.motion-blur{
-  animation:motionBlurReveal .85s cubic-bezier(.22,1,.36,1);
-}
+.post-content.expanded::after{opacity:0;pointer-events:none;}
+.post-content.motion-blur{animation:motionBlurReveal .85s cubic-bezier(.22,1,.36,1);}
 @keyframes motionBlurReveal{
-  0%{
-    filter:blur(0px) saturate(1);
-    transform:translateY(-5px) scale(1);
-    opacity:.85;
-  }
-  15%{
-    filter:blur(6px) saturate(.8);
-    transform:translateY(-2px) scale(1.008);
-    opacity:.92;
-  }
-  40%{
-    filter:blur(3.2px) saturate(.92);
-    transform:translateY(-.5px) scale(1.004);
-    opacity:.97;
-  }
-  70%{
-    filter:blur(1.2px) saturate(1);
-    transform:translateY(0) scale(1.001);
-    opacity:1;
-  }
-  100%{
-    filter:blur(0px) saturate(1);
-    transform:translateY(0) scale(1);
-    opacity:1;
-  }
+  0%{filter:blur(0px) saturate(1);transform:translateY(-5px) scale(1);opacity:.85;}
+  15%{filter:blur(6px) saturate(.8);transform:translateY(-2px) scale(1.008);opacity:.92;}
+  40%{filter:blur(3.2px) saturate(.92);transform:translateY(-.5px) scale(1.004);opacity:.97;}
+  70%{filter:blur(1.2px) saturate(1);transform:translateY(0) scale(1.001);opacity:1;}
+  100%{filter:blur(0px) saturate(1);transform:translateY(0) scale(1);opacity:1;}
 }
-
 .post-readmore{
-  display:inline-flex;
-  align-items:center;
-  gap:.38rem;
-  margin-top:.6rem;
-  padding:.42rem .95rem .42rem .9rem;
-  border-radius:100px;
-  font-family:var(--mm-font);
-  font-size:.78rem;
-  font-weight:700;
-  letter-spacing:.01em;
+  display:inline-flex;align-items:center;gap:.38rem;
+  margin-top:.6rem;padding:.42rem .95rem .42rem .9rem;
+  border-radius:100px;font-family:var(--mm-font);
+  font-size:.78rem;font-weight:700;letter-spacing:.01em;
   color:var(--gold);
   background:linear-gradient(135deg,rgba(245,166,35,.14),rgba(236,72,153,.1));
   border:1px solid rgba(245,166,35,.28);
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  user-select:none;
-  -webkit-user-select:none;
-  touch-action:manipulation;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1),
-             background .3s ease,
-             border-color .3s ease,
-             box-shadow .3s ease;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none;touch-action:manipulation;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),background .3s ease,border-color .3s ease,box-shadow .3s ease;
 }
 .post-readmore:hover{
   background:linear-gradient(135deg,rgba(245,166,35,.24),rgba(236,72,153,.16));
@@ -466,17 +408,9 @@ input,textarea,select{font-family:inherit}
   box-shadow:0 6px 18px rgba(245,166,35,.18);
 }
 .post-readmore:active{transform:scale(.94);}
-.post-readmore svg{
-  width:14px;
-  height:14px;
-  flex-shrink:0;
-  transition:transform .55s cubic-bezier(.34,1.56,.64,1);
-}
+.post-readmore svg{width:14px;height:14px;flex-shrink:0;transition:transform .55s cubic-bezier(.34,1.56,.64,1);}
 .post-readmore.expanded svg{transform:rotate(180deg);}
-.post-readmore .rm-label{
-  display:inline-block;
-  transition:opacity .35s ease, transform .35s ease;
-}
+.post-readmore .rm-label{display:inline-block;transition:opacity .35s ease, transform .35s ease;}
 
 .post-actions{display:flex;gap:.2rem;padding:.55rem .7rem .7rem;
   border-top:1px solid var(--border);margin-top:.6rem;}
@@ -493,107 +427,67 @@ input,textarea,select{font-family:inherit}
 .feed-empty svg{width:60px;height:60px;stroke-width:1.2;fill:none;stroke:currentColor;margin-bottom:1rem;opacity:.4}
 .feed-empty h3{color:var(--text-2);font-weight:600;margin-bottom:.4rem}
 
-/* ✦ POST DIVIDER */
 .post-divider{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:.75rem;
-  padding:1rem 1.5rem;
-  background:var(--surface);
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+  padding:1rem 1.5rem;background:var(--surface);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
 }
 .post-divider::before,
 .post-divider::after{
-  content:'';
-  flex:1;
-  height:1px;
+  content:'';flex:1;height:1px;
   background:linear-gradient(90deg,transparent,var(--border-2) 40%,var(--border-2) 60%,transparent);
 }
 .post-divider .ornament{
-  font-size:.85rem;
-  line-height:1;
+  font-size:.85rem;line-height:1;
   background:linear-gradient(135deg,var(--gold),var(--pink));
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
   filter:drop-shadow(0 0 8px rgba(245,166,35,.55));
   animation:ornamentPulse 3s ease-in-out infinite;
 }
-@keyframes ornamentPulse{
-  0%,100%{transform:scale(1) rotate(0deg);opacity:.85}
-  50%{transform:scale(1.15) rotate(180deg);opacity:1}
-}
+@keyframes ornamentPulse{0%,100%{transform:scale(1) rotate(0deg);opacity:.85}50%{transform:scale(1.15) rotate(180deg);opacity:1}}
 
-/* EXPLORE */
-.explore-users-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:.85rem;
-  padding:1rem;
-}
+.explore-users-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem;padding:1rem;}
 .explore-user-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:1.2rem .9rem 1rem;
-  text-align:center;
-  cursor:pointer;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:1.2rem .9rem 1rem;
+  text-align:center;cursor:pointer;
   transition:transform .3s cubic-bezier(.34,1.56,.64,1),border-color .25s,box-shadow .25s;
-  position:relative;
-  overflow:hidden;
+  position:relative;overflow:hidden;
 }
 .explore-user-card::before{
-  content:'';
-  position:absolute;
-  top:0;left:0;right:0;
-  height:3px;
-  background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));
-  opacity:.75;
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--gold),var(--pink),var(--violet));opacity:.75;
 }
 .explore-user-card:hover{
-  transform:translateY(-3px);
-  border-color:rgba(245,166,35,.35);
+  transform:translateY(-3px);border-color:rgba(245,166,35,.35);
   box-shadow:0 12px 32px rgba(245,166,35,.12);
 }
 .explore-user-card:active{transform:scale(.97)}
 .explore-user-card .av{
-  width:76px;height:76px;
-  border-radius:50%;
-  margin:0 auto .7rem;
-  overflow:hidden;
-  background:linear-gradient(135deg,var(--gold),var(--pink));
+  width:76px;height:76px;border-radius:50%;margin:0 auto .7rem;
+  overflow:hidden;background:linear-gradient(135deg,var(--gold),var(--pink));
   display:flex;align-items:center;justify-content:center;
   color:#000;font-weight:800;font-size:1.7rem;
   border:3px solid var(--surface);
   box-shadow:0 6px 20px rgba(245,166,35,.28),0 0 0 2px var(--border);
 }
 .explore-user-card .av img{width:100%;height:100%;object-fit:cover}
-.explore-user-card .nm{
-  font-weight:700;font-size:.9rem;margin-bottom:.15rem;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  color:var(--text);
-}
-.explore-user-card .un{
-  font-size:.72rem;color:var(--text-3);
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  margin-bottom:.55rem;
-}
+.explore-user-card .nm{font-weight:700;font-size:.9rem;margin-bottom:.15rem;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text);}
+.explore-user-card .un{font-size:.72rem;color:var(--text-3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:.55rem;}
 .explore-user-card .coins{
   display:inline-flex;align-items:center;gap:.25rem;
-  padding:.22rem .65rem;
-  border-radius:100px;
+  padding:.22rem .65rem;border-radius:100px;
   background:linear-gradient(135deg,rgba(245,166,35,.16),rgba(236,72,153,.1));
-  border:1px solid rgba(245,166,35,.22);
-  color:var(--gold);
-  font-size:.68rem;
-  font-weight:700;
+  border:1px solid rgba(245,166,35,.22);color:var(--gold);
+  font-size:.68rem;font-weight:700;
 }
 .explore-empty{
   text-align:center;padding:4rem 1.5rem;color:var(--text-3);
   grid-column:1/-1;font-size:.9rem;
 }
 
-/* PROFILE */
 .profile-header{position:relative}
 .profile-bg{width:100%;height:180px;
   background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);
@@ -641,7 +535,6 @@ input,textarea,select{font-family:inherit}
   height:2px;background:linear-gradient(90deg,var(--gold),var(--pink));border-radius:2px;}
 .profile-posts{padding:.5rem}
 
-/* NOTIFICATIONS */
 .notif-list{padding:.5rem 0}
 .notif-item{display:flex;gap:.8rem;padding:.9rem 1rem;align-items:flex-start;
   border-bottom:1px solid var(--border);transition:background .2s;position:relative;cursor:pointer;}
@@ -655,7 +548,6 @@ input,textarea,select{font-family:inherit}
 .notif-item .body p{font-size:.87rem;line-height:1.4;color:var(--text)}
 .notif-item .body .time{font-size:.7rem;color:var(--text-3);margin-top:.25rem}
 
-/* SHOP */
 .shop-head{padding:1.2rem 1.2rem .4rem}
 .shop-head h2{font-size:1.5rem;font-weight:800;display:flex;align-items:center;gap:.5rem}
 .shop-head p{color:var(--text-2);font-size:.85rem;margin-top:.3rem}
@@ -690,7 +582,6 @@ input,textarea,select{font-family:inherit}
   box-shadow:0 0 8px #fff,0 0 16px var(--gold);animation:twinkleS 2.4s ease-in-out infinite;opacity:0;}
 @keyframes twinkleS{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1.4)}}
 
-/* MODALS */
 .modal{position:fixed;inset:0;z-index:1000;background:var(--overlay);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   display:flex;align-items:center;justify-content:center;padding:1rem;
@@ -760,7 +651,6 @@ input,textarea,select{font-family:inherit}
   border-radius:50%;animation:spin .7s linear infinite;}
 .btn.ghost.loading::after,.btn.danger.loading::after{border-color:rgba(255,255,255,.2);border-top-color:var(--text);}
 
-/* IMAGE VIEWER */
 #imageViewer{position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,.96);
   display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 #imageViewer.open{opacity:1;pointer-events:auto}
@@ -774,7 +664,6 @@ input,textarea,select{font-family:inherit}
   padding:.6rem 1.4rem;background:rgba(255,255,255,.15);color:#fff;border-radius:30px;
   font-size:.85rem;font-weight:600;backdrop-filter:blur(8px);}
 
-/* PAYMENT */
 .pay-methods{display:flex;gap:.6rem;margin-bottom:1rem}
 .pay-methods button{flex:1;padding:.85rem;border-radius:14px;border:2px solid var(--border);
   background:var(--surface-2);font-weight:700;font-size:.9rem;transition:all .25s;
@@ -803,7 +692,6 @@ input,textarea,select{font-family:inherit}
   font-size:.65rem;font-weight:700;letter-spacing:.03em;
 }
 
-/* TOASTS */
 .toast{position:fixed;bottom:calc(var(--tab-height) + 1rem);left:50%;
   transform:translateX(-50%) translateY(80px);padding:.75rem 1.4rem;border-radius:100px;
   background:var(--glass);color:var(--text);font-size:.85rem;font-weight:500;
@@ -815,7 +703,6 @@ input,textarea,select{font-family:inherit}
 .toast.error{border-color:rgba(239,68,68,.4);box-shadow:0 8px 30px rgba(239,68,68,.15)}
 .toast.info{border-color:rgba(245,166,35,.4);box-shadow:0 8px 30px rgba(245,166,35,.15);color:var(--gold)}
 
-/* CONFIRM */
 #confirmDialog{z-index:1100}
 #confirmDialog .modal-box{max-width:340px;text-align:center;padding:2rem 1.5rem 1.5rem;
   background:linear-gradient(160deg,var(--surface),var(--surface-2));
@@ -831,7 +718,6 @@ input,textarea,select{font-family:inherit}
 #confirmDialog .actions{display:flex;gap:.6rem}
 #confirmDialog .actions button{flex:1;padding:.9rem 1rem;border-radius:12px;font-weight:700;font-size:.9rem;transition:all .25s}
 
-/* ADMIN */
 .admin-tabs{display:flex;gap:.3rem;overflow-x:auto;padding-bottom:.7rem;margin-bottom:1rem;
   border-bottom:1px solid var(--border);scrollbar-width:none;}
 .admin-tabs::-webkit-scrollbar{display:none}
@@ -852,7 +738,6 @@ input,textarea,select{font-family:inherit}
 .admin-item .actions .edit{background:rgba(6,182,212,.15);color:var(--cyan)}
 .admin-item .actions .delete{background:rgba(239,68,68,.15);color:var(--red)}
 
-/* COMMENTS */
 .comments-list{max-height:55vh;overflow-y:auto;padding:.3rem 0}
 .comment-item{display:flex;gap:.65rem;padding:.6rem 0}
 .comment-item .avatar{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;
@@ -871,7 +756,6 @@ input,textarea,select{font-family:inherit}
 .comment-input-row button{padding:.75rem 1.2rem;border-radius:100px;
   background:linear-gradient(135deg,var(--gold),var(--pink));color:#000;font-weight:700;font-size:.85rem;}
 
-/* STAR BURST */
 #starBurst{position:fixed;inset:0;pointer-events:none;z-index:6500;overflow:hidden;}
 .star-piece{position:absolute;font-size:24px;animation:starFall linear forwards;
   filter:drop-shadow(0 0 8px rgba(255,215,0,.8));}
@@ -896,7 +780,6 @@ input,textarea,select{font-family:inherit}
 .spinner-xs{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.15);
   border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 
-/* MESSENGER */
 .chat-badge{position:absolute;top:4px;right:4px;min-width:16px;height:16px;
   border-radius:8px;background:var(--pink);color:#fff;font-size:9px;font-weight:700;
   display:none;align-items:center;justify-content:center;padding:0 4px;
@@ -940,7 +823,6 @@ input,textarea,select{font-family:inherit}
 .chat-empty svg{width:64px;height:64px;stroke-width:1.2;fill:none;stroke:currentColor;opacity:.35;margin-bottom:1rem}
 .chat-empty h3{color:var(--text-2);font-weight:600;margin-bottom:.4rem;font-size:1rem}
 
-/* CHAT DETAIL */
 #chatDetail{position:fixed;inset:0;z-index:900;background:var(--bg);
   display:flex;flex-direction:column;transform:translateX(100%);
   transition:transform .3s cubic-bezier(.4,0,.2,1);will-change:transform;}
@@ -1743,9 +1625,9 @@ const API_URL = 'https://hnaung-api.vercel.app/api/index';
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
 /* ✅ Post collapse config */
-const POST_COLLAPSE_HEIGHT = 150;      // collapsed max-height in px
-const POST_COLLAPSE_MIN_CHARS = 180;    // only consider collapsing if content >= this many chars
-const POST_COLLAPSE_THRESHOLD = 190;    // actual measured px threshold
+const POST_COLLAPSE_HEIGHT = 150;
+const POST_COLLAPSE_MIN_CHARS = 180;
+const POST_COLLAPSE_THRESHOLD = 190;
 
 const $ = id => document.getElementById(id);
 const q = s => document.querySelector(s);
@@ -1867,6 +1749,17 @@ const State = {
   },
   chatUnread: 0
 };
+
+/* ═══════════════════════════════════════════════════════════════
+   ✦ NAVIGATION HISTORY STACK — for the Back button
+   ═══════════════════════════════════════════════════════════════ */
+const ViewHistory = [];        // [{ view, viewingUser }]
+const MAX_VIEW_HISTORY = 100;
+
+function _pushViewHistory(view, viewingUser) {
+  ViewHistory.push({ view: view || 'home', viewingUser: viewingUser || null });
+  if (ViewHistory.length > MAX_VIEW_HISTORY) ViewHistory.shift();
+}
 
 /* ============ API ============ */
 async function api(action, params = {}, opts = {}){
@@ -2363,6 +2256,9 @@ async function enterApp(){
   $('authScreen').classList.add('hidden');
   $('onboarding').classList.add('hidden');
   $('app').classList.add('visible');
+  // Reset navigation history on fresh entry
+  ViewHistory.length = 0;
+  State.currentView = 'home';
   renderSkeletons();
   Progress.start();
   try{
@@ -2393,6 +2289,7 @@ async function enterApp(){
   refreshChatUnread();
   startChatPolling();
   wireAdminUploads();
+  _armBackButton();
 }
 
 /* ============ SKELETONS ============ */
@@ -2506,23 +2403,17 @@ function bindPostActions(container){
   });
 }
 
-/* ============================================================
-   ✦ POST COLLAPSE / EXPAND — Motion Blur
-   ============================================================ */
 function applyPostCollapse(container){
   if(!container) return;
   container.querySelectorAll('.post-content').forEach(el => {
-    // Reset
     el.classList.remove('collapsed','expanded','motion-blur');
     el.style.maxHeight = '';
     const oldBtn = el.parentElement.querySelector('.post-readmore');
     if(oldBtn) oldBtn.remove();
 
-    // Skip if content is clearly short
     const txt = el.textContent || '';
     if(txt.length < POST_COLLAPSE_MIN_CHARS) return;
 
-    // Measure full height (element has no max-height right now)
     const fullH = el.scrollHeight;
     if(fullH > POST_COLLAPSE_THRESHOLD){
       el.classList.add('collapsed');
@@ -2541,7 +2432,6 @@ function addReadMoreButton(el){
          stroke-linecap="round" stroke-linejoin="round">
       <polyline points="6 9 12 15 18 9"/>
     </svg>`;
-  // Insert after .post-content
   if(el.nextSibling){
     el.parentElement.insertBefore(btn, el.nextSibling);
   } else {
@@ -2558,17 +2448,12 @@ function togglePostContent(el, btn){
   const labelEl = btn.querySelector('.rm-label');
 
   if(isCollapsed){
-    /* ===== EXPAND ===== */
-    // Measure true content height (temporarily remove constraint)
     const prevInline = el.style.maxHeight;
     el.style.maxHeight = 'none';
     const fullH = el.scrollHeight;
-    // Reset to collapsed height so browser knows where to start
     el.style.maxHeight = POST_COLLAPSE_HEIGHT + 'px';
-    // Force reflow so browser registers the starting value
     void el.offsetHeight;
 
-    // Trigger transition
     el.classList.remove('collapsed');
     el.classList.add('expanded','motion-blur');
     el.style.maxHeight = fullH + 'px';
@@ -2576,7 +2461,6 @@ function togglePostContent(el, btn){
     btn.classList.add('expanded');
     if(labelEl) labelEl.textContent = 'လျှော့ပြရန်';
 
-    // Cleanup after transition
     setTimeout(() => {
       el.classList.remove('motion-blur');
       if(el.classList.contains('expanded')){
@@ -2584,7 +2468,6 @@ function togglePostContent(el, btn){
       }
     }, 850);
   } else {
-    /* ===== COLLAPSE ===== */
     const fullH = el.scrollHeight;
     el.style.maxHeight = fullH + 'px';
     void el.offsetHeight;
@@ -2943,13 +2826,22 @@ async function loadMyPurchases(){
 }
 
 /* ============ VIEW OTHER USER ============ */
-async function viewUserProfile(username){
+async function viewUserProfile(username, opts = {}){
   if(!username) return;
   if(String(username).toLowerCase() === String(State.user.username).toLowerCase()){
-    switchView('profile'); return;
+    switchView('profile');
+    return;
   }
+
+  // Record history for back navigation
+  if(!opts.noHistory){
+    _pushViewHistory(State.currentView, State.viewingUser);
+  }
+
   State.viewingUser = username;
-  switchView('profile');
+  // Switch to profile view WITHOUT recording (we already recorded above)
+  switchView('profile', { noHistory: true, keepViewingUser: true });
+
   $('headerBack').classList.remove('hidden');
   $('headerLogo').classList.add('hidden');
   $('myCoinCard').classList.add('hidden');
@@ -3003,8 +2895,19 @@ function renderViewingUserPosts(){
   applyPostCollapse($('profilePosts'));
 }
 $('headerBack').onclick = () => {
-  renderProfile();
-  switchView('profile');
+  // Simulate back: restore previous view from history
+  if(ViewHistory.length > 0){
+    const prev = ViewHistory.pop();
+    if(prev.viewingUser){
+      viewUserProfile(prev.viewingUser, { noHistory: true });
+    } else {
+      State.viewingUser = null;
+      switchView(prev.view, { noHistory: true });
+    }
+  } else {
+    renderProfile();
+    switchView('profile', { noHistory: true });
+  }
 };
 
 /* ============ EDIT PROFILE ============ */
@@ -4117,7 +4020,18 @@ function setupTabBar(){
 }
 function getCurrentView(){ return State.currentView; }
 function switchView(view, opts = {}){
+  const prevView = State.currentView;
+  const prevViewingUser = State.viewingUser;
+
+  // Record history for back navigation
+  if(!opts.noHistory && prevView && (prevView !== view || prevViewingUser)){
+    _pushViewHistory(prevView, prevViewingUser);
+  }
+
   State.currentView = view;
+  // Reset viewingUser unless the caller explicitly wants to keep it
+  if(!opts.keepViewingUser) State.viewingUser = null;
+
   qa('.tab-bar button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   qa('.app-view').forEach(s => s.classList.add('hidden'));
   const map = { home:'viewHome', explore:'viewExplore', messages:'viewMessages', notifications:'viewNotifications', profile:'viewProfile', shop:'viewShop' };
@@ -4126,7 +4040,7 @@ function switchView(view, opts = {}){
   else if(view === 'explore') renderExplore();
   else if(view === 'messages') openMessagesView();
   else if(view === 'notifications') renderNotifications();
-  else if(view === 'profile') renderProfile();
+  else if(view === 'profile'){ if(!State.viewingUser) renderProfile(); }
   else if(view === 'shop') renderShop();
   $('appMain').scrollTop = 0;
 }
@@ -4157,6 +4071,8 @@ function doLogout(){
   State.notifications = []; State.commentsCache = {}; State.viewingUser = null;
   State.chat.conversations = []; State.chat.messages = [];
   State.chat.messagesCache = {}; State.chat.cacheTtl = {};
+  ViewHistory.length = 0;
+  _exitingApp = false;
   $('app').classList.remove('visible');
   $('authScreen').classList.remove('hidden');
   ['loginUser','loginPass','regUser','regEmail','regPass','regPass2','adminPass'].forEach(id => $(id).value = '');
@@ -4403,22 +4319,61 @@ $('bcSendBtn').onclick = async () => {
   btnLoad(btn, false);
 };
 
-/* ============================================================
-   BACK BUTTON
-   ============================================================ */
+/* ═══════════════════════════════════════════════════════════════════
+   ✦ BACK BUTTON SYSTEM — proper history stack
+   ═══════════════════════════════════════════════════════════════════ */
+let _backArmed = false;
+let _exitingApp = false;
 let _exitIntentTime = 0;
-let _backLocked = false;
+
+function _armBackButton(){
+  if(_backArmed) return;
+  _backArmed = true;
+  try{
+    history.replaceState({ hnaung: 'root' }, '', location.href);
+    history.pushState({ hnaung: 'sentinel' }, '', location.href);
+  }catch(_){}
+  window.addEventListener('popstate', _onPopState);
+}
+
+function _onPopState(){
+  if(_exitingApp) return;
+
+  // Re-arm the sentinel so we intercept the next back press too
+  try{
+    history.pushState({ hnaung: 'sentinel' }, '', location.href);
+  }catch(_){}
+
+  const handled = _handleBackPress();
+  if(handled) return;
+
+  // At root — exit intent (press back twice)
+  const now = Date.now();
+  if(now - _exitIntentTime < 2000){
+    _exitingApp = true;
+    // Skip our sentinel + the app root state → land on whatever was before our app
+    try{ history.go(-2); }catch(_){}
+  } else {
+    _exitIntentTime = now;
+    toast('Press back again to exit', 'info');
+  }
+}
 
 function _handleBackPress(){
+  // 1. Image viewer
   if($('imageViewer').classList.contains('open')){
     $('imageViewer').classList.remove('open');
     return true;
   }
+
+  // 2. Any open modal (except the confirm dialog, which handles its own buttons)
   const openModals = Array.from(document.querySelectorAll('.modal.open')).filter(m => m.id !== 'confirmDialog');
   if(openModals.length){
     openModals[openModals.length - 1].classList.remove('open');
     return true;
   }
+
+  // 3. Chat detail overlay
   if($('chatDetail').classList.contains('open')){
     if(State.chat.selectMode){ exitSelectMode(); return true; }
     $('chatDetail').classList.remove('open');
@@ -4431,42 +4386,28 @@ function _handleBackPress(){
     if(getCurrentView() === 'messages') openMessagesView();
     return true;
   }
-  if(State.viewingUser){
-    renderProfile();
-    switchView('profile');
-    return true;
-  }
-  const cur = getCurrentView();
-  if(cur && cur !== 'home'){
-    switchView('home');
-    return true;
-  }
-  return false;
-}
 
-function setupBackButton(){
-  try{
-    history.replaceState({ zionRoot: true }, '', location.pathname + location.search);
-    history.pushState({ zionNav: 1 }, '', location.pathname + location.search);
-  }catch(_){}
-  window.addEventListener('popstate', () => {
-    if(_backLocked) return;
-    _backLocked = true;
-    const handled = _handleBackPress();
-    if(handled){
-      try{ history.pushState({ zionNav: Date.now() }, '', location.pathname + location.search); }catch(_){}
+  // 4. Internal view history
+  if(ViewHistory.length > 0){
+    const prev = ViewHistory.pop();
+    if(prev.viewingUser){
+      viewUserProfile(prev.viewingUser, { noHistory: true });
     } else {
-      const now = Date.now();
-      if(now - _exitIntentTime < 2000){
-        try{ history.back(); }catch(_){}
-      } else {
-        _exitIntentTime = now;
-        try{ history.pushState({ zionNav: Date.now() }, '', location.pathname + location.search); }catch(_){}
-        toast('Press back again to exit', 'info');
-      }
+      State.viewingUser = null;
+      switchView(prev.view, { noHistory: true });
     }
-    setTimeout(() => { _backLocked = false; }, 80);
-  });
+    return true;
+  }
+
+  // 5. Safety net: if somehow we're on a non-home view with no history
+  if(State.currentView && State.currentView !== 'home'){
+    State.viewingUser = null;
+    switchView('home', { noHistory: true });
+    return true;
+  }
+
+  // 6. At root — let the caller handle exit intent
+  return false;
 }
 
 /* ============ INIT ============ */
@@ -4475,10 +4416,9 @@ document.addEventListener('DOMContentLoaded', () => {
   Progress.init();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   initLanding();
-  setupBackButton();
 });
 
-console.log('%c✦ Hnaung (နှောင်း) v8.2 — Motion-blur Read More', 'color:#f5a623;font-size:18px;font-weight:900');
+console.log('%c✦ Hnaung (နှောင်း) v8.3 — Proper Back Navigation', 'color:#f5a623;font-size:18px;font-weight:900');
 </script>
 </body>
 </html>
